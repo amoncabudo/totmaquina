@@ -35,9 +35,9 @@ services:
     #Variables d'entorn per la bdd.
     environment:
       MYSQL_ROOT_PASSWORD: 12345
-      MYSQL_DATABASE: totmaquina
-      MYSQL_USER: admin 
-      MYSQL_PASSWORD: admin1234
+      MYSQL_DATABASE: dbname
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassw0rd
     # La base de dades es crea amb format utf8mb4
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
     #Volum on es guarda la base de dades (fitxer) així no es perdrà la informació si es para el contenidor
