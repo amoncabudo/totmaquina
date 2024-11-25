@@ -1,0 +1,74 @@
+services:
+  php-apache:
+    #Nom del contenidor
+    container_name: server_projectX_container
+    #Mapeig de ports
+    ports:
+      - "80:80"
+    #Construeix la imatge del contenidor segons el Dockerfile que hi ha a mysql
+    build: 
+      context: .
+      dockerfile: Build/server/Dockerfile
+    #Nom de la imatge que crearà. En el cas que no hi hagués el --build, buscaria la imatge a local o DockerHub
+    image: server_projectx_image
+    #Mapeja la carpeta del projecte a la carpeta /var/www/html. Així si feu canvis al projecte, es veuran reflectits al contenidor
+    volumes:
+      - .:/var/www/html
+    #Xarxa a la que pertany el contenidor
+    networks:
+      - network_project
+    # Crea un un ordre de dependència. Primer es crerà el contenidor mysql i després el php-apache
+    depends_on:
+      - mariadb
+  mariadb:
+    #Nom del contenidor de la bdd, útil perquè el server_projectX_container pugui connectar-se a la bdd
+    container_name: mariadb_projectX_container
+    #Mapeig de ports
+    ports:
+      - "3307:3306"
+    #Construeix la imatge del contenidor segons el Dockerfile que hi ha a mysql
+    build:
+      context: .
+      dockerfile: Build/mariadb/Dockerfile
+    #Nom de la imatge que crearà. En el cas que no hi hagués el build, buscaria la imatge a local o DockerHub
+    image: mariadb_projectx_image
+    #Variables d'entorn per la bdd.
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: dbname
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassw0rd
+    # La base de dades es crea amb format utf8mb4
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    #Volum on es guarda la base de dades (fitxer) així no es perdrà la informació si es para el contenidor
+    volumes:
+      - dbDataMariaDB:/var/lib/mysql
+    #Xarxa a la que pertanyen el contenidor
+    networks:
+      - network_project
+  phpmyadmin:
+    #Nom del contenidor de phpmyadmin
+    container_name: phpmyadmin_projectx_container
+    #Mapeig de ports
+    ports:
+      - "8080:80"
+    #Imatge de phpmyadmin del Dockerhub
+    image: phpmyadmin:latest
+    #Variables d'entorn per phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_ABSOLUTE_URI: "http://localhost:8080"  # Assegura't d'establir aquesta opció
+    #Xarxa a la que pertanyen el contenidor
+    networks:
+      - network_project
+    #Depèn del contenidor mysql
+    depends_on:
+      - mariadb
+#Volums que es crearan perquè la base de dades no es perdi
+volumes:
+  dbDataMariaDB:
+#Xarxa que es crearà per la comunicació dels contenidors
+networks:
+  network_project:  
+    driver: bridge
