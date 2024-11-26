@@ -27,6 +27,7 @@ include "../App/Middleware/auth.php";
 include "../App/Middleware/test.php";
 include "../App/Controllers/ctrlmachineinv.php";
 include "../App/Controllers/maintenance.php";
+include "../App/Controllers/history.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -41,6 +42,7 @@ $app->route("privat", [\App\Controllers\Privat::class, "privat"], ["auth"]);
 $app->route("tancar-sessio", "ctrlTancarSessio", ["auth"]);
 $app->route("machineinv", "ctrlMachineInv");
 $app->route("maintenance", "maintenance");
+$app->route("history", "history");
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
