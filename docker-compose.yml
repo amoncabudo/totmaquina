@@ -1,7 +1,7 @@
 services:
   php-apache:
     #Nom del contenidor
-    container_name: totmaquinacont
+    container_name: server_projectX_container
     #Mapeig de ports
     ports:
       - "80:80"
@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: Build/server/Dockerfile
     #Nom de la imatge que crearà. En el cas que no hi hagués el --build, buscaria la imatge a local o DockerHub
-    image: totmaquinacont
+    image: server_projectx_image
     #Mapeja la carpeta del projecte a la carpeta /var/www/html. Així si feu canvis al projecte, es veuran reflectits al contenidor
     volumes:
       - .:/var/www/html
@@ -31,13 +31,13 @@ services:
       context: .
       dockerfile: Build/mariadb/Dockerfile
     #Nom de la imatge que crearà. En el cas que no hi hagués el build, buscaria la imatge a local o DockerHub
-    image: totmaquinacont
+    image: mariadb_projectx_image
     #Variables d'entorn per la bdd.
     environment:
       MYSQL_ROOT_PASSWORD: 12345
-      MYSQL_DATABASE: totmaquina
-      MYSQL_USER: admin 
-      MYSQL_PASSWORD: admin1234
+      MYSQL_DATABASE: dbname
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassw0rd
     # La base de dades es crea amb format utf8mb4
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
     #Volum on es guarda la base de dades (fitxer) així no es perdrà la informació si es para el contenidor
