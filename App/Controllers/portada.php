@@ -23,6 +23,8 @@ use \Emeset\Contracts\Container;
  **/
 function ctrlPortada(Request $request, Response $response, Container $container) :Response
 {
+    $user = $container->get("User");
+    $user = $user->getAllUser();
     // Comptem quantes vegades has visitat aquesta pàgina
     $visites = $request->get(INPUT_COOKIE, "visites");
     if (!is_null($visites)) {
@@ -39,6 +41,7 @@ function ctrlPortada(Request $request, Response $response, Container $container)
         $missatge = "Hola! Ja has visitat {$visites} pàgines d'aquesta web!";
     }
 
+    $response->set("users", $user);
     $response->set("missatge", $missatge);
     $response->SetTemplate("portada.php");
 
