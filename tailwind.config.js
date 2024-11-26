@@ -1,16 +1,9 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./App/Views/**/*.php",
-    "./public/**/*.php",
-    "./App/**/*.php"
-  ],
+export default {
+  content: [],
   theme: {
-    extend: {
-      colors: {
-        'brand': '#1a1a1a',
-      }
-    },
+    extend: {},
   },
   plugins: [],
 }
+

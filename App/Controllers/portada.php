@@ -23,6 +23,27 @@ use \Emeset\Contracts\Container;
  **/
 function ctrlPortada(Request $request, Response $response, Container $container) :Response
 {
-    $response->redirect("location: index.php?r=dashboard");
+    $user = $container->get("User");
+    $user = $user->getAllUser();
+    // Comptem quantes vegades has visitat aquesta pàgina
+    $visites = $request->get(INPUT_COOKIE, "visites");
+    if (!is_null($visites)) {
+        $visites = (int)$visites + 1;
+    } else {
+        $visites = 1;
+    }
+    $response->setcookie("visites", $visites, strtotime("+1 month"));
+
+    $missatge = "";
+    if ($visites == 1) {
+        $missatge = "Benvingut! Aquesta és la primera pàgina que visites d'aquesta web!";
+    } else {
+        $missatge = "Hola! Ja has visitat {$visites} pàgines d'aquesta web!";
+    }
+
+    $response->set("users", $user);
+    $response->set("missatge", $missatge);
+    $response->SetTemplate("portada.php");
+
     return $response;
 }

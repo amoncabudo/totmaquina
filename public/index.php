@@ -25,6 +25,10 @@ include "../App/Controllers/validarLogin.php";
 include "../App/Controllers/tancarSessio.php";
 include "../App/Middleware/auth.php";
 include "../App/Middleware/test.php";
+<<<<<<< HEAD
+=======
+include "../App/Controllers/ctrlmachineinv.php";
+>>>>>>> develop
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -32,16 +36,12 @@ $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
 $app = new \Emeset\Emeset($contenidor);
 $app->middleware([\App\Middleware\App::class, "execute"]);
 
-// Rutas originales
 $app->route("", "ctrlPortada");
 $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], ["auth"]);
 $app->route("tancar-sessio", "ctrlTancarSessio", ["auth"]);
-
-// Ruta del dashboard usando el controlador de clase
-$app->route("dashboard", [\App\Controllers\DashboardController::class, "__invoke"], ["auth"]);
-
+$app->route("machineinv", "ctrlMachineInv");
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
@@ -53,7 +53,6 @@ $app->route("/hola/{id}", function ($request, $response) {
     return $response;
 });
 
-// Ruta por defecto para errores
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
 $app->execute();
