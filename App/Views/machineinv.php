@@ -127,6 +127,9 @@
     toggleDropdown('2');
   });
 </script>
+<script src="../path/to/flowbite/dist/flowbite.min.js"></script>
+<script src="/js/bundle.js"></script>
+
 
 </body>
 </html>

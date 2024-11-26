@@ -29,6 +29,8 @@
     </div>
   </div>
   <script src="/js/bundle.js"></script>
+  <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
+
 </body>
 
 </html>
