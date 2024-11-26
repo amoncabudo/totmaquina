@@ -31,8 +31,8 @@
         <tbody>
           <?php foreach ($historial as $registro): ?>
             <tr class="hover:bg-gray-100">
-              <td class="py-2 px-4 border-b"><?= htmlspecialchars($registro['fecha']) ?></td>
-              <td class="py-2 px-4 border-b"><?= htmlspecialchars($registro['tipo']) ?></td>
+            <td class="py-2 px-4 border-b"><?= htmlspecialchars($registro['fecha']) ?></td>
+            <td class="py-2 px-4 border-b"><?= htmlspecialchars($registro['tipo']) ?></td>
               <td class="py-2 px-4 border-b"><?= htmlspecialchars($registro['fallo']) ?></td>
               <td class="py-2 px-4 border-b"><?= htmlspecialchars($registro['reparacion']) ?></td>
               <td class="py-2 px-4 border-b"><?= htmlspecialchars(implode(", ", $registro['tecnicos'])) ?></td>
@@ -44,7 +44,7 @@
     <?php endif; ?>
 
     <div class="mt-4">
-      <a href="maintenance.php" class="text-blue-500 hover:underline">Volver a seleccionar máquina</a>
+      <a href="/maintenance" class="text-blue-500 hover:underline">Volver a seleccionar máquina</a>
     </div>
   </div>
 </body>
