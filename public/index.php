@@ -25,10 +25,7 @@ include "../App/Controllers/validarLogin.php";
 include "../App/Controllers/tancarSessio.php";
 include "../App/Middleware/auth.php";
 include "../App/Middleware/test.php";
-<<<<<<< HEAD
-=======
 include "../App/Controllers/ctrlmachineinv.php";
->>>>>>> develop
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");

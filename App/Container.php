@@ -1,18 +1,12 @@
 <?php
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
 namespace App;
 
 use Emeset\Container as EmesetContainer;
 
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
 class Container extends EmesetContainer {
 
     public function __construct($config){
