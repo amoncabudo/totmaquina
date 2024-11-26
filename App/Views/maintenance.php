@@ -95,7 +95,7 @@
     event.preventDefault();
     const selectedMachine = selectMachine.value;
     if (selectedMachine) {
-      window.location.href = `historial.html?maquina=${selectedMachine}`;
+      window.location.href = `/history?maquina=${selectedMachine}`;
     } else {
       alert("Por favor, selecciona una máquina antes de continuar.");
     }
