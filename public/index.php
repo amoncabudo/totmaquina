@@ -26,6 +26,7 @@ include "../App/Controllers/tancarSessio.php";
 include "../App/Middleware/auth.php";
 include "../App/Middleware/test.php";
 include "../App/Controllers/ctrlmachineinv.php";
+include "../App/Controllers/ctrlindex.php";
 include "../App/Controllers/maintenance.php";
 include "../App/Controllers/history.php";
 
@@ -41,6 +42,8 @@ $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], ["auth"]);
 $app->route("tancar-sessio", "ctrlTancarSessio", ["auth"]);
 $app->route("machineinv", "ctrlMachineInv");
+$app->route("index", "ctrlIndex");
+
 $app->route("maintenance", "maintenance");
 $app->route("history", "history");
 $app->route("ajax", function ($request, $response) {
