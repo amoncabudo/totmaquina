@@ -10,22 +10,25 @@
     <nav id="navbar" class="fixed top-0 w-full bg-black shadow-lg z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo y menú izquierdo -->
+                <!-- Logo -->
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <img class="h-8 w-8" src="/img/logo.png" alt="Logo">
                     </div>
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">DASHBOARD</a>
-                        <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">GESTIÓN</a>
-                        <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">MANTENIMIENTO</a>
-                        <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">INCIDENCIAS</a>
-                        <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">HISTORIAL</a>
+                    <!-- Menú de navegación para pantallas medianas y grandes -->
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4">
+                            <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">DASHBOARD</a>
+                            <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">GESTIÓN</a>
+                            <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">MANTENIMIENTO</a>
+                            <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">INCIDENCIAS</a>
+                            <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200">HISTORIAL</a>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Búsqueda y perfil -->
-                <div class="flex items-center">
+                <div class="hidden md:flex items-center">
                     <div class="relative">
                         <input type="text" placeholder="Search" 
                                class="bg-gray-100/90 backdrop-blur-sm rounded-full px-4 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-gray-400">
@@ -51,11 +54,50 @@
                         </a>
                     </div>
                 </div>
+
+                <!-- Botón menú móvil -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-white hover:text-gray-300 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menú móvil -->
+            <div id="mobile-menu" class="hidden md:hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="#" class="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium">DASHBOARD</a>
+                    <a href="#" class="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium">GESTIÓN</a>
+                    <a href="#" class="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium">MANTENIMIENTO</a>
+                    <a href="#" class="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium">INCIDENCIAS</a>
+                    <a href="#" class="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium">HISTORIAL</a>
+                </div>
+                <!-- Búsqueda móvil -->
+                <div class="px-2 pt-2 pb-3">
+                    <div class="relative">
+                        <input type="text" placeholder="Search" 
+                               class="w-full bg-gray-100/90 backdrop-blur-sm rounded-full px-4 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        <button class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- Espaciador para compensar el navbar fijo -->
     <div class="h-16"></div>
+
+    <script>
+        // Toggle menú móvil
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html> 
