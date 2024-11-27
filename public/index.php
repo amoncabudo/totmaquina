@@ -28,6 +28,7 @@ include "../App/Middleware/test.php";
 include "../App/Controllers/ctrlmachineinv.php";
 include "../App/Controllers/ctrlindex.php";
 include "../App/Controllers/maintenance.php";
+include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
 
 /* Creem els diferents models */
@@ -45,6 +46,7 @@ $app->route("machineinv", "ctrlMachineInv");
 $app->route("index", "ctrlIndex");
 
 $app->route("maintenance", "maintenance");
+$app->route("userManagement", "ctrlUserManagement");
 $app->route("history", "history");
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
