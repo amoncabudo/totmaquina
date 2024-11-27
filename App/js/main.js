@@ -3,4 +3,3 @@ document.querySelector('button').addEventListener('click', function() {
   dropdown.classList.toggle('hidden');
 });
 
-
