@@ -43,7 +43,7 @@ function ctrlPortada(Request $request, Response $response, Container $container)
 
     $response->set("users", $user);
     $response->set("missatge", $missatge);
-    $response->SetTemplate("portada.php");
+    $response->SetTemplate("index.php");
 
     return $response;
 }
