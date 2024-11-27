@@ -498,6 +498,7 @@ video {
 /* Make elements with the HTML hidden attribute stay hidden by default */
 [hidden]:where(:not([hidden="until-found"])) {
   display: none;
+ feature/machineinv
 }
 
 [data-popper-arrow],[data-popper-arrow]:before {
@@ -893,4 +894,6 @@ input[type="range"]::-ms-fill-lower {
 .dark\:\!bg-gray-700:is(.dark *) {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1)) !important;
+
+ develop
 }
