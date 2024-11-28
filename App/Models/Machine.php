@@ -39,12 +39,12 @@ class Machine
      * @return array
      */
     public function getAllMachine(){
-        $stmt = $this->sql->prepare("SELECT * FROM Machine");
+        $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, location, installation_date FROM Machine ORDER BY id DESC");
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
-    public function getMachineById($id){
+    public function getMachineById($id) {
         $stmt = $this->sql->prepare("SELECT * FROM Machine WHERE id = :id");
         $stmt->bindParam(":id", $id);
         $stmt->execute();
