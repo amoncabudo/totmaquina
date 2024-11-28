@@ -3,10 +3,12 @@ function ctrlmachinedetail($request, $response, $container)
 {
     
     $machine_id = $request->getParam('id');
+    error_log("Machine ID: " . $machine_id);
 
     if ($machine_id) {
         $machineModel = $container->get('Machine');
         $machine = $machineModel->getMachineById($machine_id);
+        error_log("Machine Data: " . print_r($machine, true));
 
         if ($machine) {
             $response->set('machine', $machine);
