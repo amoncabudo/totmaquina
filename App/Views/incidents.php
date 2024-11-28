@@ -28,21 +28,21 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Nom del dispositiu -->
           <div>
-            <label for="device" class="block text-sm font-medium text-gray-700">Dispositivo</label>
+            <label for="device" class="block text-sm font-medium text-gray-700">💻Dispositivo💻</label>
             <input type="text" id="device" name="device" placeholder="Nom del dispositiu" 
               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
           </div>
           
           <!-- Descripció -->
           <div>
-            <label for="issue" class="block text-sm font-medium text-gray-700">Descripcion de la averia</label>
+            <label for="issue" class="block text-sm font-medium text-gray-700">📋Descripcion de la averia📋</label>
             <textarea id="issue" name="issue" rows="2" placeholder="Descripció breu de l'incidència"
               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
           </div>
 
           <!-- Prioritat -->
           <div>
-            <label for="priority" class="block text-sm font-medium text-gray-700">Prioridad</label>
+            <label for="priority" class="block text-sm font-medium text-gray-700">⚠️Prioridad⚠️</label>
             <select id="priority" name="priority" 
               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
               <option value="baixa">Baja</option>
@@ -53,7 +53,7 @@
 
           <!-- Selecció de tècnics -->
           <div>
-            <label for="technicians" class="block text-sm font-medium text-gray-700">Assignar Tècnicos</label>
+            <label for="technicians" class="block text-sm font-medium text-gray-700">🛠Assignar Tècnicos🛠</label>
             <div x-data="{ 
               open: false, 
               selectedTechnicians: [], 
@@ -93,14 +93,14 @@
 
           <!-- Hores estimades -->
           <div>
-            <label for="hours" class="block text-sm font-medium text-gray-700">Hores Estimades</label>
+            <label for="hours" class="block text-sm font-medium text-gray-700">⌛️Hores Estimadas⌛️</label>
             <input type="number" id="hours" name="hours" placeholder="Hores" 
               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
           </div>
 
           <!-- Data -->
           <div>
-            <label for="date" class="block text-sm font-medium text-gray-700">Data de Registr</label>
+            <label for="date" class="block text-sm font-medium text-gray-700">📆Data de Registro📆</label>
             <input type="date" id="date" name="date" 
               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
           </div>
@@ -110,11 +110,11 @@
         <div class="mt-4 flex items-center space-x-4">
           <button type="submit" 
             class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Registrar Incidència
+            💾Registrar Incidència💾
           </button>
           <button type="button" @click.prevent="$refs.form.reset(); selectedTechnicians = [];" 
             class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
-            Netejar
+            🧹 Limpiar🧹
           </button>
         </div>
       </form>
@@ -199,60 +199,8 @@
 
   </main>
 
-  <script>
-    const deviceChartCtx = document.getElementById('deviceChart').getContext('2d');
-    const monthlyChartCtx = document.getElementById('monthlyChart').getContext('2d');
-    const responseChartCtx = document.getElementById('responseChart').getContext('2d');
 
-    // Chart.js for device incidents
-    const deviceChart = new Chart(deviceChartCtx, {
-      type: 'pie',
-      data: {
-        labels: ['Dispositiu A', 'Dispositiu B', 'Dispositiu C', 'Dispositiu D'],
-        datasets: [{
-          data: [12, 19, 6, 3],
-          backgroundColor: ['#FF9999', '#66B2FF', '#99FF99', '#FFCC99'],
-        }]
-      },
-      options: {
-        responsive: true,
-      }
-    });
-
-    // Chart.js for monthly incidents
-    const monthlyChart = new Chart(monthlyChartCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny', 'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'],
-        datasets: [{
-          label: 'Incidències',
-          data: [15, 20, 25, 18, 22, 17, 19, 23, 20, 21, 18, 20],
-          backgroundColor: '#4CAF50',
-        }]
-      },
-      options: {
-        responsive: true,
-      }
-    });
-
-    // Chart.js for response time
-    const responseChart = new Chart(responseChartCtx, {
-      type: 'line',
-      data: {
-        labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5'],
-        datasets: [{
-          label: 'Tiempo de Respuesta (h)',
-          data: [5, 6, 4, 7, 3],
-          fill: false,
-          borderColor: '#FF6347',
-          tension: 0.1,
-        }]
-      },
-      options: {
-        responsive: true,
-      }
-    });
-  </script>
-
+<script src="/js/main.js"></script>
+ 
 </body>
 </html>
