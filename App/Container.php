@@ -29,8 +29,9 @@ class Container extends EmesetContainer {
         };
 
         $this["Machine"] = function ($c) {
-            $db = $c->get("Db");
-            return new \App\Models\Machine($db->getConnection());
+            $db =  $c->get("Db");
+            $task = new \App\Models\Machine($db->getConnection());
+            return $task;
         };
     }
 }

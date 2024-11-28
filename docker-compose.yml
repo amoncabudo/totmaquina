@@ -46,6 +46,7 @@ services:
     #Xarxa a la que pertanyen el contenidor
     networks:
       - network_project
+    restart: always
   phpmyadmin:
     #Nom del contenidor de phpmyadmin
     container_name: phpmyadmin_projectx_container
@@ -65,6 +66,7 @@ services:
     #Depèn del contenidor mysql
     depends_on:
       - mariadb
+    restart: always
 #Volums que es crearan perquè la base de dades no es perdi
 volumes:
   dbDataMariaDB:
