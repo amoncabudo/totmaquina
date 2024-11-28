@@ -31,6 +31,7 @@ include "../App/Controllers/maintenance.php";
 include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
+include "../App/Controllers/incidents.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -51,6 +52,7 @@ $app->route('machine-detail/{id}', 'ctrlMachineDetail');
 
 $app->route("userManagement", "ctrlUserManagement");
 $app->route("history", "history");
+$app->route("incidents", "incidents");
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
