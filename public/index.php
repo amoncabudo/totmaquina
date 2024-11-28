@@ -60,7 +60,6 @@ $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 $app->route('machinedetail/{id}', 'ctrlmachinedetail');
 $app->route("addmachine", "ctrlAddMachine");
 
-$app->route("userManagement", "ctrluserManagement");
 $app->route("history", "history");
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
