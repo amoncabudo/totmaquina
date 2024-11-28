@@ -31,6 +31,8 @@ include "../App/Controllers/maintenance.php";
 include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
+include "../App/Controllers/ctrlAddUser.php";
+
 include "../App/Controllers/ctrlAddMachine.php";
 
 /* Creem els diferents models */
@@ -48,10 +50,16 @@ $app->route("machineinv", "ctrlmachineinv");
 $app->route("index", "ctrlindex");
 
 $app->route("maintenance", "maintenance");
+$app->route('machine-detail/{id}', 'ctrlMachineDetail');
+
+$app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
+$app->route("history", "history");
+
+
+$app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 $app->route('machinedetail/{id}', 'ctrlmachinedetail');
 $app->route("addmachine", "ctrlAddMachine");
 
-$app->route("userManagement", "ctrluserManagement");
 $app->route("history", "history");
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
