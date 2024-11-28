@@ -109,7 +109,7 @@
             <!-- Contenedor de usuario -->
             <div class="flex items-center space-x-4">
                 <!-- Imagen de usuario -->
-                <img src="<?= '/Images/' . $user["avatar"]; ?>" alt="Usuario" class="h-12 w-12 rounded-full object-cover">
+                <img src="<?= '/images/' . $user["avatar"]; ?>" alt="Usuario" class="h-12 w-12 rounded-full object-cover">
                 <!-- Información de usuario -->
                 <p class="text-gray-800 font-semibold"><?= htmlspecialchars($user['name'] . ' ' . $user['surname']); ?></p>
             </div>

@@ -56,7 +56,7 @@ services:
     image: phpmyadmin:latest
     #Variables d'entorn per phpmyadmin
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: mariadb
       PMA_PORT: 3306
     #Xarxa a la que pertanyen el contenidor
     networks:

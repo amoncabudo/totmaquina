@@ -22,7 +22,7 @@ class UserController
 
         if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] == 0) {
             $avatar = $_FILES['avatar']['name'];
-            move_uploaded_file($_FILES['avatar']['tmp_name'], __DIR__ . "/../../public/Images/" . $avatar);
+            move_uploaded_file($_FILES['avatar']['tmp_name'], __DIR__ . "/../../public/images/" . $avatar);
         }
         $userdb = $container->get("User");
         $result = $userdb->insertUser($name, $surname, $email, $password, $role, $avatar);

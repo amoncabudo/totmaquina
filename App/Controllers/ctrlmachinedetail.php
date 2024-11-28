@@ -1,21 +1,24 @@
 <?php
-function ctrlMachineDetail($request, $response, $container){
-    $machineId = $request->get(INPUT_GET, 'id');
+function ctrlmachinedetail($request, $response, $container)
+{
     
-    // Get the Machine model from the container
-    $machineModel = $container->get('Machine');
-    
-    // Fetch detailed machine data based on $machineId
-    $machine = $machineModel->getMachineById($machineId);
-    
-    if (!$machine) {
-        // Handle the case where the machine is not found
-        $response->setTemplate('error.php');
-        $response->setData(['error' => 'Machine not found']);
-        return $response;
+    $machine_id = $request->getParam('id');
+    error_log("Machine ID: " . $machine_id);
+
+    if ($machine_id) {
+        $machineModel = $container->get('Machine');
+        $machine = $machineModel->getMachineById($machine_id);
+        error_log("Machine Data: " . print_r($machine, true));
+
+        if ($machine) {
+            $response->set('machine', $machine);
+            $response->setTemplate('machine_detail.php');
+            return $response;
+        }
     }
-    
-    $response->setTemplate('machine_detail.php');
-    $response->setData(['machine' => $machine]);
+
+    // Si no se encuentra la máquina, mostrar error
+    $response->set('error', "Máquina no encontrada.");
+    $response->setTemplate('error.php');
     return $response;
 }

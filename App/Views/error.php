@@ -29,6 +29,7 @@
     <div class="grid grid-cols-1 gap-4">
       <div>
         <p class="text-base">Si has arribat aquí vol dir que alguna cosa ha fallat.</p>
+
       </div>
     </div>
 

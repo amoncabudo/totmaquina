@@ -35,8 +35,9 @@
     </div>
     <p class="mt-4 text-center text-gray-600"><?= htmlspecialchars($missatge) ?></p>
   </div>
+
   <script src="/js/bundle.js"></script>
-  <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
+  <script src="/js/flowbite.min.js"></script>
 
 </body>
 </html>
