@@ -48,7 +48,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\n/* harmony import */ var _hola_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./hola.js */ \"./App/js/hola.js\");\n/* harmony import */ var _example_ts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./example.ts */ \"./App/js/example.ts\");\n\r\n\r\n\r\n\r\n\r\n\r\njquery__WEBPACK_IMPORTED_MODULE_0__(function() {\r\n    console.log('Hello World');\r\n    (0,_hola_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])();\r\n    console.log(\"Example\", _example_ts__WEBPACK_IMPORTED_MODULE_2__.obj);\r\n});\n\n//# sourceURL=webpack:///./App/js/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\n/* harmony import */ var _hola_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./hola.js */ \"./App/js/hola.js\");\n/* harmony import */ var _example_ts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./example.ts */ \"./App/js/example.ts\");\n\r\n\r\n\r\n\r\n\r\n\r\njquery__WEBPACK_IMPORTED_MODULE_0__(function() {\r\n    console.log('Hello World');\r\n    (0,_hola_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])();\r\n    console.log(\"Example\", _example_ts__WEBPACK_IMPORTED_MODULE_2__.obj);\r\n\r\n});\n\n//# sourceURL=webpack:///./App/js/index.js?");
 
 /***/ })
 
