@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body>
+<body class="bg-gray-100 min-h-screen">
 
 
   <!-- Modal toggle -->
@@ -53,20 +53,23 @@
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto bg-white p-8 mt-10 rounded-lg shadow-lg">
+  <div class="max-w-7xl mx-auto p-8 mt-10 rounded-lg ">
     <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Inventario de Máquinas</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <?php foreach ($machines as $machine): ?>
-        <div class="machine-entry bg-gray-200 p-4 rounded-lg shadow-md mb-4">
-          <div class="flex justify-between items-center">
-            <div>
-              <h2 class="text-lg font-bold"><?= htmlspecialchars($machine['name']) ?></h2>
-              <p class="text-sm"> <?= htmlspecialchars($machine['model']) ?>, <?= htmlspecialchars($machine['manufacturer']) ?>, <?= htmlspecialchars($machine['location']) ?></p>
-            </div>
-            <a href="machine-detail/<?= $machine['id']; ?>" class="btn btn-custom-green">Más información</a>                            </div>
 
-        </div>
-      <?php endforeach; ?>
+        <?php foreach ($machines as $machine): ?>
+            <div class="machine-entry bg-gray-200 p-4 rounded-lg shadow-md mb-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold"><?php echo htmlspecialchars($machine['name']) ?></h2>
+                        <p class="text-sm"> <?php echo htmlspecialchars($machine['model']) ?>, <?php echo htmlspecialchars($machine['manufacturer']) ?>, <?php echo htmlspecialchars($machine['location']) ?></p>
+                    </div>
+                    <a href="machine_detail/<?php echo htmlspecialchars($machine['id']); ?>" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-800 border border-transparent rounded-lg shadow-sm hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700">
+                        Ver Mas
+                    </a>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
   </div>
 </body>

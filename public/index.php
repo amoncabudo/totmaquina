@@ -40,9 +40,9 @@ $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], ["auth"]);
 $app->route("tancar-sessio", "ctrlTancarSessio", ["auth"]);
-$app->route("machineinv", "ctrlMachineInv");
+$app->route("machineinv", "ctrlmachineinv");
 $app->route("maintenance", "maintenance");
-$app->route('machine-detail/{id}', 'ctrlMachineDetail');
+$app->route('machine_detail/{id}', 'ctrlmachinedetail');
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
