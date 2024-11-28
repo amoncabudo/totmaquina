@@ -15,55 +15,50 @@
     
     // Ejecutar una vez al cargar para establecer el estado inicial
     handleScroll();
-    const deviceChartCtx = document.getElementById('deviceChart').getContext('2d');
-    const monthlyChartCtx = document.getElementById('monthlyChart').getContext('2d');
-    const responseChartCtx = document.getElementById('responseChart').getContext('2d');
 
-    // Chart.js for device incidents
-    const deviceChart = new Chart(deviceChartCtx, {
-      type: 'pie',
-      data: {
-        labels: ['Dispositiu A', 'Dispositiu B', 'Dispositiu C', 'Dispositiu D'],
-        datasets: [{
-          data: [12, 19, 6, 3],
-          backgroundColor: ['#FF9999', '#66B2FF', '#99FF99', '#FFCC99'],
-        }]
-      },
-      options: {
-        responsive: true,
-      }
-    });
+    // Inicialización del menú móvil y dropdown cuando el DOM está cargado
+    document.addEventListener('DOMContentLoaded', function() {
+        const overlay = document.getElementById('navbar-mobile-overlay');
+        const mobileMenu = document.getElementById('navbar-mobile');
+        const menuButton = document.querySelector('[data-collapse-toggle="navbar-mobile"]');
+        const closeButton = document.getElementById('close-menu');
+        const dropdownButton = document.getElementById('dropdownDefaultButton');
+        const dropdownMenu = document.getElementById('dropdown');
 
-    // Chart.js for monthly incidents
-    const monthlyChart = new Chart(monthlyChartCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny', 'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'],
-        datasets: [{
-          label: 'Incidències',
-          data: [15, 20, 25, 18, 22, 17, 19, 23, 20, 21, 18, 20],
-          backgroundColor: '#4CAF50',
-        }]
-      },
-      options: {
-        responsive: true,
-      }
-    });
+        // Función para abrir el menú
+        function openMenu() {
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            mobileMenu.classList.remove('-translate-x-full');
+            document.body.style.overflow = 'hidden';
+        }
 
-    // Chart.js for response time
-    const responseChart = new Chart(responseChartCtx, {
-      type: 'line',
-      data: {
-        labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5'],
-        datasets: [{
-          label: 'Tiempo de Respuesta (h)',
-          data: [5, 6, 4, 7, 3],
-          fill: false,
-          borderColor: '#FF6347',
-          tension: 0.1,
-        }]
-      },
-      options: {
-        responsive: true,
-      }
+        // Función para cerrar el menú
+        function closeMenu() {
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            mobileMenu.classList.add('-translate-x-full');
+            document.body.style.overflow = '';
+            // Cerrar también el dropdown
+            dropdownMenu.classList.add('hidden');
+        }
+
+        // Función para alternar el dropdown
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            dropdownMenu.classList.toggle('hidden');
+        }
+
+        // Event listeners
+        menuButton?.addEventListener('click', openMenu);
+        closeButton?.addEventListener('click', closeMenu);
+        overlay?.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                closeMenu();
+            }
+        });
+        dropdownButton?.addEventListener('click', toggleDropdown);
+
+        // Prevenir que los clics dentro del menú cierren el overlay
+        mobileMenu?.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
     });

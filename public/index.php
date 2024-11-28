@@ -31,7 +31,9 @@ include "../App/Controllers/maintenance.php";
 include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
-include "../App/Controllers/incidents.php";
+include "../App/Controllers/ctrlAddUser.php";
+
+include "../App/Controllers/ctrlAddMachine.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -44,13 +46,20 @@ $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], ["auth"]);
 $app->route("tancar-sessio", "ctrlTancarSessio", ["auth"]);
-$app->route("machineinv", "ctrlMachineInv");
-$app->route("index", "ctrlIndex");
+$app->route("machineinv", "ctrlmachineinv");
+$app->route("index", "ctrlindex");
 
 $app->route("maintenance", "maintenance");
 $app->route('machine-detail/{id}', 'ctrlMachineDetail');
 
-$app->route("userManagement", "ctrlUserManagement");
+$app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
+$app->route("history", "history");
+
+
+$app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
+$app->route('machinedetail/{id}', 'ctrlmachinedetail');
+$app->route("addmachine", "ctrlAddMachine");
+
 $app->route("history", "history");
 $app->route("incidents", "incidents");
 $app->route("ajax", function ($request, $response) {

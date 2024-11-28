@@ -41,6 +41,25 @@ class User
     public function getAllUser(){
         $stmt = $this->sql->prepare("SELECT * FROM User");
         $stmt->execute();
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function insertUser($name, $surname, $email, $password, $role, $avatar){
+        $password = password_hash($password, PASSWORD_DEFAULT);
+        try {
+            $query = "INSERT INTO User (name, surname, email, password, role, avatar) VALUES (:name, :surname, :email, :password, :role, :avatar)";
+            $stmt = $this->sql->prepare($query);
+            $stmt->execute([
+                'name' => $name,
+                'surname' => $surname,
+                'email' => $email,
+                'password' => $password,
+                'role' => $role,
+                'avatar' => $avatar
+            ]);
+        } catch (\PDOException $e) {
+            echo "Error en la inserción: " . $e->getMessage();
+            exit;
+        }
     }
 }
