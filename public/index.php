@@ -28,15 +28,9 @@ include "../App/Middleware/test.php";
 include "../App/Controllers/ctrlmachineinv.php";
 include "../App/Controllers/ctrlindex.php";
 include "../App/Controllers/maintenance.php";
-<<<<<<< HEAD
-include "../App/Controllers/ctrluserManagement.php";
-include "../App/Controllers/history.php";
-=======
 include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
- develop
->>>>>>> 095600866231d4a01ce265a741724e9781c9ee5d
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -53,17 +47,10 @@ $app->route("machineinv", "ctrlMachineInv");
 $app->route("index", "ctrlIndex");
 
 $app->route("maintenance", "maintenance");
-<<<<<<< HEAD
-$app->route("userManagement", "ctrlUserManagement");
-$app->route("history", "history");
-=======
-feature/machineinv
 $app->route('machine-detail/{id}', 'ctrlMachineDetail');
 
 $app->route("userManagement", "ctrlUserManagement");
 $app->route("history", "history");
-develop
->>>>>>> 095600866231d4a01ce265a741724e9781c9ee5d
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
