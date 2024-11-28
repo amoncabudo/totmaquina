@@ -61,6 +61,7 @@ $app->route('machinedetail/{id}', 'ctrlmachinedetail');
 $app->route("addmachine", "ctrlAddMachine");
 
 $app->route("history", "history");
+$app->route("incidents", "incidents");
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
