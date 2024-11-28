@@ -31,7 +31,8 @@ include "../App/Controllers/maintenance.php";
 include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
- develop
+include "../App/Controllers/ctrlAddUser.php";
+
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -48,12 +49,13 @@ $app->route("machineinv", "ctrlMachineInv");
 $app->route("index", "ctrlIndex");
 
 $app->route("maintenance", "maintenance");
-feature/machineinv
 $app->route('machine-detail/{id}', 'ctrlMachineDetail');
 
-$app->route("userManagement", "ctrlUserManagement");
+$app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
-develop
+
+
+$app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
