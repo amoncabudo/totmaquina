@@ -500,7 +500,7 @@ video {
   display: none;
 }
 
-=======
+
 .tooltip-arrow,.tooltip-arrow:before {
   position: absolute;
   width: 8px;
@@ -568,7 +568,6 @@ video {
   width: 8px;
   height: 8px;
   background: inherit;
-=======
 }
 
 [data-popper-arrow] {
@@ -1040,7 +1039,7 @@ input:checked + .toggle-bg {
 
 [data-popover][role="tooltip"][data-popper-placement^='top'] > [data-popper-arrow] {
   bottom: -5px;
-=======
+}
 .visible {
   visibility: visible;
 }
@@ -1159,8 +1158,7 @@ input::placeholder,textarea::placeholder {
 
 ::-webkit-datetime-edit-fields-wrapper {
   padding: 0;
-=======
-.inline-block {
+}.inline-block {
   display: inline-block;
 }
 .inline {
@@ -1299,7 +1297,7 @@ select:not([size]) {
   background-position: left 0.75rem center;
   padding-right: 0.75rem;
   padding-left: 0;
-=======
+}
 .rounded-e-lg {
   border-start-end-radius: 0.5rem;
   border-end-end-radius: 0.5rem;
@@ -1394,7 +1392,7 @@ select:not([size]) {
   background-size: 0.55em 0.55em;
   background-position: center;
   background-repeat: no-repeat;
-=======
+}
 .\!bg-gray-50 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1)) !important;
@@ -1430,7 +1428,7 @@ select:not([size]) {
 [type='radio']:checked {
   background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
   background-size: 1em 1em;
-=======
+}
 .bg-white\/50 {
   background-color: rgb(255 255 255 / 0.5);
 }
@@ -1475,7 +1473,7 @@ input[type=file]::file-selector-button {
   font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;
-=======
+}
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1504,7 +1502,7 @@ input[type=file]::file-selector-button:hover {
 :is([dir=rtl]) input[type=file]::file-selector-button {
   padding-right: 2rem;
   padding-left: 1rem;
-=======
+}
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -1580,7 +1578,7 @@ input[type="range"]::-ms-fill-lower {
 }
 .w-1\/2 {
   width: 50%;
-=======
+}
 .font-medium {
   font-weight: 500;
 }
@@ -1651,7 +1649,7 @@ input[type="range"]::-ms-fill-lower {
 }
 .leading-6 {
   line-height: 1.5rem;
-=======
+}
 .opacity-0 {
   opacity: 0;
 }
@@ -1738,7 +1736,7 @@ input[type="range"]::-ms-fill-lower {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1)) !important;
 }
-=======
+
 .focus\:ring-2:focus {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
