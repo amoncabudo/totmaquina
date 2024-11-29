@@ -83,6 +83,11 @@ $app->route("/hola/{id}", function ($request, $response) {
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
 $app->route("userconfig", [\App\Controllers\UserConfig::class, "index"]);
+$app->route("politica-cookies", function($request, $response) {
+    $response->SetTemplate("politica-cookies.php");
+    return $response;
+});
+
 $app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
 
 $app->execute();
