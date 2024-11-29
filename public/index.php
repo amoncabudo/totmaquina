@@ -32,6 +32,7 @@ include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
 include "../App/Controllers/ctrlAddUser.php";
+include "../App/Controllers/NotificationsController.php";
 include "../App/Controllers/ctrlAddMachine.php";
 
 /* Creem els diferents models */
@@ -56,9 +57,15 @@ $app->route("history", "history");
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
 
+// Rutas de notificaciones
+$app->route("notifications", [\App\Controllers\NotificationsController::class, "index"]);
+$app->post("notifications/delete/{id}", [\App\Controllers\NotificationsController::class, "delete"]);
+$app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsController::class, "markAsRead"]);
+
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 
 $app->route("history", "history");
+$app->route("incidents", "incidents");
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;

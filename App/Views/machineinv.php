@@ -11,8 +11,9 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen">
+  <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
-  <div class="max-w-7xl mx-auto p-8 mt-10 rounded-lg ">
+  <div class="max-w-7xl mx-auto p-8 mt-20 rounded-lg">
     <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Inventario de Máquinas</h1>
     <div class="flex justify-end mb-4">
          <!-- Button to open modal -->

@@ -20,7 +20,22 @@
                     <div class="hidden md:block ml-10">
                         <div class="flex items-baseline space-x-4" role="menubar">
                             <a href="index" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" role="menuitem">DASHBOARD</a>
-                            <a href="#" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" role="menuitem">GESTIÓN</a>
+                            
+                            <!-- Menú desplegable GESTIÓN -->
+                            <div class="relative group" role="menuitem">
+                                <button class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center" 
+                                        aria-haspopup="true" 
+                                        aria-expanded="false">
+                                    GESTIÓN
+                                    <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
+                                    <a href="userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
+                                    <a href="machineinv" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Inventario de Máquinas</a>
+                                </div>
+                            </div>
                             
                             <!-- Menú desplegable MANTENIMIENTO -->
                             <div class="relative group" role="menuitem">
@@ -126,7 +141,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <a href="#" class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100" role="menuitem">
+                            <a href="/notifications" class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100" role="menuitem">
                                 Ver todas las notificaciones
                             </a>
                         </div>
@@ -163,7 +178,28 @@
         <div class="hidden md:hidden" id="navbar-mobile">
             <div class="space-y-1 px-2 pb-3 pt-2 bg-black">
                 <a href="index" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700" role="menuitem">DASHBOARD</a>
-                <a href="#" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700" role="menuitem">GESTIÓN</a>
+                
+                <!-- Botón desplegable GESTIÓN móvil -->
+                <button id="dropdownGestionLink" data-dropdown-toggle="dropdownGestion" 
+                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
+                        aria-expanded="false"
+                        aria-haspopup="true">
+                    GESTIÓN 
+                    <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <!-- Menú desplegable GESTIÓN móvil -->
+                <div id="dropdownGestion" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownGestionLink">
+                    <ul class="py-2 text-sm text-white">
+                        <li>
+                            <a href="userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Usuarios</a>
+                        </li>
+                        <li>
+                            <a href="machineinv" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Inventario de Máquinas</a>
+                        </li>
+                    </ul>
+                </div>
                 
                 <!-- Botón desplegable MANTENIMIENTO móvil -->
                 <button id="dropdownMaintenanceLink" data-dropdown-toggle="dropdownMaintenance" 
@@ -294,7 +330,7 @@
                             </div>
                         </a>
                     </div>
-                    <a href="#" class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100" role="menuitem">
+                    <a href="/notifications" class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100" role="menuitem">
                         Ver todas las notificaciones
                     </a>
                 </div>
