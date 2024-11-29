@@ -10,8 +10,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="css/main.css">
 </head>
-<body class="bg-gray-100 p-6">
-  <div class="container mx-auto bg-white p-6 rounded shadow">
+<body class="bg-gray-100">
+  <?php include __DIR__ . "/layouts/navbar.php"; ?>
+
+  <div class="container mx-auto bg-white p-6 rounded shadow mt-20">
     <h1 class="text-2xl font-bold mb-4">Historial de Mantenimiento</h1>
     
     <?php if (empty($historial)): ?>

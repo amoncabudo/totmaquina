@@ -11,8 +11,9 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen">
+  <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
-  <div class="max-w-7xl mx-auto p-8 mt-10 rounded-lg ">
+  <div class="max-w-7xl mx-auto p-8 mt-20 rounded-lg">
     <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Inventario de Máquinas</h1>
     <div class="flex justify-end mb-4">
       <a href="addmachine" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
