@@ -382,6 +382,6 @@
     <div class="h-16" aria-hidden="true"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-    <script src="/js/main.js"></script>
+    <?php include "cookie-banner.php"; ?>
 </body>
 </html> 

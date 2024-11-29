@@ -18,6 +18,9 @@ function ctrlTancarSessio(Request $request, Response $response, Container $conta
         session_start();
     }
 
+    // Guardamos el ID del usuario antes de limpiar la sesión
+    $userId = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
+
     // Limpiamos las variables de sesión específicas
     $response->setSession("logat", false);
     $response->setSession("user", null);
