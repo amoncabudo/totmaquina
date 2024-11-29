@@ -14,7 +14,11 @@
                 <!-- Logo y menú de escritorio -->
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <img class="h-8 w-8" src="/img/logo.png" alt="Logo de la aplicación">
+                        <a href="/index" class="flex items-center">
+                            <div class="bg-white p-1.5 rounded-full">
+                                <img class="h-10 w-10" src="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png" alt="Logo de la aplicación">
+                            </div>
+                        </a>
                     </div>
                     <!-- Menú de navegación para pantallas medianas y grandes -->
                     <div class="hidden md:block ml-10">

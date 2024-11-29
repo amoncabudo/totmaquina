@@ -1,37 +1,36 @@
 <?php
 
+namespace App\Middleware;
+
 use \Emeset\Contracts\Http\Request;
 use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
-/**
- * Middleware que gestiona l'autenticació
- *
- * @param \Emeset\Contracts\Http\Request $request petició HTTP
- * @param \Emeset\Contracts\Http\Response $response resposta HTTP
- * @param \Emeset\Contracts\Container $container  
- * @param callable $next  següent middleware o controlador.   
- * @return \Emeset\Contracts\Http\Response resposta HTTP
- */
-function auth(Request $request, Response $response, Container $container, $next) : Response
-{
+class Auth {
 
-    $usuari = $request->get("SESSION", "usuari");
-    $logat = $request->get("SESSION", "logat");
+    public static function auth(Request $request, Response $response, Container $container) :Response
+    {
+        $logat = $request->get("SESSION", "logat");
+        $user = $request->get("SESSION", "user");
 
-    if (!isset($logat)) {
-        $usuari = "";
-        $logat = false;
+        if ($logat !== true || !$user) {
+            $response->setSession("error", "Debes iniciar sesión para acceder a esta página");
+            $response->redirect("location: /login");
+        }
+
+        return $response;
     }
 
-    $response->set("usuari", $usuari);
-    $response->set("logat", $logat);
+    public static function role($roles = []) {
+        return function (Request $request, Response $response, Container $container) use ($roles) {
+            $user = $request->get("SESSION", "user");
+            
+            if (!$user || !in_array($user['role'], $roles)) {
+                $response->setSession("error", "No tienes permisos para acceder a esta página");
+                $response->redirect("location: /index");
+            }
 
-    // si l'usuari està logat permetem carregar el recurs
-    if ($logat) {
-        $response = \Emeset\Middleware::next($request, $response, $container, $next);
-    } else {
-        $response->redirect("location: /login");
+            return $response;
+        };
     }
-    return $response;
 }
