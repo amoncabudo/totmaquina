@@ -141,7 +141,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <a href="#" class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100" role="menuitem">
+                            <a href="/notifications" class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100" role="menuitem">
                                 Ver todas las notificaciones
                             </a>
                         </div>
@@ -330,7 +330,7 @@
                             </div>
                         </a>
                     </div>
-                    <a href="#" class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100" role="menuitem">
+                    <a href="/notifications" class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100" role="menuitem">
                         Ver todas las notificaciones
                     </a>
                 </div>
