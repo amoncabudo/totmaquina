@@ -5,27 +5,37 @@ use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
 /**
- * Controlador que gestiona el procés de login
- * Framework d'exemple per a M07 Desenvolupament d'aplicacions web.
- * @author: Dani Prados dprados@cendrassos.net
- *
- * Comprova si l'usuari s'ha autentificat correctament
- *
- **/
-
-/**
- * ctrlValidarLogin: Controlador que comprova si l'usuari s'ha autentificat
- * correctament
+ * Controlador que gestiona el cierre de sesión
  *
  * @param $request contingut de la peticó http.
  * @param $response contingut de la response http.
- * @param array $config  paràmetres de configuració de l'aplicació
- *
+ * @param Container $container contenedor de dependencias
  **/
 function ctrlTancarSessio(Request $request, Response $response, Container $container) :Response
 {
-  $response->setSession("logat", false);
-  $response->redirect("location: /");
+    // Iniciamos la sesión si no está iniciada
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-  return $response;
+    // Limpiamos las variables de sesión específicas
+    $response->setSession("logat", false);
+    $response->setSession("user", null);
+
+    // Limpiamos el array de sesión
+    $_SESSION = array();
+
+    // Eliminamos la cookie de sesión si existe
+    if (isset($_COOKIE[session_name()])) {
+        setcookie(session_name(), '', time()-42000, '/');
+    }
+
+    // Destruimos la sesión
+    session_destroy();
+
+    // Hacemos el redirect antes de devolver la respuesta
+    header("Location: /login");
+    exit();
+
+    return $response;
 }

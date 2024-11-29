@@ -34,11 +34,13 @@ function ctrlValidarLogin(Request $request, Response $response, Container $conta
         // Guardar datos del usuario en la sesión
         $response->setSession("user", $user);
         $response->setSession("logat", true);
-        $response->redirect("location: /index");
+        header("Location: /index");
+        exit();
     } else {
         $response->setSession("error", "Email o contraseña incorrectos");
         $response->setSession("logat", false);
-        $response->redirect("location: /login");
+        header("Location: /login");
+        exit();
     }
 
     return $response;
