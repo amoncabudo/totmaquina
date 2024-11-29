@@ -46,11 +46,13 @@ $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], ["auth"]);
 $app->route("tancar-sessio", "ctrlTancarSessio", ["auth"]);
-$app->route("machineinv", "ctrlmachineinv");
 $app->route("index", "ctrlindex");
-
 $app->route("maintenance", "maintenance");
-$app->route('machine-detail/{id}', 'ctrlMachineDetail');
+
+$app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
+$app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
+$app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"]);
+$app->route("history", "history");
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
@@ -61,8 +63,6 @@ $app->post("notifications/delete/{id}", [\App\Controllers\NotificationsControlle
 $app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsController::class, "markAsRead"]);
 
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
-$app->route('machinedetail/{id}', 'ctrlmachinedetail');
-$app->route("addmachine", "ctrlAddMachine");
 
 $app->route("history", "history");
 $app->route("incidents", "incidents");

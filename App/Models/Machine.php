@@ -51,18 +51,6 @@ class Machine
         return $stmt->fetch();
     }
 
-    
-    public function addMachine($name, $model, $manufacturer, $location, $installation_date, $serial_number){
-
-        $query = "INSERT INTO Machine (name, model, manufacturer, location, installation_date, serial_number) VALUES (:name, :model, :manufacturer, :location, :installation_date, :serial_number);";
-        $stm = $this->sql->prepare($query);
-        //print_r([":event_title" => $event_title, ":event_description" => $event_description, ":event_location" => $event_location, ":event_type" => $event_type, ":event_comment" => $event_comment_value, ":date_start" => $date_start, ":date_end" => $date_end]);
-        $stm->execute([":name" => $name, ":model" => $model, ":manufacturer" => $manufacturer, ":location" => $location, ":installation_date" => $installation_date, ":serial_number" => $serial_number]);
-
-        $id = $this->sql->lastInsertId();
-        return $id;
-    }
-
      
     public function updateMachine($id, $name, $model, $manufacturer, $location, $installation_date, $serial_number) {
     
@@ -81,6 +69,25 @@ class Machine
         if ($stm->errorCode() !== '00000') {
             $err = $stm->errorInfo();
             die("Error al actualizar: {$err[0]} - {$err[1]}\n{$err[2]}");
+        }
+    }
+
+    public function insertMachine($name, $model, $manufacturer, $location, $installation_date, $serial_number, $photo){
+        try {
+            $query = "INSERT INTO Machine (name, model, manufacturer, location, installation_date, serial_number, photo) VALUES (:name, :model, :manufacturer, :location, :installation_date, :serial_number, :photo)";
+            $stmt = $this->sql->prepare($query);
+            $stmt->execute([
+                'name' => $name,
+                'model' => $model,
+                'manufacturer' => $manufacturer,
+                'location' => $location,
+                'installation_date' => $installation_date,
+                'serial_number' => $serial_number,
+                'photo' => $photo
+            ]);
+        } catch (\PDOException $e) {
+            echo "Error en la inserción: " . $e->getMessage();
+            exit;
         }
     }
 }

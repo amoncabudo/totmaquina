@@ -1,12 +1,20 @@
 <?php
-function ctrlMachineInv($request, $response, $container){
-    // Get the Machine model from the container
-    $machineModel = $container->get('Machine');
-    
-    // Fetch all machine data from the database
-    $machines = $machineModel->getAllMachine();
-    
-    $response->setTemplate('machineinv.php');
-    $response->set('machines', $machines);
-    return $response;
+
+namespace App\Controllers;
+
+use \Emeset\Contracts\Http\Request;
+use \Emeset\Contracts\Http\Response;
+use \Emeset\Contracts\Container;
+
+class getMachine
+{
+    function ctrlmachineinv($request, $response, $container)
+    {
+        $machineModel = $container->get("Machine");
+        $machines = $machineModel->getAllMachine();
+
+        $response->set("machines", $machines);
+        $response->setTemplate('machineinv.php');
+        return $response;
+    }
 }
