@@ -1,5 +1,14 @@
 <?php
-function ctrlmachinedetail($request, $response, $container)
+
+namespace App\Controllers;
+
+use \Emeset\Contracts\Http\Request;
+use \Emeset\Contracts\Http\Response;
+use \Emeset\Contracts\Container;
+
+class getMachinebyid
+{
+function ctrlMachineDetail($request, $response, $container)
 {
     
     $machine_id = $request->getParam('id');
@@ -21,4 +30,5 @@ function ctrlmachinedetail($request, $response, $container)
     $response->set('error', "Máquina no encontrada.");
     $response->setTemplate('error.php');
     return $response;
+}
 }

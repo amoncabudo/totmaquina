@@ -16,7 +16,6 @@
               <p><strong>Ubicación:</strong> <? echo htmlspecialchars($machine['location']) ?></p>
               <p><strong>Fecha de instalación:</strong> <? echo htmlspecialchars($machine['installation_date']) ?></p>
               <p><strong>Número de serie:</strong> <? echo htmlspecialchars($machine['serial_number']) ?></p>
-      
             </div>
             <div class="flex justify-end mt-4">
       <a href="javascript:void(0);" onclick="history.back();" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
