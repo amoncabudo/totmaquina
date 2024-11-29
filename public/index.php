@@ -34,18 +34,21 @@ include "../App/Controllers/history.php";
 include "../App/Controllers/ctrlAddUser.php";
 include "../App/Controllers/NotificationsController.php";
 include "../App/Controllers/ctrlAddMachine.php";
+include "../App/Controllers/ctrlUserConfig.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
 
 $app = new \Emeset\Emeset($contenidor);
-$app->middleware([\App\Middleware\App::class, "execute"]);
+$app->middleware(function($request, $response, $container, $next) {
+    return \App\Middleware\App::execute($request, $response, $container, $next);
+});
 
 $app->route("", "ctrlPortada");
 $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
-$app->route("privat", [\App\Controllers\Privat::class, "privat"], ["auth"]);
-$app->route("tancar-sessio", "ctrlTancarSessio", ["auth"]);
+$app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
+$app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
 $app->route("maintenance", "maintenance");
 
@@ -78,5 +81,8 @@ $app->route("/hola/{id}", function ($request, $response) {
 });
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
+
+$app->route("userconfig", [\App\Controllers\UserConfig::class, "index"]);
+$app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
 
 $app->execute();
