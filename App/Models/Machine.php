@@ -90,4 +90,16 @@ class Machine
             exit;
         }
     }
+
+    
+    public function deleteMachine($id){
+        $query = "DELETE FROM Machine WHERE id = :id";
+        $stm = $this->sql->prepare($query);
+        $stm->execute([":id" => $id]);
+    
+        if ($stm->errorCode() !== '00000') {
+            $err = $stm->errorInfo();
+            die("Error al eliminar: {$err[0]} - {$err[1]}\n{$err[2]}");
+        }
+    }
 }

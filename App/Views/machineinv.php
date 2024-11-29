@@ -30,13 +30,13 @@
 
         <!-- Modal -->
         <div id="machine-modal" tabindex="-1" aria-hidden="true"
-            class="hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto h-[calc(100%-1rem)] max-h-full">
+            class="hidden fixed top-10 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-y-auto h-full">
             <div class="relative w-full max-w-2xl max-h-full">
                 <div class="bg-white rounded-lg shadow">
                     <!-- Header -->
                     <div class="flex items-center justify-between p-4 border-b border-gray-300">
-                        <h3 class="text-lg font-semibold text-gray-900">Add Machine</h3>
-                        <button type="button" class="text-gray-400 hover:text-gray-900" data-modal-hide="machine-modal">
+                        <h2 class="text-lg font-semibold text-gray-900">Añadir Máquina</h2>
+                        <button type="button" class="text-gray-400 hover:text-gray-900" data-modal-hide="machine-modal" aria-label="Cerrar modal">
                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -51,49 +51,49 @@
                             <div class="grid gap-4">
                                 <!-- Name -->
                                 <div>
-                                    <label for="name" class="block text-sm font-medium text-gray-900">Name</label>
+                                    <label for="name" class="block text-sm font-medium text-gray-900">Nombre</label>
                                     <input type="text" id="name" name="name" placeholder="Enter name" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <!-- Model -->
                                 <div>
-                                    <label for="model" class="block text-sm font-medium text-gray-900">Model</label>
+                                    <label for="model" class="block text-sm font-medium text-gray-900">Modelo</label>
                                     <input type="text" id="model" name="model" placeholder="Enter model" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <!-- Manufacturer -->
                                 <div>
-                                    <label for="manufacturer" class="block text-sm font-medium text-gray-900">Manufacturer</label>
+                                    <label for="manufacturer" class="block text-sm font-medium text-gray-900">Fabricante</label>
                                     <input type="text" id="manufacturer" name="manufacturer" placeholder="Enter manufacturer" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <!-- Location -->
                                 <div>
-                                    <label for="location" class="block text-sm font-medium text-gray-900">Location</label>
+                                    <label for="location" class="block text-sm font-medium text-gray-900">Ubicación</label>
                                     <input type="text" id="location" name="location" placeholder="Enter location" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <!-- Serial Number -->
                                 <div>
-                                    <label for="serial_number" class="block text-sm font-medium text-gray-900">Serial Number</label>
+                                    <label for="serial_number" class="block text-sm font-medium text-gray-900">Número de Serie</label>
                                     <input type="text" id="serial_number" name="serial_number" placeholder="Enter serial number" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <!-- Installation Date -->
                                 <div>
-                                    <label for="installation_date" class="block text-sm font-medium text-gray-900">Installation Date</label>
+                                    <label for="installation_date" class="block text-sm font-medium text-gray-900">Fecha de Instalación</label>
                                     <input type="date" id="installation_date" name="installation_date" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <!-- Image -->
                                 <div>
-                                    <label for="photo" class="block text-sm font-medium text-gray-900">Image</label>
+                                    <label for="photo" class="block text-sm font-medium text-gray-900">Imagen</label>
                                     <input type="file" id="photo" name="photo"
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Cancel</button>
-                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                                    <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-800">Cancel</button>
+                                    <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-800">Save</button>
                                 </div>
                             </div>
                         </form>
