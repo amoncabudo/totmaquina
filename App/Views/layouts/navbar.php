@@ -16,7 +16,7 @@
                     <div class="flex-shrink-0">
                         <a href="/index" class="flex items-center">
                             <div class="bg-white p-1.5 rounded-full">
-                                <img class="h-10 w-10" src="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png" alt="Logo de la aplicación">
+                                <img class="h-10 w-10" src="/Images/Imagen_2024-11-28_150432915-removebg-preview.png" alt="Logo de la aplicación">
                             </div>
                         </a>
                     </div>

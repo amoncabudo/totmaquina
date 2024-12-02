@@ -34,6 +34,8 @@ include "../App/Controllers/history.php";
 include "../App/Controllers/ctrlAddUser.php";
 include "../App/Controllers/NotificationsController.php";
 include "../App/Controllers/ctrlAddMachine.php";
+include "../App/Controllers/ctrlDeleteMachine.php";
+include "../App/Controllers/ctrlUploadCSV.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -53,6 +55,9 @@ $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
 $app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"]);
 $app->route("history", "history");
+$app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
+$app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
+
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
@@ -78,5 +83,8 @@ $app->route("/hola/{id}", function ($request, $response) {
 });
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
+
+$app->route("/assignUser", [\App\Controllers\MachineController::class, "assignUser"]);
+
 
 $app->execute();

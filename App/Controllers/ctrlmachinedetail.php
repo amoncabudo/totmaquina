@@ -20,7 +20,11 @@ function ctrlMachineDetail($request, $response, $container)
         error_log("Machine Data: " . print_r($machine, true));
 
         if ($machine) {
+            $userModel = $container->get('User');
+            $users = $userModel->getAllUser();
+
             $response->set('machine', $machine);
+            $response->set('users', $users);
             $response->setTemplate('machine_detail.php');
             return $response;
         }
