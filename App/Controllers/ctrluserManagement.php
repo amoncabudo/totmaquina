@@ -12,7 +12,7 @@ class getUser
     {
         $userdb = $container->get("User");
         $userdb = $userdb->getAllUser();
-
+      
         $response->set("users", $userdb);
         $response->setTemplate('userManagement.php');
         return $response;

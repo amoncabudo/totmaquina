@@ -32,6 +32,8 @@ include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
 include "../App/Controllers/ctrlAddUser.php";
+include "../App/Controllers/ctrlEditUser.php";
+include "../App/Controllers/ctrlDeleteUser.php";
 
 include "../App/Controllers/ctrlAddMachine.php";
 
@@ -59,6 +61,10 @@ $app->route("history", "history");
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 $app->route('machinedetail/{id}', 'ctrlmachinedetail');
 $app->route("addmachine", "ctrlAddMachine");
+
+$app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
+$app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
+
 
 $app->route("history", "history");
 $app->route("incidents", "incidents");
