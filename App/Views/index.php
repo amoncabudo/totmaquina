@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+    <link rel="stylesheet" href="/main.css">
 </head>
 <body class="bg-gray-100">
 
@@ -15,22 +16,23 @@
 
 <main class="bg-gray-100 min-h-screen">
     <!-- Carrusel de imágenes -->
-    <div class="w-full bg-gray-700 h-64 mb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-center">
-            <div class="w-32 h-32">
-                <img src="/img/placeholder.svg" alt="Placeholder" class="w-full h-full object-cover">
-            </div>
-            <!-- Puntos de navegación del carrusel -->
-            <div class="absolute bottom-4 flex space-x-2">
-                <span class="w-2 h-2 bg-white rounded-full"></span>
-                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
-                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
-            </div>
+    <div class="carousel-container">
+        <div class="carousel-slide active">
+            <img src="/Images/Slider1_Ordenador.webp" alt="Ordenador" data-fancybox="gallery">
         </div>
+        <div class="carousel-slide">
+            <img src="/Images/Slider2_Pasta.webp" alt="Pasta" data-fancybox="gallery">
+        </div>
+        <div class="carousel-slide">
+            <img src="/Images/Slide3_Empresa.webp" alt="Empresa" data-fancybox="gallery">
+        </div>
+
+        <button class="carousel-button carousel-prev" onclick="moveSlide(-1)">❮</button>
+        <button class="carousel-button carousel-next" onclick="moveSlide(1)">❯</button>
     </div>
 
     <!-- Sección TOT MÀQUINA -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
         <div class="bg-gray-700 rounded-lg p-8 flex items-center justify-between">
             <div class="max-w-2xl">
                 <h2 class="text-2xl font-bold text-white mb-4">TOT MÀQUINA</h2>
@@ -41,7 +43,9 @@
                 </p>
             </div>
             <div class="w-32 h-32 flex-shrink-0">
-                <img src="/img/placeholder.svg" alt="Máquina" class="w-full h-full object-cover">
+                <img src="/Images/Slider1_Ordenador.webp" 
+                     alt="Máquina" 
+                     class="w-full h-full object-cover rounded-lg">
             </div>
         </div>
     </div>
@@ -49,7 +53,9 @@
 
 <?php include __DIR__ . "/layouts/footer.php"; ?>
 
-
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script src="/js/main.js"></script>
+
 </body>
 </html>
