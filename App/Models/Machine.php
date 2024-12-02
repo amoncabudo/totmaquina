@@ -52,23 +52,24 @@ class Machine
     }
 
      
-    public function updateMachine($id, $name, $model, $manufacturer, $location, $installation_date, $serial_number) {
-    
-        $query = "UPDATE Machine SET name = :name, model = :model, manufacturer = :manufacturer, location = :location, installation_date = :installation_date, serial_number = :serial_number WHERE id = :id";
-        $stm = $this->sql->prepare($query);
-        $stm->execute([
-            ":id" => $id,
-            ":name" => $name,
-            ":model" => $model,
-            ":manufacturer" => $manufacturer,
-            ":location" => $location,
-            ":installation_date" => $installation_date,
-            ":serial_number" => $serial_number
-        ]);
-    
-        if ($stm->errorCode() !== '00000') {
-            $err = $stm->errorInfo();
-            die("Error al actualizar: {$err[0]} - {$err[1]}\n{$err[2]}");
+    public function updateMachine($id, $data)
+    {
+        try {
+            $query = "UPDATE Machine SET name = :name, model = :model, manufacturer = :manufacturer, location = :location, installation_date = :installation_date, serial_number = :serial_number, photo = :photo WHERE id = :id";
+            $stmt = $this->sql->prepare($query);
+            $stmt->execute([
+                'id' => $id,
+                'name' => $data['name'],
+                'model' => $data['model'],
+                'manufacturer' => $data['manufacturer'],
+                'location' => $data['location'],
+                'installation_date' => $data['installation_date'],
+                'serial_number' => $data['serial_number'],
+                'photo' => $data['photo']
+            ]);
+        } catch (\PDOException $e) {
+            echo "Error en la actualización: " . $e->getMessage();
+            exit;
         }
     }
 
@@ -89,5 +90,37 @@ class Machine
             echo "Error en la inserción: " . $e->getMessage();
             exit;
         }
+    }
+    
+    public function deleteMachine($id){
+        $query = "DELETE FROM Machine WHERE id = :id";
+        $stm = $this->sql->prepare($query);
+        $stm->execute([":id" => $id]);
+    
+        if ($stm->errorCode() !== '00000') {
+            $err = $stm->errorInfo();
+            die("Error al eliminar: {$err[0]} - {$err[1]}\n{$err[2]}");
+        }
+    }
+    
+    public function assignUserToMachine($machineId, $userId) {
+        $query = "UPDATE Machine SET assigned_technician_id = :userId WHERE id = :machineId";
+        $stmt = $this->sql->prepare($query);
+        $stmt->execute([
+            ':machineId' => $machineId,
+            ':userId' => $userId
+        ]);
+
+        if ($stmt->errorCode() !== '00000') {
+            $err = $stmt->errorInfo();
+            die("Error al asignar usuario: {$err[0]} - {$err[1]}\n{$err[2]}");
+        }
+    }
+
+    public function getMachineBySerialNumber($serial_number) {
+        $query = "SELECT * FROM Machine WHERE serial_number = :serial_number";
+        $stmt = $this->sql->prepare($query);
+        $stmt->execute(['serial_number' => $serial_number]);
+        return $stmt->fetch();
     }
 }

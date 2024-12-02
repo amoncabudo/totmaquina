@@ -58,6 +58,9 @@ $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
 $app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"]);
 $app->route("history", "history");
+$app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
+$app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
+
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
