@@ -310,7 +310,6 @@ input:where([type='button']),
 input:where([type='reset']),
 input:where([type='submit']) {
   -webkit-appearance: button; /* 1 */
-  appearance: button; /* Añadir esta línea */
   background-color: transparent; /* 2 */
   background-image: none; /* 2 */
 }
@@ -355,7 +354,6 @@ Correct the cursor style of increment and decrement buttons in Safari.
 
 [type='search'] {
   -webkit-appearance: textfield; /* 1 */
-  appearance: textfield; /* Añadir esta línea */
   outline-offset: -2px; /* 2 */
 }
 
@@ -484,7 +482,7 @@ iframe,
 embed,
 object {
   display: block; /* 1 */
-  appearance: none; /* Añadir esta línea para compatibilidad */
+  vertical-align: middle; /* 2 */
 }
 
 /*
