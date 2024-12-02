@@ -35,6 +35,8 @@ include "../App/Controllers/ctrlAddUser.php";
 include "../App/Controllers/NotificationsController.php";
 include "../App/Controllers/ctrlAddMachine.php";
 include "../App/Controllers/ctrlUserConfig.php";
+include "../App/Controllers/ctrlEditUser.php";
+include "../App/Controllers/ctrlDeleteUser.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -66,6 +68,10 @@ $app->post("notifications/delete/{id}", [\App\Controllers\NotificationsControlle
 $app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsController::class, "markAsRead"]);
 
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
+
+$app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
+$app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
+
 
 $app->route("history", "history");
 $app->route("incidents", "incidents");
