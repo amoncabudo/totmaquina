@@ -71,9 +71,28 @@
                                 </div>
                                 <!-- Contraseña -->
                                 <div>
-                                    <label for="password" class="block text-sm font-medium text-gray-900">Contraseña</label>
-                                    <input type="password" id="password" name="password" placeholder="Escribe la contraseña" required
+                                    <div class="flex items-center">
+                                        <label for="password" class="block text-sm font-medium text-gray-900">Contraseña</label>
+                                        <button data-tooltip-target="password-tooltip" type="button" class="ml-2">
+                                            <svg class="w-4 h-4 text-gray-400 hover:text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                        <div id="password-tooltip" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip">
+                                            La contraseña debe contener:
+                                            <ul class="list-disc pl-4">
+                                                <li>Al menos una minúscula</li>
+                                                <li>Al menos una mayúscula</li>
+                                                <li>Al menos un número</li>
+                                                <li>Al menos un carácter especial ($@$!%*?&-.,)</li>
+                                                <li>Entre 6 y 13 caracteres</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <input type="password" id="password" name="password" 
+                                        placeholder="Escribe la contraseña" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <div id="mss"></div>
                                 </div>
                                 <!-- Rol -->
                                 <div>
@@ -150,10 +169,28 @@
                                 </div>
                                 <!-- Contraseña -->
                                 <div>
-                                    <label for="edit-password-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Contraseña</label>
+                                    <div class="flex items-center">
+                                        <label for="edit-password-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Contraseña</label>
+                                        <button data-tooltip-target="edit-password-tooltip-<?= $user['id'] ?>" type="button" class="ml-2">
+                                            <svg class="w-4 h-4 text-gray-400 hover:text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                        <div id="edit-password-tooltip-<?= $user['id'] ?>" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip">
+                                            La contraseña debe contener:
+                                            <ul class="list-disc pl-4">
+                                                <li>Al menos una minúscula</li>
+                                                <li>Al menos una mayúscula</li>
+                                                <li>Al menos un número</li>
+                                                <li>Al menos un carácter especial ($@$!%*?&-.,)</li>
+                                                <li>Entre 6 y 13 caracteres</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                     <input type="password" id="edit-password-<?= $user['id'] ?>" name="password" 
                                         placeholder="Dejar en blanco para mantener la actual"
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <div id="edit-mss"></div>
                                 </div>
                                 <!-- Rol -->
                                 <div>
@@ -239,7 +276,8 @@
             </div>
         <?php endforeach; ?>
     </div>
-    <script src="/js/main.js"></script>
+    <script src="/js/bundle.js"></script>
+    <script src="/js/password.js"></script>
 
 </body>
 
