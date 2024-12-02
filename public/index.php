@@ -34,20 +34,23 @@ include "../App/Controllers/history.php";
 include "../App/Controllers/ctrlAddUser.php";
 include "../App/Controllers/NotificationsController.php";
 include "../App/Controllers/ctrlAddMachine.php";
-include "../App/Controllers/ctrlDeleteMachine.php";
-include "../App/Controllers/ctrlUploadCSV.php";
+include "../App/Controllers/ctrlUserConfig.php";
+include "../App/Controllers/ctrlEditUser.php";
+include "../App/Controllers/ctrlDeleteUser.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
 
 $app = new \Emeset\Emeset($contenidor);
-$app->middleware([\App\Middleware\App::class, "execute"]);
+$app->middleware(function($request, $response, $container, $next) {
+    return \App\Middleware\App::execute($request, $response, $container, $next);
+});
 
 $app->route("", "ctrlPortada");
 $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
-$app->route("privat", [\App\Controllers\Privat::class, "privat"], ["auth"]);
-$app->route("tancar-sessio", "ctrlTancarSessio", ["auth"]);
+$app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
+$app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
 $app->route("maintenance", "maintenance");
 
@@ -69,6 +72,10 @@ $app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsCon
 
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 
+$app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
+$app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
+
+
 $app->route("history", "history");
 $app->route("incidents", "incidents");
 $app->route("ajax", function ($request, $response) {
@@ -84,7 +91,12 @@ $app->route("/hola/{id}", function ($request, $response) {
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
-$app->route("/assignUser", [\App\Controllers\MachineController::class, "assignUser"]);
+$app->route("userconfig", [\App\Controllers\UserConfig::class, "index"]);
+$app->route("politica-cookies", function($request, $response) {
+    $response->SetTemplate("politica-cookies.php");
+    return $response;
+});
 
+$app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
 
 $app->execute();
