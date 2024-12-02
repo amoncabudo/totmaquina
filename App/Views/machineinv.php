@@ -11,17 +11,99 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen">
+  <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
-  <div class="max-w-7xl mx-auto p-8 mt-10 rounded-lg ">
+  <div class="max-w-7xl mx-auto p-8 mt-20 rounded-lg">
     <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Inventario de Máquinas</h1>
     <div class="flex justify-end mb-4">
-      <a href="addmachine" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-        Crear Máquina
-      </a>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+         <!-- Button to open modal -->
+         <div class="flex justify-end mt-4">
+            <button data-modal-target="machine-modal" data-modal-toggle="machine-modal"
+                class="bg-gray-800 text-white hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Añadir Máquina
+            </button>
+        </div>
 
-        <?php foreach ($machines as $machine): ?>
+        <!-- Modal -->
+        <div id="machine-modal" tabindex="-1" aria-hidden="true"
+            class="hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto h-[calc(100%-1rem)] max-h-full">
+            <div class="relative w-full max-w-2xl max-h-full">
+                <div class="bg-white rounded-lg shadow">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between p-4 border-b border-gray-300">
+                        <h3 class="text-lg font-semibold text-gray-900">Add Machine</h3>
+                        <button type="button" class="text-gray-400 hover:text-gray-900" data-modal-hide="machine-modal">
+                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-6">
+                        <form action="/addmachine" method="POST" enctype="multipart/form-data">
+                            <div class="grid gap-4">
+                                <!-- Name -->
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-900">Name</label>
+                                    <input type="text" id="name" name="name" placeholder="Enter name" required
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <!-- Model -->
+                                <div>
+                                    <label for="model" class="block text-sm font-medium text-gray-900">Model</label>
+                                    <input type="text" id="model" name="model" placeholder="Enter model" required
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <!-- Manufacturer -->
+                                <div>
+                                    <label for="manufacturer" class="block text-sm font-medium text-gray-900">Manufacturer</label>
+                                    <input type="text" id="manufacturer" name="manufacturer" placeholder="Enter manufacturer" required
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <!-- Location -->
+                                <div>
+                                    <label for="location" class="block text-sm font-medium text-gray-900">Location</label>
+                                    <input type="text" id="location" name="location" placeholder="Enter location" required
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <!-- Serial Number -->
+                                <div>
+                                    <label for="serial_number" class="block text-sm font-medium text-gray-900">Serial Number</label>
+                                    <input type="text" id="serial_number" name="serial_number" placeholder="Enter serial number" required
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <!-- Installation Date -->
+                                <div>
+                                    <label for="installation_date" class="block text-sm font-medium text-gray-900">Installation Date</label>
+                                    <input type="date" id="installation_date" name="installation_date" required
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <!-- Image -->
+                                <div>
+                                    <label for="photo" class="block text-sm font-medium text-gray-900">Image</label>
+                                    <input type="file" id="photo" name="photo"
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div class="flex justify-end space-x-2">
+                                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Cancel</button>
+                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php foreach ($machines as $machine): ?>
             <div class="machine-entry bg-gray-200 p-4 rounded-lg shadow-md mb-4">
                 <div class="flex justify-between items-center">
                     <div>
@@ -36,61 +118,10 @@
         <?php endforeach; ?>
     </div>
   </div>
-
- 
-    <!-- Modal para agregar máquina -->
-    <div class="modal fade" id="addMachineModal" tabindex="-1" aria-labelledby="addMachineModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addMachineModalLabel">Agregar Máquina</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" enctype="multipart/form-data" action="/addmachine">
-                        <div class="mb-3">
-                            <label for="machineName" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" name="name" id="machineName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="machineModel" class="form-label">Modelo</label>
-                            <input type="text" class="form-control" name="model" id="machineModel" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="machineManufacturer" class="form-label">Fabricante</label>
-                            <input type="text" class="form-control" name="manufacturer" id="machineManufacturer" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="machineLocation" class="form-label">Ubicación</label>
-                            <input type="text" class="form-control" name="location" id="machineLocation" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="machineSerialNumber" class="form-label">Número de Serie</label>
-                            <input type="text" class="form-control" name="serial_number" id="machineSerialNumber" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="machineInstallationDate" class="form-label">Fecha de Instalación</label>
-                            <input type="date" class="form-control" name="installation_date" id="machineInstallationDate" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="machinePhoto" class="form-label">Imagen</label>
-                            <input type="file" class="form-control" name="photo" id="machinePhoto">
-                        </div>
-                        <button type="submit" class="btn btn-success">Guardar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Botón para abrir el modal de agregar máquina -->
-    <button data-bs-toggle="modal" data-bs-target="#addMachineModal" class="btn btn-primary">
-        Agregar Máquina
-    </button>
+   
 
 </body>
-<script src="/js/flowbite.min.js"></script>
-<script src="/js/bundle.js"></script>
-<script src="/js/machineinv.js"></script>
+<script src="js/bundle.js"></script>
+<script src="js/flowbite.min.js"></script>
 
 </html>

@@ -11,6 +11,7 @@
 </head>
 
 <body class="bg-gray-300">
+<?php include __DIR__ . "/layouts/navbar.php"; ?>
 
     <!-- Contenedor principal -->
     <div class="max-w-4xl mx-auto mt-8 relative">
@@ -238,6 +239,7 @@
             </div>
         <?php endforeach; ?>
     </div>
+    <script src="/js/main.js"></script>
 
 </body>
 
