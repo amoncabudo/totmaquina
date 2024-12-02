@@ -18,6 +18,7 @@ CREATE TABLE Machine (
     location VARCHAR(255),
     photo VARCHAR(255),
     assigned_technician_id INT,
+    coordinates VARCHAR(255),
     FOREIGN KEY (assigned_technician_id) REFERENCES User(id) ON DELETE SET NULL
 );
 
