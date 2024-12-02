@@ -61,4 +61,107 @@
         mobileMenu?.addEventListener('click', function(e) {
             e.stopPropagation();
         });
+
+        // Carrusel
+        const slides = document.querySelectorAll('.carousel-slide');
+        let currentSlide = 0;
+        let slideInterval;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (index >= slides.length) index = 0;
+            if (index < 0) index = slides.length - 1;
+            slides[index].classList.add('active');
+            currentSlide = index;
+        }
+
+        // Función global para mover slides
+        window.moveSlide = function(direction) {
+            showSlide(currentSlide + direction);
+            resetInterval();
+        };
+
+        function startInterval() {
+            slideInterval = setInterval(() => {
+                showSlide(currentSlide + 1);
+            }, 6000);
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            startInterval();
+        }
+
+        // Inicializar el carrusel
+        if (slides.length > 0) {
+            showSlide(0);
+            startInterval();
+
+            // Pausar en hover
+            const container = document.querySelector('.carousel-container');
+            container.addEventListener('mouseenter', () => clearInterval(slideInterval));
+            container.addEventListener('mouseleave', startInterval);
+        }
+
+        // Inicializar Fancybox
+        Fancybox.bind('[data-fancybox="gallery"]', {
+            Carousel: {
+                infinite: true
+            },
+            Toolbar: {
+                display: ["close"]
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar Fancybox
+            Fancybox.bind('[data-fancybox="gallery"]', {
+                Carousel: {
+                    infinite: true
+                },
+                Toolbar: {
+                    display: ["close"]
+                }
+            });
+        
+            // Variables del carrusel
+            const slides = document.querySelectorAll('.carousel-slide');
+            let currentSlide = 0;
+            let slideInterval;
+        
+            // Función para mostrar una slide
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                if (index >= slides.length) index = 0;
+                if (index < 0) index = slides.length - 1;
+                slides[index].classList.add('active');
+                currentSlide = index;
+            }
+        
+            // Función global para mover slides
+            window.moveSlide = function(direction) {
+                showSlide(currentSlide + direction);
+                resetInterval();
+            };
+        
+            // Funciones para el autoplay
+            function startInterval() {
+                slideInterval = setInterval(() => {
+                    showSlide(currentSlide + 1);
+                }, 6000);
+            }
+        
+            function resetInterval() {
+                clearInterval(slideInterval);
+                startInterval();
+            }
+        
+            // Inicializar carrusel
+            showSlide(0);
+            startInterval();
+        
+            // Pausar en hover
+            const container = document.querySelector('.carousel-container');
+            container.addEventListener('mouseenter', () => clearInterval(slideInterval));
+            container.addEventListener('mouseleave', startInterval);
+        });
     });
