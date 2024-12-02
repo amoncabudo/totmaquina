@@ -52,25 +52,23 @@ class Machine
     }
 
      
-    public function updateMachine($id, $data)
+    public function updateMachine($id, $name, $model, $manufacturer, $location, $installation_date, $serial_number, $photo, $coordinates)
     {
-        try {
-            $query = "UPDATE Machine SET name = :name, model = :model, manufacturer = :manufacturer, location = :location, installation_date = :installation_date, serial_number = :serial_number, photo = :photo WHERE id = :id";
-            $stmt = $this->sql->prepare($query);
-            $stmt->execute([
-                'id' => $id,
-                'name' => $data['name'],
-                'model' => $data['model'],
-                'manufacturer' => $data['manufacturer'],
-                'location' => $data['location'],
-                'installation_date' => $data['installation_date'],
-                'serial_number' => $data['serial_number'],
-                'photo' => $data['photo']
-            ]);
-        } catch (\PDOException $e) {
-            echo "Error en la actualización: " . $e->getMessage();
-            exit;
-        }
+
+        $query = "UPDATE Machine SET name = :name, model = :model, manufacturer = :manufacturer, location = :location, installation_date = :installation_date, serial_number = :serial_number, photo = :photo, coordinates = :coordinates WHERE id = :id";
+        $stmt = $this->sql->prepare($query);
+        
+        $stmt->execute([
+            'id' => $id,
+            'name' => $name,
+            'model' => $model,
+            'manufacturer' => $manufacturer,
+            'location' => $location,
+            'installation_date' => $installation_date,
+            'serial_number' => $serial_number,
+            'photo' => $photo,
+            'coordinates' => $coordinates
+        ]);
     }
 
     public function insertMachine($name, $model, $manufacturer, $location, $installation_date, $serial_number, $photo){
@@ -122,5 +120,25 @@ class Machine
         $stmt = $this->sql->prepare($query);
         $stmt->execute(['serial_number' => $serial_number]);
         return $stmt->fetch();
+    }
+
+    public function createMachine($name, $model, $manufacturer, $location, $installation_date, $serial_number, $photo, $coordinates) {
+        try {
+            $query = "INSERT INTO Machine (name, model, manufacturer, location, installation_date, serial_number, photo, coordinates) VALUES (:name, :model, :manufacturer, :location, :installation_date, :serial_number, :photo, :coordinates)";
+            $stmt = $this->sql->prepare($query);
+            $stmt->execute([
+                'name' => $name,
+                'model' => $model,
+                'manufacturer' => $manufacturer,
+                'location' => $location,
+                'installation_date' => $installation_date,
+                'serial_number' => $serial_number,
+                'photo' => $photo,
+                'coordinates' => $coordinates
+            ]);
+        } catch (\PDOException $e) {
+            echo "Error en la inserción: " . $e->getMessage();
+            exit;
+        }
     }
 }
