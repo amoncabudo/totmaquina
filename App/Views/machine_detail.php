@@ -20,7 +20,7 @@
         <p class="mb-6"><strong>Coordenadas:</strong> <?php echo htmlspecialchars($machine['coordinates']) ?></p>
       </div>
       <div class="flex flex-col items-center">
-        <img src="<?php echo htmlspecialchars('/Images/' . $machine['photo']); ?>" alt="Imagen de la máquina" class="w-full mb-4 ">
+        <img src="<?php echo htmlspecialchars('/Images/' . $machine['photo']); ?>" alt="Imagen de la máquina" class="w-full mb-4 shadow-md rounded-lg">
        
       </div>
     </div>

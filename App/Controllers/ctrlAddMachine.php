@@ -20,7 +20,8 @@ class MachineController
         $installation_date = $request->get(INPUT_POST, 'installation_date');
         $serial_number = $request->get(INPUT_POST, 'serial_number');
         $photo = $request->get(INPUT_POST, 'photo');
-
+        $coordinates = $request->get(INPUT_POST, 'coordinates');
+        
         $photo = null;
 
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
@@ -28,7 +29,7 @@ class MachineController
             move_uploaded_file($_FILES['photo']['tmp_name'], __DIR__ . "/../../public/Images/" . $photo);
         }
         $machineModel = $container->get("Machine");
-        $result = $machineModel->insertMachine($name, $model, $manufacturer, $location, $installation_date, $serial_number, $photo);
+        $result = $machineModel->insertMachine($name, $model, $manufacturer, $location, $installation_date, $serial_number, $photo, $coordinates);
 
 
         $response->redirect("Location: /machineinv");
