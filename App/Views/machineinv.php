@@ -99,9 +99,11 @@
                                     </div>
                                     <!-- Image -->
                                     <div>
-                                        <label for="photo" class="block text-sm font-medium text-gray-900">Imagen</label>
-                                        <input type="file" id="photo" name="photo"
-                                            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <label for="machine-photo" class="block text-sm font-medium text-gray-900">Imagen</label>
+                                        <input type="file" id="machine-photo" name="photo" accept="image/*" capture="environment" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <button type="button" id="capture-photo" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Capturar desde Webcam</button>
+                                        <video id="video" width="320" height="240" autoplay class="mt-2 hidden"></video>
+                                        <canvas id="canvas" width="320" height="240" class="mt-2 hidden"></canvas>
                                     </div>
                                     <div class="flex justify-end space-x-2">
                                         <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-800">Cancel</button>
@@ -185,9 +187,11 @@
                                 </div>
                                 <!-- Image -->
                                 <div>
-                                    <label for="photo" class="block text-sm font-medium text-gray-900">Imagen</label>
-                                    <input type="file" id="photo" name="photo"
-                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <label for="machine-photo" class="block text-sm font-medium text-gray-900">Imagen</label>
+                                    <input type="file" id="machine-photo" name="photo" accept="image/*" capture="environment" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <button type="button" id="capture-photo" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Capturar desde Webcam</button>
+                                    <video id="video" width="320" height="240" autoplay class="mt-2 hidden"></video>
+                                    <canvas id="canvas" width="320" height="240" class="mt-2 hidden"></canvas>
                                 </div>
                                 <div class="flex justify-end space-x-2">
                                     <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-800">Cancel</button>
@@ -347,7 +351,7 @@
                         <p class="text-xs sm:text-sm"><?php echo htmlspecialchars($machine['model']) ?>, <?php echo htmlspecialchars($machine['location']) ?></p>
                     </div>
                     <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class=" p-1 sm:p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300" aria-label="Opciones">
+                        <button @click="open = !open" class="p-1 sm:p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300" aria-label="Opciones">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                             </svg>
@@ -356,6 +360,9 @@
                             <a href="machinedetail/<?php echo htmlspecialchars($machine['id']); ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver Más</a>
                             <button type="button" data-modal-target="edit-machine-modal-<?php echo $machine['id'] ?>" data-modal-toggle="edit-machine-modal-<?php echo $machine['id'] ?>" class="block w-full text-left px-4 py-2 text-sm text-blue-800 hover:bg-blue-50">
                                 Editar
+                            </button>
+                            <button type="button" onclick="showQRCode('<?php echo htmlspecialchars($machine['id']); ?>')" class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
+                                Generar QR
                             </button>
                             <form action="/deletemachine/<?php echo htmlspecialchars($machine['id']); ?>" method="POST" class="block">
                                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
@@ -375,5 +382,7 @@
 
 <script src="js/bundle.js"></script>
 <script src="js/flowbite.min.js"></script>
+<script src="js/machineinv.js"></script>
+
 
 </html>

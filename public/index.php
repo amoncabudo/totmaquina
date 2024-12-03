@@ -41,6 +41,8 @@ include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
+include "../App/Controllers/ctrlgenerateqr.php";
+
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -65,7 +67,6 @@ $app->route("history", "history");
 $app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
-
 
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
@@ -110,5 +111,10 @@ $app->route("politica-cookies", function($request, $response) {
 });
 
 $app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
+
+$app->get('/generate_qr', function($request, $response) {
+    $id = $request->getParam('id');
+    echo generateQRCode('https://example.com/machine/' . $id);
+});
 
 $app->execute();
