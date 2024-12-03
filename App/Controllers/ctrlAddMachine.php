@@ -35,4 +35,5 @@ class MachineController
         $response->redirect("Location: /machineinv");
         return $response;
     }
+
 }
