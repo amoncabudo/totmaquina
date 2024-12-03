@@ -6,6 +6,8 @@
   <title>Detalle de la Máquina</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 </head>
+<?php include __DIR__ . "/layouts/navbar.php"; ?>
+
 <body class="bg-gray-100 min-h-screen">
   <div class="max-w-3xl mx-auto p-8 mt-10 rounded-lg">
     <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Detalle de la Máquina</h1>
