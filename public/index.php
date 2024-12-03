@@ -40,6 +40,7 @@ include "../App/Controllers/ctrlDeleteUser.php";
 include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
+include "../App/Controllers/incidents.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
