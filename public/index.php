@@ -85,14 +85,12 @@ $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 
 
 $app->route("history", "history");
-
-$app->route("incidents", [\App\Controllers\incidents::class, "index"]);
-$app->post("/addincidents", [\App\Controllers\AddIncidents::class, "register"]);
-
-
-
-
-
+$app->get('/incidents', 'incidents');
+$app->post('/incidents/create', 'createIncident');
+$app->post('/incidents/update-status', 'updateStatus');
+$app->post('/incidents/assign-technician', 'assignTechnician');
+$app->post('/incidents/delete', 'deleteIncident');
+$app->get('/incidents/statistics', 'getStatistics');
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
