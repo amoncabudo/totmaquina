@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
+  <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
-
-  <div class="max-w-3xl mx-auto bg-white p-8 mt-10 rounded-lg shadow-lg">
+  <div class="max-w-3xl mx-auto bg-white p-8 mt-20 rounded-lg shadow-lg">
     <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Historial de Mantenimiento</h1>
     <form id="maintenance-form">
       <label for="machine-select" class="block text-lg font-medium text-gray-700 mb-2">Selecciona una máquina:</label>

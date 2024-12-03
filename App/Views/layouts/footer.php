@@ -3,7 +3,9 @@
            <div class="grid grid-cols-2 gap-8">
                <!-- Logo y redes sociales -->
                <div>
-                   <img class="h-8 w-8 mb-4" src="/img/logo.png" alt="Logo">
+                   <div class="bg-white p-3 rounded-full inline-block mb-4">
+                       <img class="h-24 w-24" src="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png" alt="Logo">
+                   </div>
                    <div class="flex space-x-4">
                        <a href="#" class="text-gray-400 hover:text-white">
                            <span class="sr-only">Facebook</span>
