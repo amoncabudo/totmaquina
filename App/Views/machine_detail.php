@@ -11,16 +11,17 @@
     <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Detalle de la Máquina</h1>
     <div class="bg-gray-200 p-4 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <h2 class="text-lg font-bold"><?php echo htmlspecialchars($machine['name']) ?></h2>
-        <p><strong>Modelo:</strong> <?php echo htmlspecialchars($machine['model']) ?></p>
-        <p><strong>Fabricante:</strong> <?php echo htmlspecialchars($machine['manufacturer']) ?></p>
-        <p><strong>Fecha de instalación:</strong> <?php echo htmlspecialchars($machine['installation_date']) ?></p>
-        <p><strong>Número de serie:</strong> <?php echo htmlspecialchars($machine['serial_number']) ?></p>
+        <h2 class="text-lg font-bold mb-6"><?php echo htmlspecialchars($machine['name']) ?></h2>
+        <p class="mb-6"><strong>Modelo:</strong> <?php echo htmlspecialchars($machine['model']) ?></p>
+        <p class="mb-6"><strong>Fabricante:</strong> <?php echo htmlspecialchars($machine['manufacturer']) ?></p>
+        <p class="mb-6"><strong>Fecha de instalación:</strong> <?php echo htmlspecialchars($machine['installation_date']) ?></p>
+        <p class="mb-6"><strong>Número de serie:</strong> <?php echo htmlspecialchars($machine['serial_number']) ?></p>
+        <p class="mb-6"><strong>Ubicación:</strong> <?php echo htmlspecialchars($machine['location']) ?></p>
+        <p class="mb-6"><strong>Coordenadas:</strong> <?php echo htmlspecialchars($machine['coordinates']) ?></p>
       </div>
       <div class="flex flex-col items-center">
-        <img src="<?php echo htmlspecialchars('/Images/' . $machine['photo']); ?>" alt="Imagen de la máquina" class="w-1/2 mb-4">
-        <p><strong>Ubicación:</strong> <?php echo htmlspecialchars($machine['location']) ?></p>
-        <p><strong>Coordenadas:</strong> <?php echo htmlspecialchars($machine['coordinates']) ?></p>
+        <img src="<?php echo htmlspecialchars('/Images/' . $machine['photo']); ?>" alt="Imagen de la máquina" class="w-full mb-4 ">
+       
       </div>
     </div>
     

@@ -1491,6 +1491,12 @@ input:checked + .toggle-bg {
     right: 20px;
 }
 
+.machine_img {
+    max-height: 300px;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
+
 .hover\:border-gray-300:hover {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));

@@ -111,3 +111,8 @@
 .carousel-next {
     right: 20px;
 }
+
+.machine_img {
+    max-height: 300px;
+    object-fit: cover;
+  }
