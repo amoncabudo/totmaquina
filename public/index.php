@@ -112,9 +112,6 @@ $app->route("politica-cookies", function($request, $response) {
 
 $app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
 
-$app->get('/generate_qr', function($request, $response) {
-    $id = $request->getParam('id');
-    echo generateQRCode('https://example.com/machine/' . $id);
-});
+
 
 $app->execute();
