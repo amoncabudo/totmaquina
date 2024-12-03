@@ -115,4 +115,4 @@ $app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile
 $app->execute();
 
 
-$app->execute();
+
