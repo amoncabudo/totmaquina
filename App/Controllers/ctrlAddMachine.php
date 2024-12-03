@@ -12,7 +12,6 @@ class MachineController
     function createMachine($request, $response, $container)
     {
 
-
         $name = $request->get(INPUT_POST, 'name');
         $model = $request->get(INPUT_POST, 'model');
         $manufacturer = $request->get(INPUT_POST, 'manufacturer');
@@ -35,4 +34,5 @@ class MachineController
         $response->redirect("Location: /machineinv");
         return $response;
     }
+
 }
