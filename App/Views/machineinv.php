@@ -280,7 +280,19 @@
                                         value="<?= htmlspecialchars($machine['location']) ?>" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
-                                <!-- Rol -->
+                                <div>
+                                    <label for="edit-serial_number-<?= $machine['id'] ?>" class="block text-sm font-medium text-gray-900">Número de Serie</label>
+                                    <input type="text" id="edit-serial_number-<?= $machine['id'] ?>" name="serial_number" 
+                                        value="<?= isset($machine['serial_number']) ? htmlspecialchars($machine['serial_number']) : '' ?>" required
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-installation_date-<?= $machine['id'] ?>" class="block text-sm font-medium text-gray-900">Fecha de Instalación</label>
+                                    <input type="date" id="edit-installation_date-<?= $machine['id'] ?>" name="installation_date" 
+                                        value="<?= htmlspecialchars($machine['installation_date']) ?>" required
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <!-- Coordinates -->
                                 <?php
                                 // Ensure variables are set before use
                                 $coordinates = isset($machine['coordinates']) ? htmlspecialchars($machine['coordinates']) : '';
