@@ -99,9 +99,11 @@
                                     </div>
                                     <!-- Image -->
                                     <div>
-                                        <label for="photo" class="block text-sm font-medium text-gray-900">Imagen</label>
-                                        <input type="file" id="photo" name="photo"
-                                            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <label for="machine-photo" class="block text-sm font-medium text-gray-900">Imagen</label>
+                                        <input type="file" id="machine-photo" name="photo" accept="image/*" capture="environment" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <button type="button" id="capture-photo" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Capturar desde Webcam</button>
+                                        <video id="video" width="320" height="240" autoplay class="mt-2 hidden"></video>
+                                        <canvas id="canvas" width="320" height="240" class="mt-2 hidden"></canvas>
                                     </div>
                                     <div class="flex justify-end space-x-2">
                                         <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-800">Cancel</button>
@@ -185,9 +187,11 @@
                                 </div>
                                 <!-- Image -->
                                 <div>
-                                    <label for="photo" class="block text-sm font-medium text-gray-900">Imagen</label>
-                                    <input type="file" id="photo" name="photo"
-                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <label for="machine-photo" class="block text-sm font-medium text-gray-900">Imagen</label>
+                                    <input type="file" id="machine-photo" name="photo" accept="image/*" capture="environment" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <button type="button" id="capture-photo" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Capturar desde Webcam</button>
+                                    <video id="video" width="320" height="240" autoplay class="mt-2 hidden"></video>
+                                    <canvas id="canvas" width="320" height="240" class="mt-2 hidden"></canvas>
                                 </div>
                                 <div class="flex justify-end space-x-2">
                                     <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-800">Cancel</button>
@@ -357,7 +361,7 @@
                             <button type="button" data-modal-target="edit-machine-modal-<?php echo $machine['id'] ?>" data-modal-toggle="edit-machine-modal-<?php echo $machine['id'] ?>" class="block w-full text-left px-4 py-2 text-sm text-blue-800 hover:bg-blue-50">
                                 Editar
                             </button>
-                            <button type="button" onclick="generateQRCode('<?php echo htmlspecialchars($machine['id']); ?>')" class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
+                            <button type="button" onclick="showQRCode('<?php echo htmlspecialchars($machine['id']); ?>')" class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
                                 Generar QR
                             </button>
                             <form action="/deletemachine/<?php echo htmlspecialchars($machine['id']); ?>" method="POST" class="block">
@@ -378,5 +382,7 @@
 
 <script src="js/bundle.js"></script>
 <script src="js/flowbite.min.js"></script>
+<script src="js/machineinv.js"></script>
+
 
 </html>

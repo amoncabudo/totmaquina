@@ -41,6 +41,8 @@ include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
+include "../App/Controllers/ctrlgenerateqr.php";
+
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -67,7 +69,6 @@ $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachin
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
 
 
-
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
 
@@ -84,7 +85,7 @@ $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 
 
 $app->route("history", "history");
-$app->route("incidents", "incidents");
+$app->route("incidents",[\App\Controllers\Incidents::class, "index"]);
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
@@ -105,5 +106,10 @@ $app->route("politica-cookies", function($request, $response) {
 });
 
 $app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
+
+$app->get('/generate_qr', function($request, $response) {
+    $id = $request->getParam('id');
+    echo generateQRCode('https://example.com/machine/' . $id);
+});
 
 $app->execute();

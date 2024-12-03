@@ -1,63 +1,97 @@
-$(document).ready(function () {
-    var dropZone = $('#drop-zone');
+function showQRCode(machineId) {
+    fetch(`/generate_qr.php?id=${machineId}`)
+        .then(response => response.text())
+        .then(data => {
+            const qrWindow = window.open("", "QR Code", "width=300,height=300");
+            qrWindow.document.write(data); // Directly write SVG data
+        })
+        .catch(error => console.error('Error generating QR code:', error));
+}
 
-    // Cuando se arrastra un archivo sobre la zona de drop se añade la clase dragover
-    dropZone.on('dragover', function (e) {
-        e.preventDefault();
-        $(this).addClass('dragover');
-    });
 
-    // Cuando se sale de la zona de drop se elimina la clase dragover
-    dropZone.on('dragleave', function (e) {
-        e.preventDefault();
-        $(this).removeClass('dragover');
-    });
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const captureButton = document.getElementById('capture-photo');
+  const context = canvas.getContext('2d');
 
-    // Cuando se suelta el archivo en la zona de drop se ejecuta la función handleFiles
-    dropZone.on('drop', function (e) {
-        e.preventDefault();
-        $(this).removeClass('dragover');
+  captureButton.addEventListener('click', async () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+        captureButton.textContent = 'Tomar Foto';
+        
+        captureButton.onclick = () => {
+          context.drawImage(video, 0, 0, 320, 240);
+          video.classList.add('hidden');
+          canvas.classList.remove('hidden');
+          captureButton.textContent = 'Capturar desde Webcam';
+          stream.getTracks().forEach(track => track.stop());
+          saveImage(); // Guardar la imagen
+        };
+      } catch (error) {
+        console.error('Error accessing webcam: ', error);
+      }
+    }
+  });
 
-        var files = e.originalEvent.dataTransfer.files;
-        handleFiles(files);
-    });
+  document.getElementById('add-machine-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Evita el envío del formulario tradicional
 
-    // Cambia el selector para incluir dropzone-file dentro de drop-zone
-    $(document).on('change', '#dropzone-file', function () {
-        var files = $(this)[0].files;
-        handleFiles(files);
-    });
+    const formData = new FormData(this);
 
-    // Función para manejar los archivos
-    function handleFiles(files) {
-        for (var i = 0; i < files.length; i++) {
-            uploadFile(files[i]);
+    fetch('/addmachine', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Actualiza el DOM aquí, por ejemplo, añadiendo la nueva máquina a la lista
+        } else {
+            alert('Error al añadir la máquina');
         }
-    }
+    })
+    .catch(error => console.error('Error:', error));
+  });
 
-    // Función para subir el archivo al servidor
-    function uploadFile(file) {
-        var formData = new FormData();
-        formData.append('file', file);
-        var usuarioID = $('#idUsuario').text();
-        console.log(usuarioID);
-        formData.append('usuarioID', usuarioID);
-
-        $.ajax({
-            url: '/fotoalumno1',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                console.log(response);
-                alert('Foto subida correctamente');
-            },
-            error: function (error) {
-                console.error('Error fotoalumno file:', error);
+  function deleteMachine(machineId) {
+    if (confirm('¿Estás seguro de que quieres eliminar esta máquina?')) {
+        fetch(`/deletemachine/${machineId}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Elimina la máquina del DOM
+                document.getElementById(`machine-${machineId}`).remove();
+            } else {
+                alert('Error al eliminar la máquina');
             }
-        });
+        })
+        .catch(error => console.error('Error:', error));
     }
-});
+  }
 
+  document.getElementById('edit-machine-form').addEventListener('submit', function(event) {
+    event.preventDefault();
 
+    const formData = new FormData(this);
+
+    fetch('/editmachine', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Actualiza el DOM con los nuevos datos de la máquina
+        } else {
+            alert('Error al editar la máquina');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+
+  
