@@ -39,6 +39,7 @@ include "../App/Controllers/ctrlEditUser.php";
 include "../App/Controllers/ctrlDeleteUser.php";
 include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
+include "../App/Controllers/ctrladminPanel.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -69,6 +70,7 @@ $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadC
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
 
+$app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"]);
 // Rutas de notificaciones
 $app->route("notifications", [\App\Controllers\NotificationsController::class, "index"]);
 $app->post("notifications/delete/{id}", [\App\Controllers\NotificationsController::class, "delete"]);
