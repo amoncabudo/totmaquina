@@ -112,6 +112,4 @@ $app->route("politica-cookies", function($request, $response) {
 
 $app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
 
-
-
 $app->execute();
