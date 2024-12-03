@@ -347,7 +347,7 @@
                         <p class="text-xs sm:text-sm"><?php echo htmlspecialchars($machine['model']) ?>, <?php echo htmlspecialchars($machine['location']) ?></p>
                     </div>
                     <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class=" p-1 sm:p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300" aria-label="Opciones">
+                        <button @click="open = !open" class="p-1 sm:p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300" aria-label="Opciones">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                             </svg>
@@ -356,6 +356,9 @@
                             <a href="machinedetail/<?php echo htmlspecialchars($machine['id']); ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver Más</a>
                             <button type="button" data-modal-target="edit-machine-modal-<?php echo $machine['id'] ?>" data-modal-toggle="edit-machine-modal-<?php echo $machine['id'] ?>" class="block w-full text-left px-4 py-2 text-sm text-blue-800 hover:bg-blue-50">
                                 Editar
+                            </button>
+                            <button type="button" onclick="generateQRCode('<?php echo htmlspecialchars($machine['id']); ?>')" class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
+                                Generar QR
                             </button>
                             <form action="/deletemachine/<?php echo htmlspecialchars($machine['id']); ?>" method="POST" class="block">
                                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
