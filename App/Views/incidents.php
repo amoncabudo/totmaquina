@@ -32,7 +32,7 @@
             <select name="machine_id" id="machine_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 <option value="">Selecciona una màquina</option>
                 <?php foreach ($machines as $machine): ?>
-                    <option value="<?php echo $machine['id']; ?>"><?php echo htmlspecialchars($machine['name']); ?></option>
+                    <option value="<?php echo $machine['id']; ?>"><?php echo htmlspecialchars($machine['name']); ?><br> <?php echo htmlspecialchars($machine['model']); ?></option>
                 <?php endforeach; ?>
             </select>
           </div>
@@ -59,7 +59,7 @@
             <select name="technician_id" id="technician_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 <option value="">Selecciona un tècnic</option>
                 <?php foreach ($technicians as $technician): ?>
-                    <option value="<?php echo $technician['id']; ?>"><?php echo htmlspecialchars($technician['name']); ?></option>
+                    <option value="<?php echo $technician['id']; ?>"><?php echo htmlspecialchars($technician['name']); ?> <br><?php echo htmlspecialchars($technician['surname']); ?></option>
                 <?php endforeach; ?>
             </select>
           </div>
