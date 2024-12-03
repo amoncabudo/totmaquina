@@ -21,7 +21,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Tarjeta Añadir Máquina -->
                 <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all cursor-pointer"
-                    onclick="window.location.href='/addmachine'">
+                    onclick="window.location.href='/machineinv'">
                     <div class="flex items-center mb-4">
                         <i class="fas fa-plus-circle text-4xl text-blue-600 mr-4"></i>
                         <h5 class="text-xl font-bold text-gray-900">Añadir Máquina</h5>
