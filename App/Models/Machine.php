@@ -39,7 +39,7 @@ class Machine
      * @return array
      */
     public function getAllMachine(){
-        $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, location, installation_date FROM Machine ORDER BY id DESC");
+        $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, location, installation_date, coordinates FROM Machine ORDER BY id DESC");
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -71,9 +71,9 @@ class Machine
         ]);
     }
 
-    public function insertMachine($name, $model, $manufacturer, $location, $installation_date, $serial_number, $photo){
+    public function insertMachine($name, $model, $manufacturer, $location, $installation_date, $serial_number, $photo, $coordinates){
         try {
-            $query = "INSERT INTO Machine (name, model, manufacturer, location, installation_date, serial_number, photo) VALUES (:name, :model, :manufacturer, :location, :installation_date, :serial_number, :photo)";
+            $query = "INSERT INTO Machine (name, model, manufacturer, location, installation_date, serial_number, photo, coordinates) VALUES (:name, :model, :manufacturer, :location, :installation_date, :serial_number, :photo, :coordinates)";
             $stmt = $this->sql->prepare($query);
             $stmt->execute([
                 'name' => $name,
@@ -82,7 +82,8 @@ class Machine
                 'location' => $location,
                 'installation_date' => $installation_date,
                 'serial_number' => $serial_number,
-                'photo' => $photo
+                'photo' => $photo,
+                'coordinates' => $coordinates
             ]);
         } catch (\PDOException $e) {
             echo "Error en la inserción: " . $e->getMessage();
