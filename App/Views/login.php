@@ -5,47 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - TOT Màquina</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .animate-gradient {
-            background: linear-gradient(270deg, #111827, #1f2937, #374151);
-            background-size: 600% 600%;
-            animation: gradientAnimation 12s ease infinite;
-        }
-
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50% }
-            50% { background-position: 100% 50% }
-            100% { background-position: 0% 50% }
-        }
-
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-    </style>
 </head>
 
-<body class="animate-gradient min-h-screen">
+<body class="bg-gray-900 min-h-screen">
     <!-- Círculos decorativos animados -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-gray-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
-        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gray-700 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 2s;"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gray-900 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 4s;"></div>
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-gray-950 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gray-950 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gray-950 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 4s;"></div>
     </div>
 
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
-        <div class="max-w-md w-full glass-effect rounded-2xl shadow-2xl p-8 transform transition-all duration-500 hover:scale-[1.02]">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 transform transition-all duration-500 hover:scale-[1.02]">
             <!-- Logo con animación -->
             <div class="flex justify-center mb-8">
                 <img class="h-32 w-auto animate-float" src="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png" alt="TOT Màquina Logo">
@@ -53,7 +24,7 @@
             
             <!-- Título con efecto de aparición -->
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-900">
+                <h2 class="text-3xl font-bold text-gray-900">
                     Iniciar Sesión
                 </h2>
                 <p class="mt-2 text-sm text-gray-600">
