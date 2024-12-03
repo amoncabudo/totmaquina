@@ -7,7 +7,7 @@ use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 use App\Models\Machine;
 
-class Incidents {
+class incidents {
     public function index($request, $response, $container) {
         // Obtener todas las máquinas desde el modelo
         $machineModel = new Machine($container->get('db')); // Conexión a la base de datos

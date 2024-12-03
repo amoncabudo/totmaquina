@@ -85,6 +85,7 @@ $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 
 $app->route("history", "history");
 $app->route("incidents", "incidents");
+
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
