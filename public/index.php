@@ -42,6 +42,8 @@ include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
 include "../App/Controllers/TestUserController.php";
+include "../App/Controllers/ctrlgenerateqr.php";
+
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -68,7 +70,6 @@ $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachin
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
 
 
-
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
 
@@ -85,7 +86,12 @@ $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 
 
 $app->route("history", "history");
-$app->route("incidents", "incidents");
+$app->get('/incidents', 'incidents');
+$app->post('/incidents/create', 'createIncident');
+$app->post('/incidents/update-status', 'updateStatus');
+$app->post('/incidents/assign-technician', 'assignTechnician');
+$app->post('/incidents/delete', 'deleteIncident');
+$app->get('/incidents/statistics', 'getStatistics');
 $app->route("ajax", function ($request, $response) {
     $response->set("result", "ok");
     return $response;
@@ -109,3 +115,6 @@ $app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile
 
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"]);
 $app->execute();
+
+
+

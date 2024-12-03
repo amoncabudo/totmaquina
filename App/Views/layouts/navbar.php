@@ -54,12 +54,24 @@
                                     </svg>
                                 </button>
                                 <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registro de incidencias</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Estadísticas de incidencias</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registro de Mantenimiento</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Estadísticas de Mantenimiento</a>
                                 </div>
                             </div>
 
-                            <a href="#" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" role="menuitem">INCIDENCIAS</a>
+                            <div class="relative group" role="menuitem">
+                                <button class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center" 
+                                        aria-haspopup="true" 
+                                        aria-expanded="false">
+                                    INCIDENCIAS
+                                    <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
+                                    <a href="/incidents" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registro de Incidencias</a>
+                                </div>
+                            </div>
                             
                             <!-- Menú desplegable HISTORIAL -->
                             <div class="relative group" role="menuitem">
@@ -248,7 +260,24 @@
                     </ul>
                 </div>
 
-                <a href="#" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700" role="menuitem">INCIDENCIAS</a>
+                <!-- Botón desplegable INCIDENCIAS móvil -->
+                <button id="dropdownIncidenciasLink" data-dropdown-toggle="dropdownIncidencias" 
+                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
+                        aria-expanded="false"
+                        aria-haspopup="true">
+                    INCIDENCIAS 
+                    <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <!-- Menú desplegable INCIDENCIAS móvil -->
+                <div id="dropdownIncidencias" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownIncidenciasLink">
+                    <ul class="py-2 text-sm text-white">
+                        <li>
+                            <a href="incidents" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Incidencias</a>
+                        </li>
+                    </ul>
+                </div>
                 
                 <!-- Botón desplegable HISTORIAL móvil -->
                 <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" 
@@ -358,6 +387,16 @@
                                 <div>Hola, <?= $_SESSION["user"]["name"] ?></div>
                             </div>
                             <ul class="py-2 text-sm text-gray-700">
+                                                            </li>
+                                                                <li>
+                                    <a href="/adminPanel" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        Panel de Administración
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="/userconfig" class="flex items-center px-4 py-2 hover:bg-gray-100">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -366,10 +405,9 @@
                                         </svg>
                                         Configuración
                                     </a>
-                                </li>
+
                             </ul>
                         </div>
-
                         <!-- Botón de cerrar sesión móvil -->
                         <a href="tancar-sessio" class="inline-flex items-center justify-center p-2 text-red-500 hover:bg-gray-700 rounded-lg transition-colors duration-200">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
