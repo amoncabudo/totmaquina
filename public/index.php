@@ -41,6 +41,7 @@ include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/ctrlincidents.php";
+include "../App/Controllers/ctrladdincidents.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -86,6 +87,10 @@ $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 $app->route("history", "history");
 
 $app->route("incidents", [\App\Controllers\incidents::class, "index"]);
+$app->post("/addincidents", [\App\Controllers\AddIncidents::class, "register"]);
+
+
+
 
 
 $app->route("ajax", function ($request, $response) {

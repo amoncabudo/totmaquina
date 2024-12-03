@@ -23,14 +23,14 @@
   <main class="max-w-5xl mx-auto mt-8">
     <div class="bg-white shadow-lg rounded-lg p-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-700">Registrar incidència</h2>
-      <form method="POST" action="">
+      <form method="POST" action="ctrladdincidents.php">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           
           <!-- Seleccionar màquina -->
           <div>
-            <label for="machine_id" class="block text-sm font-medium text-gray-700">Selecciona una màquina:</label>
+            <label for="machine_id" class="block text-sm font-medium text-gray-700">Selecciona una maquina 🏗</label>
             <select name="machine_id" id="machine_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                <option value="">Selecciona una màquina</option>
+                <option value="">Selecciona una maquina</option>
                 <?php foreach ($machines as $machine): ?>
                     <option value="<?php echo $machine['id']; ?>"><?php echo htmlspecialchars($machine['name']); ?><br> <?php echo htmlspecialchars($machine['model']); ?></option>
                 <?php endforeach; ?>
@@ -39,25 +39,25 @@
 
           <!-- Descripció -->
           <div>
-            <label for="issue" class="block text-sm font-medium text-gray-700">Descripció de la averia📋</label>
-            <textarea id="issue" name="issue" rows="2" placeholder="Descripció breu de l'incidència" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+            <label for="issue" class="block text-sm font-medium text-gray-700">Descripcion de la averia📋</label>
+            <textarea id="issue" name="issue" rows="2" placeholder="Descripcion breve de la averia" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
           </div>
 
           <!-- Prioritat -->
           <div>
-            <label for="priority" class="block text-sm font-medium text-gray-700">Prioritat⚠️</label>
+            <label for="priority" class="block text-sm font-medium text-gray-700">Prioridad⚠️</label>
             <select id="priority" name="priority" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
               <option value="baixa">Baja</option>
-              <option value="mitjana">Mitjana</option>
+              <option value="mitjana">Mediana</option>
               <option value="alta">Alta</option>
             </select>
           </div>
 
           <!-- Seleccionar tècnic -->
           <div>
-            <label for="technician_id" class="block text-sm font-medium text-gray-700">Selecciona un tècnic:</label>
+            <label for="technician_id" class="block text-sm font-medium text-gray-700">Selecciona un tecnico👨🏽‍🔧</label>
             <select name="technician_id" id="technician_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                <option value="">Selecciona un tècnic</option>
+                <option value="">Selecciona un tecnico</option>
                 <?php foreach ($technicians as $technician): ?>
                     <option value="<?php echo $technician['id']; ?>"><?php echo htmlspecialchars($technician['name']); ?> <br><?php echo htmlspecialchars($technician['surname']); ?></option>
                 <?php endforeach; ?>
@@ -66,20 +66,20 @@
 
           <!-- Hores estimades -->
           <div>
-            <label for="hours" class="block text-sm font-medium text-gray-700">Hores Estimades⌛️</label>
+            <label for="hours" class="block text-sm font-medium text-gray-700">Hores Estimadas⌛️</label>
             <input type="number" id="hours" name="hours" placeholder="Hores" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
           </div>
 
           <!-- Data -->
           <div>
-            <label for="date" class="block text-sm font-medium text-gray-700">Data de registre📆</label>
+            <label for="date" class="block text-sm font-medium text-gray-700">Data de registro📆</label>
             <input type="date" id="date" name="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
           </div>
         </div>
 
         <!-- Botons -->
         <div class="mt-4 flex items-center justify-between space-x-4">
-          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Registrar Incidència💾</button>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Registrar Incidencia💾</button>
           <button type="button" @click.prevent="$refs.form.reset(); selectedTechnicians = [];" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">Limpiar🧹</button>
         </div>
       </form>
@@ -87,70 +87,11 @@
 
     <!-- Últimes incidències no resoltes -->
     <div class="bg-white shadow-lg rounded-lg p-6 mt-8">
-      <h2 class="text-xl font-semibold mb-4 text-gray-700">Últimes incidències no resoltes</h2>
+      <h2 class="text-xl font-semibold mb-4 text-gray-700">Ultimas incidencies no resueltas</h2>
       <ul class="space-y-4">
-        <!-- Incidència 1 -->
-        <li class="flex justify-between items-center">
-          <div>
-            <h3 class="text-lg font-medium text-gray-800">Incidència 1: Fallo en el dispositiu X</h3>
-            <p class="text-sm text-gray-600">Descripció: Pantalla en negre</p>
-          </div>
-          <div class="flex items-center">
-            <div class="w-32 h-8 bg-gray-200 rounded-full relative">
-              <div class="absolute inset-0 bg-red-600 rounded-full" style="width: 100%;"></div>
-            </div>
-            <span class="ml-2 text-sm text-gray-700">Alta</span>
-          </div>
-        </li>
-        <!-- Incidència 2 -->
-        <li class="flex justify-between items-center">
-          <div>
-            <h3 class="text-lg font-medium text-gray-800">Incidència 2: Fallo en el dispositiu Y</h3>
-            <p class="text-sm text-gray-600">Descripció: Error al iniciar la aplicació</p>
-          </div>
-          <div class="flex items-center">
-            <div class="w-32 h-8 bg-gray-200 rounded-full relative">
-              <div class="absolute inset-0 bg-yellow-500 rounded-full" style="width: 60%;"></div>
-            </div>
-            <span class="ml-2 text-sm text-gray-700">Mitjana</span>
-          </div>
-        </li>
-        <!-- Incidència 3 -->
-        <li class="flex justify-between items-center">
-          <div>
-            <h3 class="text-lg font-medium text-gray-800">Incidència 3: Fallo en el dispositiu Z</h3>
-            <p class="text-sm text-gray-600">Descripció: No connecta a internet</p>
-          </div>
-          <div class="flex items-center">
-            <div class="w-32 h-8 bg-gray-200 rounded-full relative">
-              <div class="absolute inset-0 bg-green-500 rounded-full" style="width: 25%;"></div>
-            </div>
-            <span class="ml-2 text-sm text-gray-700">Baja</span>
-          </div>
-        </li>
+        <!-- Lista de incidencias -->
       </ul>
     </div>
-
-    <!-- Estadístiques -->
-    <div class="bg-white shadow-lg rounded-lg p-6 mt-8">
-      <h2 class="text-xl font-semibold mb-4 text-gray-700">Estadístiques de incidències</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div>
-          <h3 class="text-lg font-medium text-gray-800 mb-2">Incidències per Dispositiu</h3>
-          <canvas id="deviceChart"></canvas>
-        </div>
-        <div>
-          <h3 class="text-lg font-medium text-gray-800 mb-2">Incidències per Mes</h3>
-          <canvas id="monthlyChart"></canvas>
-        </div>
-        <div>
-          <h3 class="text-lg font-medium text-gray-800 mb-2">Temps de Resposta</h3>
-          <canvas id="responseChart"></canvas>
-        </div>
-      </div>
-    </div>
   </main>
-
-  <script src="/js/main.js"></script>
 </body>
 </html>

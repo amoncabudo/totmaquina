@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use \Emeset\Contracts\Http\Request;
@@ -30,6 +31,6 @@ class incidents {
         return $response;
     }
 }
-
+   
     
 ?>
