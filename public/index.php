@@ -41,6 +41,7 @@ include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
+include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
 
 
@@ -112,6 +113,7 @@ $app->route("politica-cookies", function($request, $response) {
 
 $app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
 
+$app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"]);
 $app->execute();
 
 

@@ -29,7 +29,6 @@ class editUser
                 die("Error al subir el archivo.");
             }
         } else {
-            // Si no se sube una nueva imagen, mantener la actual
             $avatar = $currentAvatar;
         }
 

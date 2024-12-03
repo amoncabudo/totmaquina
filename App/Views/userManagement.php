@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,15 +15,24 @@
 
     <div class="max-w-7xl mx-auto p-8 rounded-lg">
         <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Gestión de Usuarios</h1>
-        
+
         <!-- Botón Añadir Usuario -->
         <div class="flex justify-end mb-4">
             <button data-modal-target="user-modal" data-modal-toggle="user-modal"
-                class="bg-gray-800 text-white hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
+                class="bg-gray-800 text-white hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center mr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Añadir Usuario
+            </button>
+
+            <button id="createTestTechnician"
+                class="bg-blue-600 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
+                Crear Técnico de Prueba
+            </button>
+            <button id="createTestSupervisor"
+                class="bg-green-600 text-white hover:bg-green-700 focus:ring-4 focus:ring-green-600 font-medium rounded-lg text-sm px-5 py-2.5">
+                Crear Supervisor de Prueba
             </button>
         </div>
 
@@ -80,7 +90,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <input type="password" id="password" name="password" 
+                                    <input type="password" id="password" name="password"
                                         placeholder="Escribe la contraseña" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                     <div id="mss"></div>
@@ -128,14 +138,14 @@
                             data-modal-toggle="edit-user-modal-<?= $user['id'] ?>"
                             class="p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300">
                             <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" />
                             </svg>
                         </button>
 
                         <!-- Botón Eliminar -->
                         <form action="/deleteUser" method="POST" class="inline">
                             <input type="hidden" name="id" value="<?= $user['id'] ?>">
-                            <button type="submit" 
+                            <button type="submit"
                                 onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?')"
                                 class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -173,25 +183,25 @@
                                     <!-- Campos del formulario de edición -->
                                     <div>
                                         <label for="edit-name-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Nombre</label>
-                                        <input type="text" id="edit-name-<?= $user['id'] ?>" name="name" 
+                                        <input type="text" id="edit-name-<?= $user['id'] ?>" name="name"
                                             value="<?= htmlspecialchars($user['name']) ?>" required
                                             class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                     </div>
                                     <div>
                                         <label for="edit-surname-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Apellido</label>
-                                        <input type="text" id="edit-surname-<?= $user['id'] ?>" name="surname" 
+                                        <input type="text" id="edit-surname-<?= $user['id'] ?>" name="surname"
                                             value="<?= htmlspecialchars($user['surname']) ?>" required
                                             class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                     </div>
                                     <div>
                                         <label for="edit-email-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Email</label>
-                                        <input type="email" id="edit-email-<?= $user['id'] ?>" name="email" 
+                                        <input type="email" id="edit-email-<?= $user['id'] ?>" name="email"
                                             value="<?= htmlspecialchars($user['email']) ?>" required
                                             class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                     </div>
                                     <div>
                                         <label for="edit-password-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Contraseña</label>
-                                        <input type="password" id="edit-password-<?= $user['id'] ?>" name="password" 
+                                        <input type="password" id="edit-password-<?= $user['id'] ?>" name="password"
                                             placeholder="Dejar en blanco para mantener la actual"
                                             class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                     </div>
@@ -214,7 +224,7 @@
                                         <?php endif; ?>
                                     </div>
                                     <div class="flex justify-end space-x-2">
-                                        <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700" 
+                                        <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700"
                                             data-modal-hide="edit-user-modal-<?= $user['id'] ?>">
                                             Cancelar
                                         </button>
@@ -232,6 +242,7 @@
     </div>
     <script src="/js/bundle.js"></script>
     <script src="/js/password.js"></script>
-
+    <script src="/js/testUser.js"></script>
 </body>
+
 </html>
