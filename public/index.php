@@ -57,7 +57,10 @@ $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
+
 $app->route("maintenance", "maintenance");
+// Ruta para mostrar las máquinas disponibles
+
 
 $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
@@ -83,7 +86,9 @@ $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 $app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
 $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 
-$app->route("machines", "ctrlmachines");
+$app->route('machines', [\App\Controllers\incidents::class, 'incidents']);
+
+
 
 $app->route("history", "history");
 $app->get('/incidents', 'incidents');

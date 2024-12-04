@@ -2,33 +2,17 @@
 
 namespace App\Controllers;
 
+use \App\Models\MachineView;
 use \Emeset\Contracts\Http\Request;
 use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
 class ctrlmachines
 {
-    public function ctrlmachines(Request $request, Response $response, Container $container)
-    {
-        // Obtener el modelo de máquinas desde el contenedor
-        $machineModel = $container->get("Machine");
-
-        // Obtener todas las máquinas
-        $machines = $machineModel->getAllMachine();
-
-        // Verificar si se obtuvieron máquinas
-        if (empty($machines)) {
-            $error = "No se pudieron obtener las máquinas desde la base de datos.";
-            $response->set("error", $error); // Establecer mensaje de error
-            $machines = [];  // Asegurarse de que $machines sea un array vacío si no hay datos
-        }
-
-        // Pasar las máquinas a la vista
-        $response->set("machines", $machines);
-
-        // Definir el template a utilizar
-        $response->setTemplate('machines.php');
-
-        return $response;
+    public function getAllMachines() {
+        $query = "SELECT id, name, description FROM machines"; // Ajusta tu consulta según la estructura de tu base de datos
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-}
+}    
