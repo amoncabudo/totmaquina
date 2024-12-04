@@ -23,11 +23,13 @@ include "../App/Controllers/error.php";
 include "../App/Controllers/login.php";
 include "../App/Controllers/validarLogin.php";
 include "../App/Controllers/tancarSessio.php";
+include "../App/Controllers/maintenance_history.php";
 include "../App/Middleware/auth.php";
 include "../App/Middleware/test.php";
 include "../App/Controllers/ctrlmachineinv.php";
 include "../App/Controllers/ctrlindex.php";
 include "../App/Controllers/maintenance.php";
+include "../App/Controllers/maintenanceStats.php";
 include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
@@ -53,14 +55,32 @@ $app->middleware(function($request, $response, $container, $next) {
     return \App\Middleware\App::execute($request, $response, $container, $next);
 });
 
+// Routes
 $app->route("", "ctrlPortada");
 $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
-$app->route("maintenance", "maintenance");
 
+// Maintenance routes
+$app->route("maintenance", "maintenance");
+$app->route("maintenance/create", "createMaintenance");
+$app->route("maintenance/stats", "maintenanceStats");
+$app->route("maintenance_history", [\App\Controllers\MaintenanceHistoryController::class, "index"]);
+
+// API routes
+$app->route("api/maintenance/history/{id}", function($request, $response) {
+    $controller = new \App\Controllers\MaintenanceHistoryController();
+    return $controller->getHistory($request, $response);
+});
+
+$app->route("api/machine/{id}", function($request, $response) {
+    $controller = new \App\Controllers\MaintenanceHistoryController();
+    return $controller->getMachineInfo($request, $response);
+});
+
+// Machine routes
 $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
 $app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"]);
