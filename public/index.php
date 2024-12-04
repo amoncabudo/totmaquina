@@ -45,7 +45,7 @@ include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
-
+include "../App/Controllers/HistoryIncidentsController.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -84,14 +84,14 @@ $app->route("api/machine/{id}", function($request, $response) {
 $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
 $app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"]);
-$app->route("history", "history");
+$app->route("history", [\App\Controllers\HistoryIncidentsController::class, "index"]);
+$app->route("history/incidents/{id}", [\App\Controllers\HistoryIncidentsController::class, "getHistory"]);
 $app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
 
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
-$app->route("history", "history");
 
 $app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"]);
 // Rutas de notificaciones
@@ -105,7 +105,6 @@ $app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
 $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 
 
-$app->route("history", "history");
 $app->get('/incidents', 'incidents');
 $app->post('/incidents/create', 'createIncident');
 $app->post('/incidents/update-status', 'updateStatus');
