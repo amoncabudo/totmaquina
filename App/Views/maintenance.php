@@ -160,6 +160,16 @@
                         </div>
                         <input type="hidden" name="technicians[]" id="selected-technicians">
                     </div>
+
+                    <!-- Descripción -->
+                    <div class="md:col-span-2">
+                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900">
+                            Descripción <span class="text-red-600">*</span>
+                        </label>
+                        <textarea id="description" name="description" rows="4" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                placeholder="Describe el mantenimiento a realizar..."></textarea>
+                    </div>
                 </div>
 
                 <div class="flex justify-center space-x-4">

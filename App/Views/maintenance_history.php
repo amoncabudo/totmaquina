@@ -56,88 +56,9 @@
     </div>
 </main>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('maintenance-form');
-    const machineSelect = document.getElementById('machine-select');
-    const historyContent = document.getElementById('history-content');
-    const maintenanceHistory = document.getElementById('maintenance-history');
-    const machineInfo = document.getElementById('machine-info');
 
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const machineId = machineSelect.value;
-        
-        if (!machineId) {
-            alert('Por favor, selecciona una máquina');
-            return;
-        }
+<script src="/js/main.js"></script>
+<script src="/js/flowbite.min.js"></script>
 
-        try {
-            const response = await fetch(`/api/maintenance/history/${machineId}`);
-            if (!response.ok) throw new Error('Error al obtener el historial');
-            
-            const history = await response.json();
-            console.log('Historial recibido:', history);
-            
-            historyContent.innerHTML = '';
-            
-            if (history && history.length > 0) {
-                history.forEach(record => {
-                    const recordElement = document.createElement('div');
-                    recordElement.className = 'bg-white p-6 rounded-lg shadow mb-4 border-l-4 border-blue-500';
-                    
-                    // Determinar el color del estado
-                    let statusColor;
-                    switch(record.status.toLowerCase()) {
-                        case 'completado':
-                            statusColor = 'bg-green-100 text-green-800';
-                            break;
-                        case 'en proceso':
-                            statusColor = 'bg-blue-100 text-blue-800';
-                            break;
-                        default:
-                            statusColor = 'bg-yellow-100 text-yellow-800';
-                    }
-                    
-                    recordElement.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div class="flex-grow">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h3 class="text-lg font-semibold text-gray-800">
-                                        ${new Date(record.date).toLocaleDateString('es-ES', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric'
-                                        })}
-                                    </h3>
-                                    <span class="px-3 py-1 rounded-full text-sm ${statusColor}">
-                                        ${record.status}
-                                    </span>
-                                </div>
-                                <p class="text-gray-600 mb-2"><strong>Tipo:</strong> ${record.type}</p>
-                                <p class="text-gray-600 mb-2"><strong>Técnico(s):</strong> ${record.technician}</p>
-                                <p class="text-gray-600 mt-2">${record.description}</p>
-                            </div>
-                        </div>
-                    `;
-                    historyContent.appendChild(recordElement);
-                });
-                maintenanceHistory.classList.remove('hidden');
-            } else {
-                historyContent.innerHTML = `
-                    <div class="bg-gray-50 p-4 rounded-lg text-center">
-                        <p class="text-gray-600">No hay registros de mantenimiento para esta máquina.</p>
-                    </div>
-                `;
-                maintenanceHistory.classList.remove('hidden');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al obtener el historial de mantenimiento');
-        }
-    });
-});
-</script>
 </body>
 </html>
