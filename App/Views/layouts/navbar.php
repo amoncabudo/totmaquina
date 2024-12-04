@@ -143,9 +143,14 @@
                             <!-- Botón de perfil con dropdown -->
                             <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300" type="button">
                                 <span class="sr-only">Abrir menú de usuario</span>
-                                <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                </svg>
+                                <?php if (isset($_SESSION["user"]["avatar"]) && $_SESSION["user"]["avatar"]): ?>
+                                    <?php $avatarPath = basename($_SESSION["user"]["avatar"]); ?>
+                                    <img class="w-8 h-8 rounded-full" src="<?= '/Images/' . $_SESSION["user"]["avatar"]; ?>" alt="Avatar de usuario">
+                                <?php else: ?>
+                                    <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                    </svg>
+                                <?php endif; ?>
                             </button>
 
                             <!-- Dropdown menu -->
