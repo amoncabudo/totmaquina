@@ -43,8 +43,13 @@ include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
+<<<<<<< HEAD
+include "../App/Controllers/ctrlmachines.php"; 
+=======
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
+
+>>>>>>> develop
 include "../App/Controllers/HistoryIncidentsController.php";
 
 /* Creem els diferents models */
@@ -62,6 +67,13 @@ $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
+<<<<<<< HEAD
+
+$app->route("maintenance", "maintenance");
+// Ruta para mostrar las máquinas disponibles
+
+=======
+>>>>>>> develop
 
 // Maintenance routes
 $app->route("maintenance", "maintenance");
@@ -103,6 +115,9 @@ $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 
 $app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
 $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
+
+$app->route('machines', [\App\Controllers\incidents::class, 'incidents']);
+
 
 
 $app->get('/incidents', 'incidents');
