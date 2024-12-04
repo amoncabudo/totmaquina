@@ -24,25 +24,26 @@ class Machine
      * 
      * @return array
      */
-    public function getAllMachine()
-    {
-        $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, location, installation_date, coordinates FROM Machine ORDER BY id DESC");
-        $stmt->execute();
-        return $stmt->fetchAll();
+    public function getAllMachine(){
+        try {
+            $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, location FROM Machine ORDER BY name");
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getAllMachine: " . $e->getMessage());
+            throw new \Exception("Error al obtener las máquinas");
+        }
     }
 
-    /**
-     * getMachineById: Obtener una máquina por su ID
-     * 
-     * @param int $id
-     * @return array
-     */
-    public function getMachineById($id)
-    {
-        $stmt = $this->sql->prepare("SELECT * FROM Machine WHERE id = :id");
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-        return $stmt->fetch();
+    public function getMachineById($id) {
+        try {
+            $stmt = $this->sql->prepare("SELECT * FROM Machine WHERE id = :id");
+            $stmt->execute(['id' => $id]);
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getMachineById: " . $e->getMessage());
+            throw new \Exception("Error al obtener la máquina");
+        }
     }
 
     /**

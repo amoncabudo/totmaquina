@@ -3,88 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seleccionar Máquina</title>
+    <meta name="description" content="Sistema de gestión de mantenimientos preventivos y correctivos">
+    <title>Registro de Mantenimientos - Panel de Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/flowbite@1.5.3/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
     <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
-    <div class="container mx-auto p-5">
-        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-5">Selecciona una Máquina</h1>
+    <main id="main-content" class="container mx-auto px-4 py-8" role="main">
+        <!-- Título y descripción -->
+        <div class="text-center mb-8" role="banner">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4" tabindex="0">Registro de Mantenimientos</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto" tabindex="0">
+                Sistema de gestión y seguimiento de mantenimientos preventivos y correctivos. Permite programar, asignar y realizar seguimiento de las tareas de mantenimiento.
+            </p>
+        </div>
 
-        <!-- Taula de selecció de màquines estilada amb Tailwind -->
-        <?php if (isset($machines) && is_array($machines) && count($machines) > 0): ?>
-            <div class="overflow-x-auto bg-white shadow-lg rounded-lg mb-4">
-                <table class="min-w-full text-center table-auto">
-                    <thead class="bg-gray-200">
-                        <tr>
-                            <th class="px-4 py-2 text-gray-600">ID</th>
-                            <th class="px-4 py-2 text-gray-600">Nom</th>
-                            <th class="px-4 py-2 text-gray-600">Model</th>
-                            <th class="px-4 py-2 text-gray-600">Fabricant</th>
-                            <th class="px-4 py-2 text-gray-600">Ubicació</th>
-                            <th class="px-4 py-2 text-gray-600">Data Instal·lació</th>
-                            <th class="px-4 py-2 text-gray-600">Acció</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-800">
-                        <?php foreach ($machines as $machine): ?>
-                            <tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="toggleMachineDetails(<?php echo htmlspecialchars(json_encode($machine)); ?>)">
-                                <td class="px-4 py-2"><?php echo htmlspecialchars($machine['id']); ?></td>
-                                <td class="px-4 py-2"><?php echo htmlspecialchars($machine['name']); ?></td>
-                                <td class="px-4 py-2"><?php echo htmlspecialchars($machine['model']); ?></td>
-                                <td class="px-4 py-2"><?php echo htmlspecialchars($machine['manufacturer']); ?></td>
-                                <td class="px-4 py-2"><?php echo htmlspecialchars($machine['location']); ?></td>
-                                <td class="px-4 py-2"><?php echo htmlspecialchars($machine['installation_date']); ?></td>
-                                <td class="px-4 py-2">
-                                    <!-- Botó per veure el historial de la màquina -->
-                                    <form action="history.php" method="GET" class="inline-block">
-                                        <input type="hidden" name="machine_id" value="<?php echo htmlspecialchars($machine['id']); ?>">
-                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Veure Historial</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+        <?php if (isset($success_message)): ?>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><?= $success_message ?></span>
             </div>
-        <?php else: ?>
-            <p class="text-center text-gray-700">No hi ha màquines disponibles</p>
         <?php endif; ?>
 
-        <!-- Detalls de la màquina seleccionada -->
-        <div id="machine-details" class="bg-white p-6 rounded-lg shadow-md mt-5 hidden">
-            <h2 class="text-xl font-semibold mb-4">Detalls de la màquina seleccionada</h2>
-            <p><strong>ID:</strong> <span id="machine-id"></span></p>
-            <p><strong>Nom:</strong> <span id="machine-name"></span></p>
-            <p><strong>Model:</strong> <span id="machine-model"></span></p>
-            <p><strong>Fabricant:</strong> <span id="machine-manufacturer"></span></p>
-            <p><strong>Ubicació:</strong> <span id="machine-location"></span></p>
-            <p><strong>Data Instal·lació:</strong> <span id="machine-installation-date"></span></p>
-            <p><strong>Coordenades:</strong> <span id="machine-coordinates"></span></p>
+        <?php if (isset($error_message)): ?>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><?= $error_message ?></span>
+            </div>
+        <?php endif; ?>
+
+        <!-- Estado de mantenimientos -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Pendientes -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                <h2 class="text-lg font-semibold text-yellow-800 mb-2">Pendientes</h2>
+                <div class="text-center">
+                    <span class="text-4xl font-bold text-yellow-800">
+                        <?php 
+                        $pendientes = array_filter($maintenances, function($m) { 
+                            return $m['status'] === 'pending'; 
+                        });
+                        echo count($pendientes);
+                        ?>
+                    </span>
+                </div>
+            </div>
+
+            <!-- En Proceso -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h2 class="text-lg font-semibold text-blue-800 mb-2">En Proceso</h2>
+                <div class="text-center">
+                    <span class="text-4xl font-bold text-blue-800">
+                        <?php 
+                        $enProceso = array_filter($maintenances, function($m) { 
+                            return $m['status'] === 'in progress'; 
+                        });
+                        echo count($enProceso);
+                        ?>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Completados -->
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h2 class="text-lg font-semibold text-green-800 mb-2">Completados</h2>
+                <div class="text-center">
+                    <span class="text-4xl font-bold text-green-800">
+                        <?php 
+                        $completados = array_filter($maintenances, function($m) { 
+                            return $m['status'] === 'completed'; 
+                        });
+                        echo count($completados);
+                        ?>
+                    </span>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <script>
-        function toggleMachineDetails(machine) {
-            // Mostrar o amagar la secció de detalls
-            const detailsSection = document.getElementById('machine-details');
+        <!-- Formulario de registro -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Registrar Nuevo Mantenimiento</h2>
+            <form action="/maintenance/create" method="POST" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Máquina -->
+                    <div>
+                        <label for="machine_id" class="block mb-2 text-sm font-medium text-gray-900">
+                            Máquina <span class="text-red-600">*</span>
+                        </label>
+                        <select id="machine_id" name="machine_id" required
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Seleccione una máquina</option>
+                            <?php foreach ($machines as $machine): ?>
+                                <option value="<?= $machine['id'] ?>"><?= htmlspecialchars($machine['name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-            // Omplir els detalls amb la informació de la màquina
-            document.getElementById('machine-id').textContent = machine.id;
-            document.getElementById('machine-name').textContent = machine.name;
-            document.getElementById('machine-model').textContent = machine.model;
-            document.getElementById('machine-manufacturer').textContent = machine.manufacturer;
-            document.getElementById('machine-location').textContent = machine.location;
-            document.getElementById('machine-installation-date').textContent = machine.installation_date;
-            document.getElementById('machine-coordinates').textContent = machine.coordinates;
+                    <!-- Fecha programada -->
+                    <div>
+                        <label for="scheduled_date" class="block mb-2 text-sm font-medium text-gray-900">
+                            Fecha Programada <span class="text-red-600">*</span>
+                        </label>
+                        <input type="date" id="scheduled_date" name="scheduled_date" required
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    </div>
 
-            // Mostrar la secció de detalls
-            detailsSection.classList.remove('hidden');
-        }
-    </script>
+                    <!-- Tipo de mantenimiento -->
+                    <div>
+                        <label for="type" class="block mb-2 text-sm font-medium text-gray-900">
+                            Tipo <span class="text-red-600">*</span>
+                        </label>
+                        <select id="type" name="type" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Seleccione un tipo</option>
+                            <option value="preventive">Preventivo</option>
+                            <option value="corrective">Correctivo</option>
+                        </select>
+                    </div>
 
-    <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.min.js"></script>
+                    <!-- Frecuencia -->
+                    <div>
+                        <label for="frequency" class="block mb-2 text-sm font-medium text-gray-900">
+                            Frecuencia <span class="text-red-600">*</span>
+                        </label>
+                        <select id="frequency" name="frequency" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Seleccione una frecuencia</option>
+                            <option value="weekly">Semanal</option>
+                            <option value="monthly">Mensual</option>
+                            <option value="quarterly">Trimestral</option>
+                            <option value="yearly">Anual</option>
+                        </select>
+                    </div>
+
+                    <!-- Técnicos -->
+                    <div class="md:col-span-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Asignar Técnicos</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="text-sm font-medium text-gray-700 mb-2">Técnicos Disponibles</h3>
+                                <ul id="tecnicos-disponibles" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2">
+                                    <?php foreach ($technicians as $technician): ?>
+                                        <li class="bg-white p-2 mb-2 rounded shadow cursor-move" data-id="<?= $technician['id'] ?>">
+                                            <?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="text-sm font-medium text-gray-700 mb-2">Técnicos Asignados</h3>
+                                <ul id="tecnicos-asignados" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2">
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" name="technicians[]" id="selected-technicians">
+                    </div>
+                </div>
+
+                <div class="flex justify-center space-x-4">
+                    <button type="submit" 
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                        Registrar Mantenimiento
+                    </button>
+                    <button type="reset"
+                            class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5">
+                        Limpiar Formulario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/flowbite.min.js"></script>
 </body>
 </html>
