@@ -38,8 +38,8 @@
                                     </svg>
                                 </button>
                                 <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
-                                    <a href="userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
-                                    <a href="machineinv" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Inventario de Máquinas</a>
+                                    <a href="/userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
+                                    <a href="/machineinv" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Inventario de Máquinas</a>
                                 </div>
                             </div>
                             
@@ -54,8 +54,8 @@
                                     </svg>
                                 </button>
                                 <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registro de Mantenimiento</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Estadísticas de Mantenimiento</a>
+                                    <a href="/maintenance" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registro de Mantenimiento</a>
+                                    <a href="/maintenance/stats" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Estadísticas de Mantenimiento</a>
                                 </div>
                             </div>
 
@@ -84,8 +84,8 @@
                                     </svg>
                                 </button>
                                 <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
-                                    <a href="maintenance" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Mantenimiento</a>
-                                    <a href="history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registros</a>
+                                    <a href="/maintenance_history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Mantenimiento</a>
+                                    <a href="/history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registros</a>
                                 </div>
                             </div>
                         </div>
@@ -235,10 +235,10 @@
                 <div id="dropdownGestion" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownGestionLink">
                     <ul class="py-2 text-sm text-white">
                         <li>
-                            <a href="userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Usuarios</a>
+                            <a href="/userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Usuarios</a>
                         </li>
                         <li>
-                            <a href="machineinv" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Inventario de Máquinas</a>
+                            <a href="/machineinv" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Inventario de Máquinas</a>
                         </li>
                     </ul>
                 </div>
@@ -257,10 +257,10 @@
                 <div id="dropdownMaintenance" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownMaintenanceLink">
                     <ul class="py-2 text-sm text-white">
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Registro de incidencias</a>
+                            <a href="/maintenance" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Registro de Mantenimiento</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Estadísticas de incidencias</a>
+                            <a href="/maintenance/stats" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Estadísticas de Mantenimiento</a>
                         </li>
                     </ul>
                 </div>
@@ -279,7 +279,7 @@
                 <div id="dropdownIncidencias" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownIncidenciasLink">
                     <ul class="py-2 text-sm text-white">
                         <li>
-                            <a href="incidents" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Incidencias</a>
+                            <a href="/incidents" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Incidencias</a>
                         </li>
                     </ul>
                 </div>
@@ -298,10 +298,10 @@
                 <div id="dropdownNavbar" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownNavbarLink">
                     <ul class="py-2 text-sm text-white">
                         <li>
-                            <a href="maintenance" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Mantenimiento</a>
+                            <a href="/maintenance_history" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Mantenimiento</a>
                         </li>
                         <li>
-                            <a href="history" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Incidencias</a>
+                            <a href="/history" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Incidencias</a>
                         </li>
                     </ul>
                 </div>

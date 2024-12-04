@@ -373,61 +373,323 @@
                 const asignados = document.getElementById('tecnicos-asignados');
                 const selectedTechnicians = document.getElementById('selected-technicians');
     
-                new Sortable(disponibles, {
-                    group: 'tecnicos',
-                    animation: 150,
-                    onSort: updateSelectedTechnicians
-                });
-    
-                new Sortable(asignados, {
-                    group: 'tecnicos',
-                    animation: 150,
-                    onSort: updateSelectedTechnicians
-                });
-    
-                function updateSelectedTechnicians() {
-                    const selected = Array.from(asignados.children).map(li => li.dataset.id);
-                    selectedTechnicians.value = selected.join(',');
+                if (disponibles && asignados) {
+                    // Función para actualizar el campo oculto con los IDs de los técnicos asignados
+                    function updateSelectedTechnicians() {
+                        const assignedTechnicians = Array.from(asignados.children).map(li => li.dataset.id);
+                        selectedTechnicians.value = assignedTechnicians.join(',');
+                        console.log('Técnicos seleccionados:', selectedTechnicians.value); // Debug
+                    }
+
+                    // Inicializar Sortable para la lista de disponibles
+                    new Sortable(disponibles, {
+                        group: 'tecnicos',
+                        animation: 150,
+                        onSort: updateSelectedTechnicians,
+                        onAdd: updateSelectedTechnicians,
+                        onRemove: updateSelectedTechnicians
+                    });
+
+                    // Inicializar Sortable para la lista de asignados
+                    new Sortable(asignados, {
+                        group: 'tecnicos',
+                        animation: 150,
+                        onSort: updateSelectedTechnicians,
+                        onAdd: updateSelectedTechnicians,
+                        onRemove: updateSelectedTechnicians
+                    });
+
+                    // Actualizar el campo oculto cuando se carga la página
+                    updateSelectedTechnicians();
                 }
             });
 
+    // Manejo del formulario de mantenimiento
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form[action="/incidents/create"]');
-        if (form) {
-            form.addEventListener('submit', function(e) {
+        const maintenanceForm = document.querySelector('form[action="/maintenance/create"]');
+        if (maintenanceForm) {
+            maintenanceForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                console.log('Enviando formulario de mantenimiento');
+
+                // Obtener los técnicos seleccionados
+                const selectedTechnicians = Array.from(document.querySelectorAll('#tecnicos-asignados li'))
+                    .map(li => li.getAttribute('data-id'));
+                console.log('Técnicos seleccionados:', selectedTechnicians);
+
+                // Crear FormData con los datos del formulario
+                const formData = new FormData(this);
                 
-                const formData = new FormData(form);
-                
-                fetch('/incidents/create', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Mostrar mensaje de éxito
-                        const successMessage = document.createElement('div');
-                        successMessage.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4';
-                        successMessage.innerHTML = '<span class="block sm:inline">Incidencia creada correctamente</span>';
-                        form.parentNode.insertBefore(successMessage, form);
-                        
-                        // Limpiar el formulario
-                        form.reset();
-                        
-                        // Actualizar los contadores
-                        location.reload(); // Por ahora recargamos la página, pero podríamos actualizar solo los números
-                    } else {
-                        // Mostrar mensaje de error
-                        const errorMessage = document.createElement('div');
-                        errorMessage.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4';
-                        errorMessage.innerHTML = '<span class="block sm:inline">Error al crear la incidencia</span>';
-                        form.parentNode.insertBefore(errorMessage, form);
+                // Asegurarse de que la fecha tenga el formato correcto
+                const dateInput = document.getElementById('scheduled_date');
+                if (dateInput && dateInput.value) {
+                    formData.set('scheduled_date', dateInput.value);
+                }
+
+                // Agregar los técnicos seleccionados
+                if (selectedTechnicians.length > 0) {
+                    selectedTechnicians.forEach(techId => {
+                        formData.append('technicians[]', techId);
+                    });
+                }
+
+                try {
+                    console.log('Enviando datos al servidor:', Object.fromEntries(formData));
+                    
+                    const response = await fetch('/maintenance/create', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    console.log('Respuesta del servidor:', response);
+                    console.log('Headers:', response.headers);
+                    
+                    // Intentar leer el texto de la respuesta primero
+                    const responseText = await response.text();
+                    console.log('Texto de respuesta:', responseText);
+
+                    let result;
+                    try {
+                        result = JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('Error al parsear JSON:', e);
+                        throw new Error('La respuesta del servidor no es JSON válido. Respuesta: ' + responseText);
                     }
-                })
-                .catch(error => {
+
+                    console.log('Respuesta parseada:', result);
+
+                    if (result.success) {
+                        alert(result.message);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        alert(result.message || 'Error al registrar el mantenimiento');
+                    }
+                } catch (error) {
                     console.error('Error:', error);
-                });
+                    alert('Error al procesar la solicitud: ' + error.message);
+                }
             });
         }
     });
+    
+    // Configuración de los gráficos de mantenimiento
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar si estamos en la página de estadísticas
+        if (document.getElementById('typeChart')) {
+            // Obtener los datos de los elementos data
+            const statsContainer = document.getElementById('stats-data');
+            const typeData = JSON.parse(statsContainer.dataset.typeStats || '[]');
+            const frequencyData = JSON.parse(statsContainer.dataset.frequencyStats || '[]');
+            const monthlyData = JSON.parse(statsContainer.dataset.monthlyStats || '[]');
+            const machineData = JSON.parse(statsContainer.dataset.machineStats || '[]');
+
+            // Gráfico por Tipo
+            new Chart(document.getElementById('typeChart'), {
+                type: 'pie',
+                data: {
+                    labels: typeData.map(item => item.type === 'preventive' ? 'Preventivo' : 'Correctivo'),
+                    datasets: [{
+                        data: typeData.map(item => item.count),
+                        backgroundColor: ['#60A5FA', '#F87171']
+                    }]
+                }
+            });
+
+            // Gráfico por Frecuencia
+            new Chart(document.getElementById('frequencyChart'), {
+                type: 'bar',
+                data: {
+                    labels: frequencyData.map(item => {
+                        const labels = {
+                            'weekly': 'Semanal',
+                            'monthly': 'Mensual',
+                            'quarterly': 'Trimestral',
+                            'yearly': 'Anual'
+                        };
+                        return labels[item.frequency];
+                    }),
+                    datasets: [{
+                        label: 'Cantidad',
+                        data: frequencyData.map(item => item.count),
+                        backgroundColor: '#60A5FA'
+                    }]
+                }
+            });
+
+            // Gráfico Mensual
+            new Chart(document.getElementById('monthlyChart'), {
+                type: 'line',
+                data: {
+                    labels: monthlyData.map(item => {
+                        const date = new Date(item.month + '-01');
+                        return date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
+                    }),
+                    datasets: [{
+                        label: 'Mantenimientos',
+                        data: monthlyData.map(item => item.count),
+                        borderColor: '#60A5FA',
+                        tension: 0.1
+                    }]
+                }
+            });
+
+            // Gráfico por Máquina
+            new Chart(document.getElementById('machineChart'), {
+                type: 'bar',
+                data: {
+                    labels: machineData.map(item => item.machine_name),
+                    datasets: [{
+                        label: 'Mantenimientos',
+                        data: machineData.map(item => item.count),
+                        backgroundColor: '#60A5FA'
+                    }]
+                },
+                options: {
+                    indexAxis: 'y'
+                }
+            });
+        }
+    });
+    
+    // Funcionalidad para el historial de mantenimiento
+    function initMaintenanceHistory() {
+        const selectMachine = document.getElementById("machine-select");
+        if (!selectMachine) return;
+
+        const infoBox = document.getElementById("machine-info");
+        const maintenanceHistory = document.getElementById("maintenance-history");
+        const historyContent = document.getElementById("history-content");
+        const infoNombre = document.getElementById("info-nombre");
+        const infoModelo = document.getElementById("info-modelo");
+        const infoFabricante = document.getElementById("info-fabricante");
+        const infoCoordenadas = document.getElementById("info-coordenadas");
+        const infoUbicacion = document.getElementById("info-ubicacion");
+
+        // Actualizar la información de la máquina cuando se selecciona una
+        selectMachine.addEventListener("change", async function(event) {
+            event.preventDefault();
+            const selectedValue = selectMachine.value;
+            console.log("Máquina seleccionada:", selectedValue);
+
+            if (selectedValue) {
+                try {
+                    const response = await fetch(`/api/machine/${selectedValue}`);
+                    console.log("Respuesta de la API de máquina:", response);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const machine = await response.json();
+                    console.log("Datos de la máquina:", machine);
+                    
+                    if (machine) {
+                        infoNombre.textContent = machine.name || 'No disponible';
+                        infoModelo.textContent = machine.model || 'No disponible';
+                        infoFabricante.textContent = machine.manufacturer || 'No disponible';
+                        infoCoordenadas.textContent = machine.coordinates || 'No disponible';
+                        infoUbicacion.textContent = machine.location || 'No disponible';
+                        infoBox.classList.remove("hidden");
+                    }
+                } catch (error) {
+                    console.error('Error al obtener información de la máquina:', error);
+                    alert('Error al obtener información de la máquina. Por favor, inténtalo de nuevo.');
+                }
+            } else {
+                infoBox.classList.add("hidden");
+            }
+        });
+
+        // Manejar el envío del formulario
+        const form = document.getElementById("maintenance-form");
+        if (form) {
+            form.addEventListener("submit", async function(event) {
+                event.preventDefault();
+                const selectedMachine = selectMachine.value;
+                console.log("Consultando historial para máquina:", selectedMachine);
+                
+                if (selectedMachine) {
+                    try {
+                        const response = await fetch(`/api/maintenance/history/${selectedMachine}`);
+                        console.log("Respuesta de la API de historial:", response);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const history = await response.json();
+                        console.log("Datos del historial:", history);
+                        
+                        historyContent.innerHTML = '';
+                        
+                        if (history && history.length > 0) {
+                            history.forEach(record => {
+                                const recordElement = document.createElement('div');
+                                recordElement.className = 'bg-white p-4 rounded-lg shadow mb-4';
+                                recordElement.innerHTML = `
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-semibold text-lg mb-2">Fecha: ${new Date(record.date).toLocaleDateString('es-ES', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric'
+                                            })}</p>
+                                            <p class="mb-1"><span class="font-medium">Tipo:</span> ${record.type}</p>
+                                            <p class="mb-1"><span class="font-medium">Estado:</span> ${record.status}</p>
+                                            <p class="mb-1"><span class="font-medium">Técnico:</span> ${record.technician || 'No asignado'}</p>
+                                            <p class="mt-2 text-gray-600">${record.description || 'Sin descripción'}</p>
+                                        </div>
+                                        <span class="px-3 py-1 rounded-full text-sm ${
+                                            record.status === 'Completado' ? 'bg-green-100 text-green-800' :
+                                            record.status === 'Pendiente' ? 'bg-yellow-100 text-yellow-800' :
+                                            record.status === 'En Proceso' ? 'bg-blue-100 text-blue-800' :
+                                            'bg-gray-100 text-gray-800'
+                                        }">${record.status}</span>
+                                    </div>
+                                `;
+                                historyContent.appendChild(recordElement);
+                            });
+                            maintenanceHistory.classList.remove('hidden');
+                        } else {
+                            historyContent.innerHTML = `
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                                    <div class="flex">
+                                        <div class="ml-3">
+                                            <p class="text-sm text-yellow-700">
+                                                No hay registros de mantenimiento para esta máquina.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            maintenanceHistory.classList.remove('hidden');
+                        }
+                    } catch (error) {
+                        console.error('Error al obtener el historial:', error);
+                        historyContent.innerHTML = `
+                            <div class="bg-red-50 border-l-4 border-red-400 p-4">
+                                <div class="flex">
+                                    <div class="ml-3">
+                                        <p class="text-sm text-red-700">
+                                            Error al obtener el historial de mantenimiento. Por favor, inténtalo de nuevo.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>`;
+                        maintenanceHistory.classList.remove('hidden');
+                    }
+                } else {
+                    alert("Por favor, selecciona una máquina antes de continuar.");
+                }
+            });
+        }
+    }
+
+    // Asegurarnos de que la función se ejecute cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMaintenanceHistory);
+    } else {
+        initMaintenanceHistory();
+    }
+    
