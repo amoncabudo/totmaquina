@@ -23,11 +23,13 @@ include "../App/Controllers/error.php";
 include "../App/Controllers/login.php";
 include "../App/Controllers/validarLogin.php";
 include "../App/Controllers/tancarSessio.php";
+include "../App/Controllers/maintenance_history.php";
 include "../App/Middleware/auth.php";
 include "../App/Middleware/test.php";
 include "../App/Controllers/ctrlmachineinv.php";
 include "../App/Controllers/ctrlindex.php";
 include "../App/Controllers/maintenance.php";
+include "../App/Controllers/maintenanceStats.php";
 include "../App/Controllers/ctrlmachinedetail.php";
 include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
@@ -41,9 +43,10 @@ include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
+include "../App/Controllers/ctrlmachines.php"; 
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
-
+include "../App/Controllers/HistoryIncidentsController.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -53,25 +56,47 @@ $app->middleware(function($request, $response, $container, $next) {
     return \App\Middleware\App::execute($request, $response, $container, $next);
 });
 
+// Routes
 $app->route("", "ctrlPortada");
 $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
-$app->route("maintenance", "maintenance");
 
+$app->route("maintenance", "maintenance");
+// Ruta para mostrar las máquinas disponibles
+
+
+// Maintenance routes
+$app->route("maintenance", "maintenance");
+$app->route("maintenance/create", "createMaintenance");
+$app->route("maintenance/stats", "maintenanceStats");
+$app->route("maintenance_history", [\App\Controllers\MaintenanceHistoryController::class, "index"]);
+
+// API routes
+$app->route("api/maintenance/history/{id}", function($request, $response) {
+    $controller = new \App\Controllers\MaintenanceHistoryController();
+    return $controller->getHistory($request, $response);
+});
+
+$app->route("api/machine/{id}", function($request, $response) {
+    $controller = new \App\Controllers\MaintenanceHistoryController();
+    return $controller->getMachineInfo($request, $response);
+});
+
+// Machine routes
 $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
 $app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"]);
-$app->route("history", "history");
+$app->route("history", [\App\Controllers\HistoryIncidentsController::class, "index"]);
+$app->route("history/incidents/{id}", [\App\Controllers\HistoryIncidentsController::class, "getHistory"]);
 $app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
 
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
-$app->route("history", "history");
 
 $app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"]);
 // Rutas de notificaciones
@@ -84,8 +109,10 @@ $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
 $app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
 $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 
+$app->route('machines', [\App\Controllers\incidents::class, 'incidents']);
 
-$app->route("history", "history");
+
+
 $app->get('/incidents', 'incidents');
 $app->post('/incidents/create', 'createIncident');
 $app->post('/incidents/update-status', 'updateStatus');

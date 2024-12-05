@@ -21,6 +21,7 @@ CREATE TABLE Machine (
     installation_date DATE,
     location VARCHAR(255),
     photo VARCHAR(255),
+    coordinates VARCHAR(100),
     assigned_technician_id INT,
     FOREIGN KEY (assigned_technician_id) REFERENCES User (id) ON DELETE SET NULL
 );
@@ -35,11 +36,18 @@ CREATE TABLE Maintenance (
         'yearly'
     ),
     type ENUM('preventive', 'corrective'),
-    status ENUM('pending', 'completed') DEFAULT 'pending',
-    responsible_technician_id INT,
+    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
     machine_id INT,
-    FOREIGN KEY (responsible_technician_id) REFERENCES User (id) ON DELETE SET NULL,
+    description TEXT,
     FOREIGN KEY (machine_id) REFERENCES Machine (id) ON DELETE CASCADE
+);
+
+CREATE TABLE MaintenanceTechnician (
+    maintenance_id INT,
+    technician_id INT,
+    PRIMARY KEY (maintenance_id, technician_id),
+    FOREIGN KEY (maintenance_id) REFERENCES Maintenance (id) ON DELETE CASCADE,
+    FOREIGN KEY (technician_id) REFERENCES User (id) ON DELETE CASCADE
 );
 
 CREATE TABLE Incident (
@@ -48,7 +56,7 @@ CREATE TABLE Incident (
     priority ENUM('high', 'medium', 'low') DEFAULT 'medium',
     status ENUM(
         'pending',
-        'in progress',
+        'in_progress',
         'resolved'
     ) DEFAULT 'pending',
     registered_date DATE NOT NULL,
@@ -63,11 +71,9 @@ CREATE TABLE Maintenance_History (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date DATE NOT NULL,
     description TEXT,
-    time_spent DECIMAL(5, 2), -- Time in hours (e.g., 2.5 for 2 and a half hours)
+    time_spent DECIMAL(5, 2),
     maintenance_id INT,
     technician_id INT,
     FOREIGN KEY (maintenance_id) REFERENCES Maintenance (id) ON DELETE CASCADE,
     FOREIGN KEY (technician_id) REFERENCES User (id) ON DELETE SET NULL
 );
-
-ALTER TABLE Machine ADD COLUMN coordinates VARCHAR(100);

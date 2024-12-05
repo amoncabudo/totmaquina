@@ -1,61 +1,53 @@
 <?php
+
 function incidents($request, $response, $container) {
     $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
-    
     $incident = new \App\Models\Incident($db->getConnection());
     
     // Obtener los datos necesarios para la vista
     $technicians = $incident->getAllTechnicians();
     $machines = $incident->getAllMachines();
-    
-    // Obtener todas las incidencias para mostrarlas
     $allIncidents = $incident->getAllIncidents();
     
     // Pasar los datos a la vista
     $response->set("technicians", $technicians);
     $response->set("machines", $machines);
     $response->set("incidents", $allIncidents);
-    $response->set("incident", $incident);
-    
-    // Verificar si hay mensaje de éxito o error usando INPUT_GET
-    $success = $request->get(INPUT_GET, "success");
-    $error = $request->get(INPUT_GET, "error");
-    if ($success) {
-        $response->set("success_message", "Incidencia creada correctamente");
-    }
-    if ($error) {
-        $response->set("error_message", "Error al crear la incidencia");
-    }
     
     $response->setTemplate('incidents.php');
     return $response;
 }
 
 function createIncident($request, $response, $container) {
-    $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+    try {
+        $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+        $incident = new \App\Models\Incident($db->getConnection());
+        
+        // Obtener los datos del formulario
+        $data = [
+            'description' => $request->get(INPUT_POST, "description"),
+            'priority' => $request->get(INPUT_POST, "priority"),
+            'machine_id' => $request->get(INPUT_POST, "machine_id"),
+            'technicians' => $request->get(INPUT_POST, "technicians", FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) ?? []
+        ];
+        
+        // Crear la incidencia
+        if ($incident->create($data)) {
+            // Redirigir a la página de incidencias
+            header('Location: /incidents');
+            exit;
+        } else {
+            throw new \Exception("Error al crear la incidencia");
+        }
+        
+    } catch (\Exception $e) {
+        error_log("Error en createIncident: " . $e->getMessage());
+        $response->setStatus(500);
+        $response->setBody(json_encode([
+            'error' => true,
+            'message' => $e->getMessage()
+        ]));
+    }
     
-    $incident = new \App\Models\Incident($db->getConnection());
-    
-    // Obtener los datos del formulario usando INPUT_POST
-    $description = $request->get(INPUT_POST, "description");
-    $machine_id = $request->get(INPUT_POST, "machine_id");
-    $priority = $request->get(INPUT_POST, "priority");
-    $technicians = $request->get(INPUT_POST, "technicians");
-    
-    $data = [
-        'description' => $description,
-        'machine_id' => $machine_id,
-        'priority' => $priority,
-        'technicians' => $technicians
-    ];
-    
-    $result = $incident->create($data);
-    
-    // Enviar respuesta JSON
-    header('Content-Type: application/json');
-    echo json_encode([
-        "success" => $result,
-        "message" => $result ? "Incidencia creada correctamente" : "Error al crear la incidencia"
-    ]);
-    exit;
+    return $response;
 }

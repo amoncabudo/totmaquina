@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.1/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="/css/main.css">
+
+
 </head>
 
 <body class="bg-gray-100 min-h-screen">
@@ -92,7 +94,7 @@
                                     </div>
                                     <input type="password" id="password" name="password"
                                         placeholder="Escribe la contraseña" required
-                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm ">
                                     <div id="mss"></div>
                                 </div>
                                 <div>
@@ -136,7 +138,8 @@
                         <button type="button"
                             data-modal-target="edit-user-modal-<?= $user['id'] ?>"
                             data-modal-toggle="edit-user-modal-<?= $user['id'] ?>"
-                            class="p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300">
+                            class="p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300"
+                            aria-label="Editar usuario">
                             <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" />
                             </svg>
@@ -147,7 +150,8 @@
                             <input type="hidden" name="id" value="<?= $user['id'] ?>">
                             <button type="submit"
                                 onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?')"
-                                class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300">
+                                class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300"
+                                aria-label="Eliminar usuario">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -200,10 +204,27 @@
                                             class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                     </div>
                                     <div>
-                                        <label for="edit-password-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Contraseña</label>
+                                        <div class="flex items-center">
+                                            <label for="edit-password-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Contraseña</label>
+                                            <button data-tooltip-target="edit-password-tooltip-<?= $user['id'] ?>" type="button" class="ml-2">
+                                                <svg class="w-4 h-4 text-gray-400 hover:text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </button>
+                                            <div id="edit-password-tooltip-<?= $user['id'] ?>" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip">
+                                                La contraseña debe contener:
+                                                <ul class="list-disc pl-4">
+                                                    <li>Al menos una minúscula</li>
+                                                    <li>Al menos una mayúscula</li>
+                                                    <li>Al menos un número</li>
+                                                    <li>Al menos un carácter especial ($@$!%*?&-.,)</li>
+                                                    <li>Entre 6 y 13 caracteres</li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                         <input type="password" id="edit-password-<?= $user['id'] ?>" name="password"
                                             placeholder="Dejar en blanco para mantener la actual"
-                                            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
                                     </div>
                                     <div>
                                         <label for="edit-role-<?= $user['id'] ?>" class="block text-sm font-medium text-gray-900">Rol</label>
@@ -241,8 +262,7 @@
         <?php endforeach; ?>
     </div>
     <script src="/js/bundle.js"></script>
-    <script src="/js/password.js"></script>
-    <script src="/js/testUser.js"></script>
+    
 </body>
 
 </html>
