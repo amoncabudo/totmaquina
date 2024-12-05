@@ -24,16 +24,16 @@
 
     <div class="max-w-7xl mx-auto p-4 sm:p-8 ">
     <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Inventario de Máquinas</h1>
-        <div class="flex justify-end mb-4 space-x-4">
+        <div class="flex mb-4 justify-end space-x-4 ">
             <button data-modal-target="machine-modal" data-modal-toggle="machine-modal"
-                class="bg-blue-800 text-white hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
+                class="bg-blue-800 text-white hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center add-machine-button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                     Añadir Máquina
                     </button>
             <button data-modal-target="csv-upload-modal" data-modal-toggle="csv-upload-modal"
-                class="bg-blue-800 text-white hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
+                class="bg-blue-800 text-white hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center add-csv-button">
                 <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
                     <path fill-rule="evenodd" d="M12 3a1 1 0 0 1 .78.375l4 5a1 1 0 1 1-1.56 1.25L13 6.85V14a1 1 0 1 1-2 0V6.85L8.78 9.626a1 1 0 1 1-1.56-1.25l4-5A1 1 0 0 1 12 3ZM9 14v-1H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-4v1a3 3 0 1 1-6 0Zm8 2a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd" />
                 </svg>
@@ -371,7 +371,7 @@
     <div class="grid grid-cols-1 gap-4">
             <?php foreach ($machines as $machine): ?>
                 <div class="bg-white p-2 sm:p-4 lg:p-3 px-4 rounded-lg shadow-md flex justify-between items-center">
-                    <div>
+                    <div class="flex flex-col gap-1 p-2 machine-card">
                         <h2 class="text-base sm:text-lg font-bold"><?php echo htmlspecialchars($machine['name']) ?></h2>
                         <p class="text-xs sm:text-sm"><?php echo htmlspecialchars($machine['location']) ?>, <?php echo htmlspecialchars($machine['model']) ?></p>
                     </div>

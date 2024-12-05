@@ -67,21 +67,41 @@ class User
 
     public function updateUser($id, $name, $surname, $email, $password, $role, $avatar)
     {
-        $password = password_hash($password, PASSWORD_DEFAULT);
+        // Si no se proporciona una nueva contraseña, no se actualiza
+        if (!empty($password)) {
+            $password = password_hash($password, PASSWORD_DEFAULT);
+            $query = "UPDATE User 
+                      SET name = :name, surname = :surname, email = :email, password = :password, role = :role, avatar = :avatar 
+                      WHERE id = :id";
 
-        $query = "UPDATE User SET name = :name, surname = :surname, email = :email, password = :password, role = :role, avatar = :avatar WHERE id = :id";
+            $params = [
+                'id' => $id,
+                'name' => $name,
+                'surname' => $surname,
+                'email' => $email,
+                'password' => $password,
+                'role' => $role,
+                'avatar' => $avatar
+            ];
+        } else {
+            $query = "UPDATE User 
+                      SET name = :name, surname = :surname, email = :email, role = :role, avatar = :avatar 
+                      WHERE id = :id";
+
+            $params = [
+                'id' => $id,
+                'name' => $name,
+                'surname' => $surname,
+                'email' => $email,
+                'role' => $role,
+                'avatar' => $avatar
+            ];
+        }
+
         $stmt = $this->sql->prepare($query);
-        
-        $stmt->execute([
-            'id' => $id,
-            'name' => $name,
-            'surname' => $surname,
-            'email' => $email,
-            'password' => $password,
-            'role' => $role,
-            'avatar' => $avatar
-        ]);
+        $stmt->execute($params);
     }
+
 
 
     public function deleteUser($id)
@@ -97,7 +117,7 @@ class User
             exit;
         }
     }
-    
+
     public function getUserById($id)
     {
         $stmt = $this->sql->prepare("SELECT * FROM User WHERE id = :id");
@@ -106,5 +126,4 @@ class User
         ]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
-
 }
