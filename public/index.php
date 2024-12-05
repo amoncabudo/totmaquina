@@ -46,6 +46,8 @@ include "../App/Controllers/incidents.php";
 include "../App/Controllers/ctrlmachines.php"; 
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
+include "../App/Controllers/ctrlMapMachine.php";
+
 include "../App/Controllers/HistoryIncidentsController.php";
 include "../App/Controllers/UserConfigController.php";
 
@@ -64,6 +66,10 @@ $app->route("validar-login", "ctrlValidarLogin");
 $app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
+
+$app->route("maintenance", "maintenance");
+// Ruta para mostrar las máquinas disponibles
+
 
 // Maintenance routes
 $app->route("maintenance", "maintenance");
@@ -91,6 +97,8 @@ $app->route("history/incidents/{id}", [\App\Controllers\HistoryIncidentsControll
 $app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
+
+$app->route("mapmachines", [\App\Controllers\ctrlMapMachine::class, "mapmachines"]);
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"]);
