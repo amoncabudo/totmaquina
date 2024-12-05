@@ -8,9 +8,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.1/dist/cdn.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>  
+     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+
 </head>
 
 <body class="bg-gray-100 min-h-screen">
@@ -32,6 +38,13 @@
                     <path fill-rule="evenodd" d="M12 3a1 1 0 0 1 .78.375l4 5a1 1 0 1 1-1.56 1.25L13 6.85V14a1 1 0 1 1-2 0V6.85L8.78 9.626a1 1 0 1 1-1.56-1.25l4-5A1 1 0 0 1 12 3ZM9 14v-1H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-4v1a3 3 0 1 1-6 0Zm8 2a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd" />
                 </svg>
                 Añadir Máquina CSV
+            </button>
+            <button onclick="window.location.href='mapmachines'" 
+                class="bg-green-800 text-white hover:bg-green-900 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3z" />
+                </svg>
+                Ver Mapa
             </button>
         </div>
             <!-- Modal -->
@@ -234,6 +247,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal del Mapa -->
+    <div id="mapaModal" class="fixed inset-0 bg-black bg-opacity-20 z-50 hidden">
+      <div class="fixed inset-0 p-4 flex items-center justify-center">
+        <div class="bg-white rounded-lg w-full h-full md:h-[90vh] max-w-7xl relative">
+          <!-- Cabecera del modal -->
+          <div class="bg-gray-800 text-white p-4 rounded-t-lg flex justify-between items-center">
+            <h3 class="text-xl font-bold">Mapa de Máquinas</h3>
+            <button onclick="cerrarMapaModal()" class="text-white hover:text-gray-300 transition-colors">
+              <i class="fas fa-times text-2xl"></i>
+            </button>
+          </div>
+          <!-- Contenedor del mapa -->
+          <div id="mapa"></div>
+          </div>
+        </div>
+      </div>
+
           <!-- Modal para editar usuario -->
     <?php foreach ($machines as $machine) : ?>
         <div id="edit-machine-modal-<?= $machine['id'] ?>" tabindex="-1" aria-hidden="true"
@@ -242,8 +273,8 @@
                 <div class="bg-white rounded-lg shadow">
                     <!-- Encabezado -->
                     <div class="flex items-center justify-between p-4 border-b border-gray-300">
-                        <h3 class="text-lg font-semibold text-gray-900">Editar Máquina</h3>
-                        <button type="button" class="text-gray-400 hover:text-gray-900" data-modal-hide="edit-machine-modal-<?= $machine['id'] ?>">
+                        <h2 class="text-lg font-semibold text-gray-900">Editar Máquina</h2>
+                        <button type="button" class="text-gray-800 hover:text-gray-900" data-modal-hide="edit-machine-modal-<?= $machine['id'] ?>" aria-label="Cerrar modal">
                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -285,12 +316,7 @@
                                         value="<?= htmlspecialchars($machine['location']) ?>" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
-                                <div>
-                                    <label for="edit-serial_number-<?= $machine['id'] ?>" class="block text-sm font-medium text-gray-900">Número de Serie</label>
-                                    <input type="text" id="edit-serial_number-<?= $machine['id'] ?>" name="serial_number" 
-                                        value="<?= isset($machine['serial_number']) ? htmlspecialchars($machine['serial_number']) : '' ?>" required
-                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                </div>
+                                
                                 <div>
                                     <label for="edit-installation_date-<?= $machine['id'] ?>" class="block text-sm font-medium text-gray-900">Fecha de Instalación</label>
                                     <input type="date" id="edit-installation_date-<?= $machine['id'] ?>" name="installation_date" 
@@ -324,12 +350,12 @@
                                 <!-- Botones -->
                                 <div class="flex justify-end space-x-2">
                                     <button type="button" 
-                                        class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600" 
+                                        class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-900" 
                                         data-modal-hide="edit-machine-modal-<?= $machine['id'] ?>">
                                         Cancelar
                                     </button>
                                     <button type="submit" 
-                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                                        class="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900">
                                         Guardar
                                     </button>
                                 </div>
@@ -347,7 +373,7 @@
                 <div class="bg-white p-2 sm:p-4 lg:p-3 px-4 rounded-lg shadow-md flex justify-between items-center">
                     <div class="flex flex-col gap-1 p-2 machine-card">
                         <h2 class="text-base sm:text-lg font-bold"><?php echo htmlspecialchars($machine['name']) ?></h2>
-                        <p class="text-xs sm:text-sm"><?php echo htmlspecialchars($machine['model']) ?>, <?php echo htmlspecialchars($machine['location']) ?></p>
+                        <p class="text-xs sm:text-sm"><?php echo htmlspecialchars($machine['location']) ?>, <?php echo htmlspecialchars($machine['model']) ?></p>
                     </div>
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open" class="p-1 sm:p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300" aria-label="Opciones">
@@ -374,14 +400,18 @@
             <?php endforeach; ?>
         </div>
     </div>
+    <script>
+        
+    </script>
+    <script src="js/bundle.js"></script>
+    <script src="js/flowbite.min.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/machineinv.js"></script>
 </body>
 
 
 
 
-<script src="js/bundle.js"></script>
-<script src="js/flowbite.min.js"></script>
-<script src="js/machineinv.js"></script>
 
 
 </html>
