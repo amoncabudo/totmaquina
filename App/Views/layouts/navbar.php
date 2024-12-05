@@ -144,32 +144,22 @@
                             <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300" type="button">
                                 <span class="sr-only">Abrir menú de usuario</span>
                                 <?php if (isset($_SESSION["user"]["avatar"]) && $_SESSION["user"]["avatar"]): ?>
-                                    <?php $avatarPath = basename($_SESSION["user"]["avatar"]); ?>
-                                    <img class="w-8 h-8 rounded-full" src="<?= '/Images/' . $_SESSION["user"]["avatar"]; ?>" alt="Avatar de usuario">
+                                    <img class="w-8 h-8 rounded-full object-cover" src="/Images/<?= htmlspecialchars($_SESSION["user"]["avatar"]); ?>" alt="Foto de perfil">
                                 <?php else: ?>
-                                    <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                    </svg>
+                                    <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+                                        <span class="text-white text-sm font-medium">
+                                            <?= isset($_SESSION["user"]["name"]) ? strtoupper(substr($_SESSION["user"]["name"], 0, 1)) : 'U' ?>
+                                        </span>
+                                    </div>
                                 <?php endif; ?>
                             </button>
 
                             <!-- Dropdown menu -->
                             <div id="dropdownUser" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
                                 <div class="px-4 py-3 text-sm text-gray-900">
-                                    <div>Hola, <?= $_SESSION["user"]["name"] ?></div>
+                                    <div class="font-medium">Hola, <?= htmlspecialchars($_SESSION["user"]["name"]) ?></div>
+                                    <div class="text-xs text-gray-500 truncate"><?= htmlspecialchars($_SESSION["user"]["email"]) ?></div>
                                 </div>
-                             
-                                    <ul class="py-2 text-sm text-gray-700">
-                                        <li>
-                                            <a href="/adminPanel" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                                                </svg>
-                                                Panel de Administración
-                                            </a>
-                                        </li>
-                                    </ul>
-                             
                                 <ul class="py-2 text-sm text-gray-700">
                                     <li>
                                         <a href="/userconfig" class="flex items-center px-4 py-2 hover:bg-gray-100">
@@ -181,6 +171,14 @@
                                         </a>
                                     </li>
                                 </ul>
+                                <div class="py-2">
+                                    <a href="tancar-sessio" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Cerrar sesión
+                                    </a>
+                                </div>
                             </div>
 
                             <!-- Botón de cerrar sesión -->
