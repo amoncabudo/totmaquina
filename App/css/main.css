@@ -120,3 +120,17 @@
     will-change: transform;
     border: 1px solid rgba(75, 85, 99, 0.3); /* gray-600 con baja opacidad para el borde */
 }
+
+#map {
+    height: calc(100vh - 60px); /* Ajusta la altura según el tamaño del navbar */
+    z-index: 1; /* Asegúrate de que el mapa esté por debajo del navbar */
+}
+#navbar {
+    position: relative;
+    z-index: 1000; /* Asegúrate de que el navbar esté por encima del mapa */
+}
+
+#navbar .dropdown-menu {
+    position: absolute;
+    z-index: 1100; /* Asegúrate de que el menú desplegable esté por encima del navbar */
+}
