@@ -8,9 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
     <link href="<?php echo $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST']; ?>/css/main.css" rel="stylesheet">
+
 </head>
 <body class="bg-gray-100">
-    <nav id="navbar" class="fixed top-0 w-full bg-black shadow-lg z-50 transition-all duration-300" role="navigation" aria-label="Menú principal">
+    <nav id="navbar" class="bg-black shadow-lg transition-all duration-300" role="navigation" aria-label="Menú principal">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo y menú de escritorio -->
@@ -95,16 +96,21 @@
                 <!-- Búsqueda y perfil -->
                 <div class="hidden md:flex items-center space-x-6">
                     <div class="relative">
-                        <label for="search-input" class="sr-only">Buscar</label>
+                        <label for="searchInput" class="sr-only">Buscar máquinas</label>
                         <input type="search" 
-                               id="search-input"
-                               placeholder="Buscar..." 
-                               class="bg-white text-gray-800 rounded-full px-4 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                               id="searchInput"
+                               placeholder="Buscar máquinas..." 
+                               class="w-64 bg-white text-gray-800 rounded-full px-4 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                               autocomplete="off">
                         <button class="absolute right-2 top-1/2 transform -translate-y-1/2" aria-label="Buscar">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </button>
+                        <!-- Contenedor de resultados -->
+                        <div id="searchResults" class="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-lg overflow-hidden hidden z-50">
+                            <!-- Los resultados se insertarán aquí dinámicamente -->
+                        </div>
                     </div>
                     
                     <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
@@ -436,5 +442,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <?php include "cookie-banner.php"; ?>
+    <script src="/js/main.js"></script>
+
 </body>
 </html> 
