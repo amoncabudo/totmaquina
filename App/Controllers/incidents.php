@@ -17,16 +17,6 @@ function incidents($request, $response, $container) {
     $response->set("incidents", $allIncidents);
     $response->set("incident", $incident);
     
-    // Verificar si hay mensaje de éxito o error usando INPUT_GET
-    $success = $request->get(INPUT_GET, "success");
-    $error = $request->get(INPUT_GET, "error");
-    if ($success) {
-        $response->set("success_message", "Incidencia creada correctamente");
-    }
-    if ($error) {
-        $response->set("error_message", "Error al crear la incidencia");
-    }
-    
     $response->setTemplate('incidents.php');
     return $response;
 }
@@ -51,11 +41,6 @@ function createIncident($request, $response, $container) {
     
     $result = $incident->create($data);
     
-    // Enviar respuesta JSON
-    header('Content-Type: application/json');
-    echo json_encode([
-        "success" => $result,
-        "message" => $result ? "Incidencia creada correctamente" : "Error al crear la incidencia"
-    ]);
+
     exit;
 }
