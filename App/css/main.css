@@ -127,12 +127,30 @@
     height: calc(100vh - 60px); /* Ajusta la altura según el tamaño del navbar */
     z-index: 1; /* Asegúrate de que el mapa esté por debajo del navbar */
 }
-#navbar {
-    position: relative;
-    z-index: 1000; /* Asegúrate de que el navbar esté por encima del mapa */
-}
 
 #navbar .dropdown-menu {
     position: absolute;
     z-index: 1100; /* Asegúrate de que el menú desplegable esté por encima del navbar */
 }
+
+.main-content {
+    padding-top: 0; /* Eliminar el padding superior */
+    margin-top: 0; /* Eliminar el margen superior */
+}
+.carousel-container {
+    margin-top: 0; /* Eliminar el margen superior del carrusel */
+}
+#navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    margin: 0;
+    padding: 0;
+}
+body {
+    padding-top: 0;
+    margin-top: 0;
+}
+

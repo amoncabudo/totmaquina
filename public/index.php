@@ -88,6 +88,8 @@ $app->route("api/machine/{id}", function($request, $response) {
     return $controller->getMachineInfo($request, $response);
 });
 
+$app->route("api/search", [\App\Controllers\SearchController::class, "search"]);
+
 // Machine routes
 $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);

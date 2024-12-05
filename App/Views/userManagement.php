@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Usuarios</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.1/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="/css/main.css">
 
 
@@ -261,8 +260,9 @@
             </div>
         <?php endforeach; ?>
     </div>
-    <script src="/js/bundle.js"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.2.1/dist/flowbite.min.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 
 </html>
