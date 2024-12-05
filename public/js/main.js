@@ -784,6 +784,111 @@
         });
     }
 
+    // Función para hacer debounce de las búsquedas
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Función para realizar la búsqueda
+    async function performSearch(query) {
+        const searchResults = document.getElementById('searchResults');
+        
+        try {
+            const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                if (data.results.length === 0) {
+                    searchResults.innerHTML = `
+                        <div class="px-4 py-2 text-sm text-gray-500">
+                            No se encontraron resultados
+                        </div>`;
+                } else {
+                    searchResults.innerHTML = data.results.map(machine => `
+                        <a href="/machinedetail/${machine.id}" class="block hover:bg-gray-50">
+                            <div class="px-4 py-2 border-b">
+                                <div class="text-sm font-medium text-gray-900">${machine.name}</div>
+                                <div class="text-sm text-gray-500">
+                                    ${machine.manufacturer} - ${machine.model}
+                                    <br>
+                                    Ubicación: ${machine.location}
+                                </div>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+            } else {
+                searchResults.innerHTML = `
+                    <div class="px-4 py-2 text-sm text-red-500">
+                        ${data.error}
+                    </div>`;
+            }
+            
+            searchResults.classList.remove('hidden');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            searchResults.innerHTML = `
+                <div class="px-4 py-2 text-sm text-red-500">
+                    Error al realizar la búsqueda
+                </div>`;
+            searchResults.classList.remove('hidden');
+        }
+    }
+
+    // Inicializar la búsqueda cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        
+        if (searchInput && searchResults) {
+            // Manejar la entrada de búsqueda con debounce
+            searchInput.addEventListener('input', debounce(function(e) {
+                const query = e.target.value.trim();
+                
+                if (query.length === 0) {
+                    searchResults.innerHTML = '';
+                    searchResults.classList.add('hidden');
+                    return;
+                }
+                
+                if (query.length < 3) {
+                    searchResults.innerHTML = `
+                        <div class="px-4 py-2 text-sm text-gray-500">
+                            Escribe al menos 3 caracteres para buscar
+                        </div>`;
+                    searchResults.classList.remove('hidden');
+                    return;
+                }
+                
+                performSearch(query);
+            }, 300));
+            
+            // Ocultar resultados cuando se hace clic fuera
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.add('hidden');
+                }
+            });
+            
+            // Prevenir envío del formulario
+            const form = searchInput.closest('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                });
+            }
+        }
+    });
+
     // Inicializar las funciones cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
@@ -794,6 +899,121 @@
         initMaintenanceHistory();
         initIncidentHistory();
     }
+
+    $(document).ready(function() {
+        console.log('DOM cargado, configurando event listeners...');
     
+        $('#createTestTechnician').on('click', function() {
+            generarUsuarioPrueba('technician');
+        });
+    
+        $('#createTestSupervisor').on('click', function() {
+            generarUsuarioPrueba('supervisor');
+        });
+    });
+    
+    function generarUsuarioPrueba(role) {
+        console.log('Generando usuario de prueba para el rol:', role);
+    
+        $.ajax({
+            url: 'https://randomuser.me/api/?nat=es&inc=email,name,login',
+            dataType: 'json',
+            success: function(data) {
+                const user = data.results[0];
+                const usuarioPrueba = {
+                    nombre: user.name.first,
+                    apellido: user.name.last,
+                    email: user.email,
+                    pass: 'Testing10.',
+                    rol: role
+                };
+    
+                // Enviar al servidor
+                $.ajax({
+                    url: '/createTestUser',
+                    method: 'POST',
+                    data: usuarioPrueba,
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function(response) {
+                        console.log('Respuesta del servidor:', response);
+                        const result = typeof response === 'string' ? JSON.parse(response) : response;
+                        if (result.success) {
+                            // En lugar de intentar insertar el usuario en el DOM, recargamos la página
+                            window.location.reload();
+                        } else {
+                            console.error('Error del servidor:', result.message);
+                            alert('Error: ' + result.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la petición:', error);
+                        alert('Error al crear el usuario: ' + error);
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al obtener usuario aleatorio:', error);
+                alert('Error al generar usuario de prueba: ' + error);
+            }
+        });
+    } 
 
     
+
+console.log("password.js loaded");
+console.log("messi");
+
+// La expresión regular para validar la contraseña 
+//(debe contener al menos una minúscula, una mayúscula, un número, un carácter especial y tener una longitud de entre 6 y 13 caracteres)
+var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&-.,])[A-Za-z\d$@$!%*?&-.,]{6,13}[^'\s]/;
+
+// Función para manejar la validación de la contraseña en el formulario de creación
+function handlePasswordValidation() {
+    var password = $(this).val();
+    console.log(password);
+    
+    if (pattern.test(password)) {
+        $(this).css("border", "2px solid green");
+        $("#mss").html("Contraseña válida").css("color", "green");
+        $("#btnEnviar").prop("disabled", false);
+    } else {
+        $(this).css("border", "2px solid red");
+        $("#mss").html("Contraseña inválida").css("color", "red");
+        $("#btnEnviar").prop("disabled", true);
+    }
+}
+
+// Función para manejar la validación de la contraseña en el formulario de edición
+function handleEditPasswordValidation() {
+    var password = $(this).val();
+    console.log(password);
+    
+    // Si el campo está vacío, permitir el envío (password opcional en edición)
+    if (password === "") {
+        $(this).css("border", "");
+        $("#edit-mss").html("").css("display", "none");
+        $("button[type='submit']").prop("disabled", false);
+        return;
+    }
+    
+    if (pattern.test(password)) {
+        $(this).css("border", "2px solid green");
+        $("#edit-mss").html("Contraseña válida").css({
+            "color": "green",
+            "display": "block"
+        });
+        $("button[type='submit']").prop("disabled", false);
+    } else {
+        $(this).css("border", "2px solid red");
+        $("#edit-mss").html("Contraseña inválida").css({
+            "color": "red",
+            "display": "block"
+        });
+        $("button[type='submit']").prop("disabled", true);
+    }
+}
+
+// Asignar eventos
+$('#password').on('keyup', handlePasswordValidation);
+$('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation);
+
