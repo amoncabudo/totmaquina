@@ -118,6 +118,34 @@ class User
         }
     }
 
+    public function updateResetToken($email, $tokenHash, $expiresAt)
+    {
+        $query = "UPDATE User SET reset_token_hash = :tokenHash, reset_token_expires_at = :expiresAt WHERE email = :email";
+        $stmt = $this->sql->prepare($query);
+        return $stmt->execute([
+            'tokenHash' => $tokenHash, 
+            'expiresAt' => $expiresAt, 
+            'email' => $email
+        ]);
+    }
+
+    public function getUserByToken($tokenHash)
+    {
+        $query = "SELECT * FROM User WHERE reset_token_hash = :tokenHash AND reset_token_expires_at > NOW()";
+        $stmt = $this->sql->prepare($query);
+        $stmt->execute(['tokenHash' => $tokenHash]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function updatePassword($email, $password)
+    {
+        $password = password_hash($password, PASSWORD_DEFAULT);
+        $query = "UPDATE User SET password = :password WHERE email = :email";
+        $stmt = $this->sql->prepare($query);
+        return $stmt->execute(['password' => $password, 'email' => $email]);
+    }
+
+
     public function getUserById($id)
     {
         $stmt = $this->sql->prepare("SELECT * FROM User WHERE id = :id");

@@ -47,6 +47,8 @@ include "../App/Controllers/ctrlmachines.php";
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/ctrlMapMachine.php";
+include "../App/Controllers/ctrlResetPassword.php";
+
 
 include "../App/Controllers/HistoryIncidentsController.php";
 include "../App/Controllers/UserConfigController.php";
@@ -132,6 +134,10 @@ $app->route("politica-cookies", function($request, $response) {
 });
 
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"]);
+$app->route("passwordRecovery", [\App\Controllers\ResetPassController::class, "index"]);
+$app->post("reset", [\App\Controllers\ResetPassController::class, "reset"]);
+$app->route("resetpassword", [\App\Controllers\ResetPassController::class, "resetPassword"]);
+$app->route("update-password", [\App\Controllers\ResetPassController::class, "updatePassword"], [], "POST");
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
