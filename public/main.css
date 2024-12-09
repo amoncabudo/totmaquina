@@ -1503,9 +1503,9 @@ input:checked + .toggle-bg {
 }
 
 #map {
-
+    margin-top: 4rem;
     z-index: 1; /* Asegúrate de que el mapa esté por debajo del navbar */
-    height: 100vh;
+    height: 91vh;
 }
 
 #navbar {

@@ -48,7 +48,9 @@ include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/ctrlMapMachine.php";
 
+
 include "../App/Controllers/HistoryIncidentsController.php";
+include "../App/Controllers/UserConfigController.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -87,6 +89,8 @@ $app->route("api/machine/{id}", function($request, $response) {
     return $controller->getMachineInfo($request, $response);
 });
 
+$app->route("api/search", [\App\Controllers\SearchController::class, "search"]);
+
 // Machine routes
 $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
@@ -96,25 +100,21 @@ $app->route("history/incidents/{id}", [\App\Controllers\HistoryIncidentsControll
 $app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
-
-$app->route("mapmachines", [\App\Controllers\ctrlMapMachine::class, "mapmachines"]);
+$app->get('/generate_machine_qr/{id}', [\App\Controllers\CtrlGenerateMachineQR::class, "generateQR"]);
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
-
 $app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"]);
+
 // Rutas de notificaciones
 $app->route("notifications", [\App\Controllers\NotificationsController::class, "index"]);
 $app->post("notifications/delete/{id}", [\App\Controllers\NotificationsController::class, "delete"]);
 $app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsController::class, "markAsRead"]);
 
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
-
 $app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
 $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
 
 $app->route('machines', [\App\Controllers\incidents::class, 'incidents']);
-
-
 
 $app->get('/incidents', 'incidents');
 $app->post('/incidents/create', 'createIncident');
@@ -122,28 +122,22 @@ $app->post('/incidents/update-status', 'updateStatus');
 $app->post('/incidents/assign-technician', 'assignTechnician');
 $app->post('/incidents/delete', 'deleteIncident');
 $app->get('/incidents/statistics', 'getStatistics');
-$app->route("ajax", function ($request, $response) {
-    $response->set("result", "ok");
-    return $response;
-});
 
-$app->route("/hola/{id}", function ($request, $response) {
-    $id = $request->getParam("id");
-    $response->setBody("Hola {$id}!");
-    return $response;
-});
+// Rutas de configuración de usuario
+$app->route("userconfig", [\App\Controllers\UserConfigController::class, "index"]);
+$app->route("update-avatar", [\App\Controllers\UserConfigController::class, "updateAvatar"], [], "POST");
+$app->route("update-profile", [\App\Controllers\UserConfigController::class, "updateProfile"], [], "POST");
 
-$app->route(Router::DEFAULT_ROUTE, "ctrlError");
-
-$app->route("userconfig", [\App\Controllers\UserConfig::class, "index"]);
 $app->route("politica-cookies", function($request, $response) {
     $response->SetTemplate("politica-cookies.php");
     return $response;
 });
 
-$app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"]);
-
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"]);
+
+$app->route(Router::DEFAULT_ROUTE, "ctrlError");
+
+
 $app->execute();
 
 
