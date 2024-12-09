@@ -8,9 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
     <link href="<?php echo $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST']; ?>/css/main.css" rel="stylesheet">
+
 </head>
 <body class="bg-gray-100">
-    <nav id="navbar" class="fixed top-0 w-full bg-black shadow-lg z-50 transition-all duration-300" role="navigation" aria-label="Menú principal">
+    <nav id="navbar" class="bg-black shadow-lg transition-all duration-300" role="navigation" aria-label="Menú principal">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo y menú de escritorio -->
@@ -95,16 +96,21 @@
                 <!-- Búsqueda y perfil -->
                 <div class="hidden md:flex items-center space-x-6">
                     <div class="relative">
-                        <label for="search-input" class="sr-only">Buscar</label>
+                        <label for="searchInput" class="sr-only">Buscar máquinas</label>
                         <input type="search" 
-                               id="search-input"
-                               placeholder="Buscar..." 
-                               class="bg-white text-gray-800 rounded-full px-4 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                               id="searchInput"
+                               placeholder="Buscar máquinas..." 
+                               class="w-64 bg-white text-gray-800 rounded-full px-4 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                               autocomplete="off">
                         <button class="absolute right-2 top-1/2 transform -translate-y-1/2" aria-label="Buscar">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </button>
+                        <!-- Contenedor de resultados -->
+                        <div id="searchResults" class="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-lg overflow-hidden hidden z-50">
+                            <!-- Los resultados se insertarán aquí dinámicamente -->
+                        </div>
                     </div>
                     
                     <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
@@ -144,44 +150,56 @@
                             <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300" type="button">
                                 <span class="sr-only">Abrir menú de usuario</span>
                                 <?php if (isset($_SESSION["user"]["avatar"]) && $_SESSION["user"]["avatar"]): ?>
-                                    <?php $avatarPath = basename($_SESSION["user"]["avatar"]); ?>
-                                    <img class="w-8 h-8 rounded-full" src="<?= '/Images/' . $_SESSION["user"]["avatar"]; ?>" alt="Avatar de usuario">
+                                    <img class="w-8 h-8 rounded-full object-cover" src="/Images/<?= htmlspecialchars($_SESSION["user"]["avatar"]); ?>" alt="Foto de perfil">
                                 <?php else: ?>
-                                    <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                    </svg>
+                                    <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+                                        <span class="text-white text-sm font-medium">
+                                            <?= isset($_SESSION["user"]["name"]) ? strtoupper(substr($_SESSION["user"]["name"], 0, 1)) : 'U' ?>
+                                        </span>
+                                    </div>
                                 <?php endif; ?>
                             </button>
 
                             <!-- Dropdown menu -->
+                       <!-- Dropdown menu -->
                             <div id="dropdownUser" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
-                                <div class="px-4 py-3 text-sm text-gray-900">
-                                    <div>Hola, <?= $_SESSION["user"]["name"] ?></div>
-                                </div>
-                             
-                                    <ul class="py-2 text-sm text-gray-700">
-                                        <li>
-                                            <a href="/adminPanel" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                                                </svg>
-                                                Panel de Administración
-                                            </a>
-                                        </li>
-                                    </ul>
-                             
-                                <ul class="py-2 text-sm text-gray-700">
-                                    <li>
-                                        <a href="/userconfig" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            </svg>
-                                            Configuración
-                                        </a>
-                                    </li>
-                                </ul>
+    <div class="px-4 py-3 text-sm text-gray-900">
+        <div class="font-medium">Hola, <?= htmlspecialchars($_SESSION["user"]["name"]) ?></div>
+        <div class="text-xs text-gray-500 truncate"><?= htmlspecialchars($_SESSION["user"]["email"]) ?></div>
+    </div>
+    <ul class="py-2 text-sm text-gray-700">
+        <!-- Configuración -->
+        <li>
+            <a href="/userconfig" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 3 3 0 016 0z"></path>
+                </svg>
+                Configuración
+            </a>
+        </li>
+        <!-- Mis Máquinas -->
+        <li>
+            <a href="/mis-maquinas" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h4m-2-2v4" />
+                </svg>
+                Mis Máquinas
+            </a>
+        </li>
+    </ul>
+    <!-- Cerrar sesión -->
+    <div class="py-2">
+        <a href="tancar-sessio" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Cerrar sesión
+        </a>
+    </div>
                             </div>
+
 
                             <!-- Botón de cerrar sesión -->
                             <a href="tancar-sessio" class="text-red-500 hover:text-red-400 transition-colors duration-200" aria-label="Cerrar sesión">
@@ -438,5 +456,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <?php include "cookie-banner.php"; ?>
+    <script src="/js/main.js"></script>
+
 </body>
 </html> 

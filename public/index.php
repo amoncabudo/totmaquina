@@ -137,7 +137,6 @@ $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "crea
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
-
 $app->execute();
 
 
