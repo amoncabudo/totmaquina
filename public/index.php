@@ -46,7 +46,8 @@ include "../App/Controllers/incidents.php";
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/usermachines.php";
-
+include "../App/Controllers/HistoryIncidentsController.php";
+include "../App/Controllers/UserConfigController.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -91,6 +92,8 @@ $app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
 
+
+$app->get('/generate_machine_qr/{id}', [\App\Controllers\CtrlGenerateMachineQR::class, "generateQR"]);
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
