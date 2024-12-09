@@ -5,17 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Machine Inventory</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.1/dist/cdn.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>  
-     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-
+    <link rel="stylesheet" href="/main.css">
+  
 
 </head>
 
@@ -30,21 +21,21 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-                    Añadir Máquina
+                <p class="text">Añadir Máquina</p>
                     </button>
             <button data-modal-target="csv-upload-modal" data-modal-toggle="csv-upload-modal"
                 class="bg-blue-800 text-white hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center add-csv-button">
                 <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
                     <path fill-rule="evenodd" d="M12 3a1 1 0 0 1 .78.375l4 5a1 1 0 1 1-1.56 1.25L13 6.85V14a1 1 0 1 1-2 0V6.85L8.78 9.626a1 1 0 1 1-1.56-1.25l4-5A1 1 0 0 1 12 3ZM9 14v-1H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-4v1a3 3 0 1 1-6 0Zm8 2a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd" />
                 </svg>
-                Añadir Máquina CSV
+                <p class="text">Añadir Máquina CSV</p>
             </button>
-            <button onclick="window.location.href='mapmachines'" 
-                class="bg-green-800 text-white hover:bg-green-900 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3z" />
+            <button onclick="window.location.href='mapmachines'"
+                class="bg-green-800 text-white hover:bg-green-900 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center"
+                aria-label="Ver Mapa">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" aria-label="Ver Mapa">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
                 </svg>
-                Ver Mapa
             </button>
         </div>
             <!-- Modal -->
@@ -206,8 +197,8 @@
                                     <canvas id="canvas" width="320" height="240" class="mt-2 hidden"></canvas>
                                 </div>
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-800">Cancel</button>
-                                    <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-800">Save</button>
+                                <button type="button" class="text-gray-400 hover:text-gray-900" data-modal-hide="machine-modal" aria-label="Cerrar modal">Cancelar</button>
+                                <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-800">Guardar</button>
                                 </div>
                             </div>
                         </form>
@@ -265,13 +256,13 @@
         </div>
       </div>
 
-          <!-- Modal para editar usuario -->
+          <!-- Modal para editar maquinas -->
     <?php foreach ($machines as $machine) : ?>
         <div id="edit-machine-modal-<?= $machine['id'] ?>" tabindex="-1" aria-hidden="true"
             class="hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto h-[calc(100%-1rem)] max-h-full">
             <div class="relative w-full max-w-2xl max-h-full">
                 <div class="bg-white rounded-lg shadow">
-                    <!-- Encabezado -->
+                    <!-- Header -->
                     <div class="flex items-center justify-between p-4 border-b border-gray-300">
                         <h2 class="text-lg font-semibold text-gray-900">Editar Máquina</h2>
                         <button type="button" class="text-gray-800 hover:text-gray-900" data-modal-hide="edit-machine-modal-<?= $machine['id'] ?>" aria-label="Cerrar modal">
@@ -295,35 +286,30 @@
                                         value="<?= htmlspecialchars($machine['name']) ?>" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
-                                <!-- Apellido -->
+                                <!-- Modelo -->
                                 <div>
                                     <label for="edit-model-<?= $machine['id'] ?>" class="block text-sm font-medium text-gray-900">Modelo</label>
                                     <input type="text" id="edit-model-<?= $machine['id'] ?>" name="model" 
                                         value="<?= htmlspecialchars($machine['model']) ?>" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
-                                <!-- Email -->
+                                <!-- Fabricante -->
                                 <div>
                                     <label for="edit-manufacturer-<?= $machine['id'] ?>" class="block text-sm font-medium text-gray-900">Fabricante</label>
                                     <input type="text" id="edit-manufacturer-<?= $machine['id'] ?>" name="manufacturer" 
                                         value="<?= htmlspecialchars($machine['manufacturer']) ?>" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
-                                <!-- Contraseña -->
+                                <!-- Ubicacion -->
                                 <div>
                                     <label for="edit-location-<?= $machine['id'] ?>" class="block text-sm font-medium text-gray-900">Ubicación</label>
                                     <input type="text" id="edit-location-<?= $machine['id'] ?>" name="location" 
                                         value="<?= htmlspecialchars($machine['location']) ?>" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
-                                
-                                <div>
-                                    <label for="edit-installation_date-<?= $machine['id'] ?>" class="block text-sm font-medium text-gray-900">Fecha de Instalación</label>
-                                    <input type="date" id="edit-installation_date-<?= $machine['id'] ?>" name="installation_date" 
-                                        value="<?= htmlspecialchars($machine['installation_date']) ?>" required
-                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                                <!-- Coordinates -->
+                                <!-- Fecha de Instalación -->
+                               
+                                <!-- Coordenadas y Foto -->
                                 <?php
                                 // Ensure variables are set before use
                                 $coordinates = isset($machine['coordinates']) ? htmlspecialchars($machine['coordinates']) : '';
@@ -349,11 +335,7 @@
                                 </div>
                                 <!-- Botones -->
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" 
-                                        class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-900" 
-                                        data-modal-hide="edit-machine-modal-<?= $machine['id'] ?>">
-                                        Cancelar
-                                    </button>
+                                <button type="button" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-800" data-modal-hide="csv-upload-modal">Cancelar</button>
                                     <button type="submit" 
                                         class="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900">
                                         Guardar
@@ -367,51 +349,42 @@
         </div>
     <?php endforeach; ?>
 
-
     <div class="grid grid-cols-1 gap-4">
-            <?php foreach ($machines as $machine): ?>
-                <div class="bg-white p-2 sm:p-4 lg:p-3 px-4 rounded-lg shadow-md flex justify-between items-center">
-                    <div class="flex flex-col gap-1 p-2 machine-card">
-                        <h2 class="text-base sm:text-lg font-bold"><?php echo htmlspecialchars($machine['name']) ?></h2>
-                        <p class="text-xs sm:text-sm"><?php echo htmlspecialchars($machine['location']) ?>, <?php echo htmlspecialchars($machine['model']) ?></p>
-                    </div>
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="p-1 sm:p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300" aria-label="Opciones">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                            </svg>
+    <?php foreach ($machines as $machine): ?>
+        <div class="bg-white p-2 sm:p-4 lg:p-3 px-4 rounded-lg shadow-md flex justify-between items-center">
+            <div class="flex flex-col gap-1 p-2 machine-card">
+                <h2 class="text-base sm:text-lg font-bold"><?php echo htmlspecialchars($machine['name']) ?></h2>
+                <p class="text-xs sm:text-sm"><?php echo htmlspecialchars($machine['location']) ?>, <?php echo htmlspecialchars($machine['model']) ?></p>
+            </div>
+            <div class="relative">
+                <button class="p-1 sm:p-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-300" aria-label="Opciones" data-dropdown-toggle="dropdown-<?= $machine['id'] ?>">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+                <div id="dropdown-<?= $machine['id'] ?>" class="hidden absolute right-0 mt-2 w-40 sm:w-48 bg-gray-100 rounded-md shadow-lg z-10">
+                    <a href="machinedetail/<?php echo htmlspecialchars($machine['id']); ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver Más</a>
+                    <button type="button" data-modal-target="edit-machine-modal-<?php echo $machine['id'] ?>" data-modal-toggle="edit-machine-modal-<?php echo $machine['id'] ?>" class="block w-full text-left px-4 py-2 text-sm text-blue-800 hover:bg-blue-50">
+                        Editar
+                    </button>
+                    <button type="button" onclick="showMachineQRCode('<?php echo htmlspecialchars($machine['id']); ?>')" 
+                        class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
+                        Generar QR
+                    </button>
+
+                    <form action="/deletemachine/<?php echo htmlspecialchars($machine['id']); ?>" method="POST" class="block">
+                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                            Eliminar
                         </button>
-                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-40 sm:w-48 bg-gray-100 rounded-md shadow-lg z-10">
-                            <a href="machinedetail/<?php echo htmlspecialchars($machine['id']); ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver Más</a>
-                            <button type="button" data-modal-target="edit-machine-modal-<?php echo $machine['id'] ?>" data-modal-toggle="edit-machine-modal-<?php echo $machine['id'] ?>" class="block w-full text-left px-4 py-2 text-sm text-blue-800 hover:bg-blue-50">
-                                Editar
-                            </button>
-                            <button type="button" onclick="showQRCode('<?php echo htmlspecialchars($machine['id']); ?>')" class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
-                                Generar QR
-                            </button>
-                            <form action="/deletemachine/<?php echo htmlspecialchars($machine['id']); ?>" method="POST" class="block">
-                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                    Eliminar
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-            <?php endforeach; ?>
+            </div>
         </div>
+        <?php endforeach; ?>
     </div>
-    <script>
-        
-    </script>
-    <script src="js/bundle.js"></script>
-    <script src="js/flowbite.min.js"></script>
-    <script src="js/map.js"></script>
-    <script src="js/machineinv.js"></script>
+    </div>
+    <script src="/js/bundle.js"></script>
+    <script src="/js/flowbite.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
-
-
-
-
-
-
 </html>
