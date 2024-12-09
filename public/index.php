@@ -48,6 +48,7 @@ include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/ctrlMapMachine.php";
 
+
 include "../App/Controllers/HistoryIncidentsController.php";
 include "../App/Controllers/UserConfigController.php";
 
@@ -99,8 +100,7 @@ $app->route("history/incidents/{id}", [\App\Controllers\HistoryIncidentsControll
 $app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
-
-$app->route("mapmachines", [\App\Controllers\ctrlMapMachine::class, "mapmachines"]);
+$app->get('/generate_machine_qr/{id}', [\App\Controllers\CtrlGenerateMachineQR::class, "generateQR"]);
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"]);
