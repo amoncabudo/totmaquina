@@ -367,116 +367,124 @@
             });
         }
     });
-            // Script para manejar el drag and drop de técnicos
-            document.addEventListener('DOMContentLoaded', function() {
-                const disponibles = document.getElementById('tecnicos-disponibles');
-                const asignados = document.getElementById('tecnicos-asignados');
-                const selectedTechnicians = document.getElementById('selected-technicians');
-    
-                if (disponibles && asignados) {
-                    // Función para actualizar el campo oculto con los IDs de los técnicos asignados
-                    function updateSelectedTechnicians() {
-                        const assignedTechnicians = Array.from(asignados.children).map(li => li.dataset.id);
-                        selectedTechnicians.value = assignedTechnicians.join(',');
-                        console.log('Técnicos seleccionados:', selectedTechnicians.value); // Debug
-                    }
 
-                    // Inicializar Sortable para la lista de disponibles
-                    new Sortable(disponibles, {
-                        group: 'tecnicos',
-                        animation: 150,
-                        onSort: updateSelectedTechnicians,
-                        onAdd: updateSelectedTechnicians,
-                        onRemove: updateSelectedTechnicians
-                    });
+    // Variable para rastrear si el formulario ya fue inicializado
+    let isMaintenanceFormInitialized = false;
 
-                    // Inicializar Sortable para la lista de asignados
-                    new Sortable(asignados, {
-                        group: 'tecnicos',
-                        animation: 150,
-                        onSort: updateSelectedTechnicians,
-                        onAdd: updateSelectedTechnicians,
-                        onRemove: updateSelectedTechnicians
-                    });
+    // Función para inicializar el manejo de técnicos
+    function initializeTechnicians() {
+        const disponibles = document.getElementById('tecnicos-disponibles');
+        const asignados = document.getElementById('tecnicos-asignados');
+        const techniciansData = document.getElementById('technicians-data');
 
-                    // Actualizar el campo oculto cuando se carga la página
-                    updateSelectedTechnicians();
+        if (disponibles && asignados && !isMaintenanceFormInitialized) {
+            // Función para actualizar el campo oculto con los IDs de los técnicos asignados
+            function updateSelectedTechnicians() {
+                const assignedTechnicians = Array.from(asignados.children).map(li => li.dataset.id);
+                if (techniciansData) {
+                    techniciansData.value = assignedTechnicians.join(',');
                 }
+            }
+
+            // Inicializar Sortable para la lista de disponibles
+            new Sortable(disponibles, {
+                group: 'tecnicos',
+                animation: 150,
+                onSort: updateSelectedTechnicians,
+                onAdd: updateSelectedTechnicians,
+                onRemove: updateSelectedTechnicians
             });
 
-    // Manejo del formulario de mantenimiento
-    document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar Sortable para la lista de asignados
+            new Sortable(asignados, {
+                group: 'tecnicos',
+                animation: 150,
+                onSort: updateSelectedTechnicians,
+                onAdd: updateSelectedTechnicians,
+                onRemove: updateSelectedTechnicians
+            });
+
+            // Actualizar el campo oculto cuando se carga la página
+            updateSelectedTechnicians();
+        }
+    }
+
+    // Función para inicializar el formulario de mantenimiento
+    function initializeMaintenanceForm() {
+        if (isMaintenanceFormInitialized) return;
+
         const maintenanceForm = document.querySelector('form[action="/maintenance/create"]');
         if (maintenanceForm) {
             maintenanceForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                console.log('Enviando formulario de mantenimiento');
 
-                // Obtener los técnicos seleccionados
-                const selectedTechnicians = Array.from(document.querySelectorAll('#tecnicos-asignados li'))
-                    .map(li => li.getAttribute('data-id'));
-                console.log('Técnicos seleccionados:', selectedTechnicians);
+                // Deshabilitar el botón de submit para evitar múltiples envíos
+                const submitButton = this.querySelector('button[type="submit"]');
+                if (submitButton.disabled) return; // Si ya está deshabilitado, no continuar
+                submitButton.disabled = true;
 
-                // Crear FormData con los datos del formulario
-                const formData = new FormData(this);
-                
-                // Asegurarse de que la fecha tenga el formato correcto
-                const dateInput = document.getElementById('scheduled_date');
-                if (dateInput && dateInput.value) {
-                    formData.set('scheduled_date', dateInput.value);
-                }
+                try {
+                    // Crear FormData con los datos del formulario
+                    const formData = new FormData(this);
+                    
+                    // Obtener los técnicos seleccionados
+                    const selectedTechnicians = Array.from(document.querySelectorAll('#tecnicos-asignados li'))
+                        .map(li => li.getAttribute('data-id'));
 
-                // Agregar los técnicos seleccionados
-                if (selectedTechnicians.length > 0) {
+                    // Limpiar los técnicos existentes del FormData
+                    formData.delete('technicians[]');
+                    formData.delete('technicians_data');
+
+                    // Agregar los técnicos seleccionados
                     selectedTechnicians.forEach(techId => {
                         formData.append('technicians[]', techId);
                     });
-                }
 
-                try {
-                    console.log('Enviando datos al servidor:', Object.fromEntries(formData));
-                    
                     const response = await fetch('/maintenance/create', {
                         method: 'POST',
                         body: formData
                     });
 
-                    console.log('Respuesta del servidor:', response);
-                    console.log('Headers:', response.headers);
-                    
-                    // Intentar leer el texto de la respuesta primero
-                    const responseText = await response.text();
-                    console.log('Texto de respuesta:', responseText);
-
-                    let result;
-                    try {
-                        result = JSON.parse(responseText);
-                    } catch (e) {
-                        console.error('Error al parsear JSON:', e);
-                        throw new Error('La respuesta del servidor no es JSON válido. Respuesta: ' + responseText);
-                    }
-
-                    console.log('Respuesta parseada:', result);
+                    const result = await response.json();
 
                     if (result.success) {
-                        alert(result.message);
+                        // Mostrar mensaje de éxito
+                        const successMessage = document.createElement('div');
+                        successMessage.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4';
+                        successMessage.setAttribute('role', 'alert');
+                        successMessage.innerHTML = `<span class="block sm:inline">${result.message}</span>`;
+                        
+                        // Eliminar mensajes anteriores si existen
+                        const previousMessages = maintenanceForm.parentNode.querySelectorAll('[role="alert"]');
+                        previousMessages.forEach(msg => msg.remove());
+                        
+                        // Insertar el nuevo mensaje
+                        maintenanceForm.parentNode.insertBefore(successMessage, maintenanceForm);
+
+                        // Recargar la página después de un breve delay
                         setTimeout(() => {
                             window.location.reload();
-                        }, 1000);
+                        }, 1500);
                     } else {
-                        alert(result.message || 'Error al registrar el mantenimiento');
+                        throw new Error(result.message || 'Error al registrar el mantenimiento');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error al procesar la solicitud: ' + error.message);
+                    alert(error.message || 'Error al procesar la solicitud');
+                } finally {
+                    // Re-habilitar el botón de submit después de un breve delay
+                    setTimeout(() => {
+                        submitButton.disabled = false;
+                    }, 2000);
                 }
             });
+
+            isMaintenanceFormInitialized = true;
         }
-    });
-    
+    }
+
     // Configuración de los gráficos de mantenimiento
-    document.addEventListener('DOMContentLoaded', function() {
-        // Verificar si estamos en la página de estadísticas
+    function initializeCharts() {
         if (document.getElementById('typeChart')) {
             // Obtener los datos de los elementos data
             const statsContainer = document.getElementById('stats-data');
@@ -551,8 +559,182 @@
                 }
             });
         }
+    }
+
+    // Función para generar usuarios de prueba
+    function initializeUserManagement() {
+        $(document).ready(function() {
+            console.log('DOM cargado, configurando event listeners...');
+        
+            $('#createTestTechnician').on('click', function() {
+                generarUsuarioPrueba('technician');
+            });
+        
+            $('#createTestSupervisor').on('click', function() {
+                generarUsuarioPrueba('supervisor');
+            });
+        });
+    }
+
+    function generarUsuarioPrueba(role) {
+        console.log('Generando usuario de prueba para el rol:', role);
+
+        $.ajax({
+            url: 'https://randomuser.me/api/?nat=es&inc=email,name,login',
+            dataType: 'json',
+            success: function(data) {
+                const user = data.results[0];
+                const usuarioPrueba = {
+                    nombre: user.name.first,
+                    apellido: user.name.last,
+                    email: user.email,
+                    pass: 'Testing10.',
+                    rol: role
+                };
+
+                // Enviar al servidor
+                $.ajax({
+                    url: '/createTestUser',
+                    method: 'POST',
+                    data: usuarioPrueba,
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function(response) {
+                        console.log('Respuesta del servidor:', response);
+                        const result = typeof response === 'string' ? JSON.parse(response) : response;
+                        if (result.success) {
+                            window.location.reload();
+                        } else {
+                            console.error('Error del servidor:', result.message);
+                            alert('Error: ' + result.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la petición:', error);
+                        alert('Error al crear el usuario: ' + error);
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al obtener usuario aleatorio:', error);
+                alert('Error al generar usuario de prueba: ' + error);
+            }
+        });
+    }
+
+    // Validación de contraseña
+    function initializePasswordValidation() {
+        // Patrones individuales para cada requisito
+        const patterns = {
+            minLength: /.{6,13}/,
+            lowercase: /[a-z]/,
+            uppercase: /[A-Z]/,
+            number: /\d/,
+            special: /[$@$!%*?&-.,]/,
+            noSpaces: /^[^\s']+$/
+        };
+
+        function validatePassword(password) {
+            return {
+                minLength: patterns.minLength.test(password),
+                lowercase: patterns.lowercase.test(password),
+                uppercase: patterns.uppercase.test(password),
+                number: patterns.number.test(password),
+                special: patterns.special.test(password),
+                noSpaces: patterns.noSpaces.test(password)
+            };
+        }
+
+        function updatePasswordFeedback(results, messageContainer) {
+            const messages = {
+                minLength: 'Entre 6 y 13 caracteres',
+                lowercase: 'Al menos una minúscula',
+                uppercase: 'Al menos una mayúscula',
+                number: 'Al menos un número',
+                special: 'Al menos un carácter especial ($@!%*?&-.,)',
+                noSpaces: 'Sin espacios ni comillas simples'
+            };
+
+            let html = '<ul class="text-sm mt-2">';
+            for (const [requirement, passed] of Object.entries(results)) {
+                const color = passed ? 'text-green-600' : 'text-red-600';
+                const icon = passed ? '✓' : '✗';
+                html += `<li class="${color}"><span class="mr-2">${icon}</span>${messages[requirement]}</li>`;
+            }
+            html += '</ul>';
+
+            messageContainer.html(html);
+
+            // Verificar si todos los requisitos se cumplen
+            const allPassed = Object.values(results).every(result => result);
+            return allPassed;
+        }
+
+        function handlePasswordValidation() {
+            const password = $(this).val();
+            const results = validatePassword(password);
+            const messageContainer = $(this).siblings('.password-requirements');
+            
+            // Crear el contenedor de requisitos si no existe
+            if (messageContainer.length === 0) {
+                $(this).after('<div class="password-requirements"></div>');
+            }
+            
+            const allPassed = updatePasswordFeedback(results, $(this).siblings('.password-requirements'));
+            
+            // Actualizar el estilo del input y el estado del botón
+            if (allPassed) {
+                $(this).css("border", "2px solid green");
+                $("#btnEnviar").prop("disabled", false);
+            } else {
+                $(this).css("border", "2px solid red");
+                $("#btnEnviar").prop("disabled", true);
+            }
+        }
+
+        function handleEditPasswordValidation() {
+            const password = $(this).val();
+            const messageContainer = $(this).siblings('.password-requirements');
+            
+            // Crear el contenedor de requisitos si no existe
+            if (messageContainer.length === 0) {
+                $(this).after('<div class="password-requirements"></div>');
+            }
+            
+            // Si el campo está vacío en modo edición
+            if (password === "") {
+                $(this).css("border", "");
+                messageContainer.html("");
+                $("button[type='submit']").prop("disabled", false);
+                return;
+            }
+            
+            const results = validatePassword(password);
+            const allPassed = updatePasswordFeedback(results, messageContainer);
+            
+            // Actualizar el estilo del input y el estado del botón
+            if (allPassed) {
+                $(this).css("border", "2px solid green");
+                $("button[type='submit']").prop("disabled", false);
+            } else {
+                $(this).css("border", "2px solid red");
+                $("button[type='submit']").prop("disabled", true);
+            }
+        }
+
+        // Asignar eventos
+        $('#password').on('keyup', handlePasswordValidation);
+        $('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation);
+    }
+
+    // Un único event listener para DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTechnicians();
+        initializeMaintenanceForm();
+        initializeCharts();
+        initializeUserManagement();
+        initializePasswordValidation();
     });
-    
+
     // Función para manejar el historial de mantenimiento
     function initMaintenanceHistory() {
         const form = document.getElementById('maintenance-form');
