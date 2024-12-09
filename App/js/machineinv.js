@@ -36,24 +36,31 @@ function showQRCode(machineId) {
     }
   });
 
-  document.getElementById('add-machine-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Evita el envío del formulario tradicional
+  document.addEventListener('DOMContentLoaded', function() {
+    const addMachineForm = document.getElementById('add-machine-form');
+    if (addMachineForm) {
+        addMachineForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-    const formData = new FormData(this);
+            const formData = new FormData(this);
 
-    fetch('/addmachine', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Actualiza el DOM aquí, por ejemplo, añadiendo la nueva máquina a la lista
-        } else {
-            alert('Error al añadir la máquina');
-        }
-    })
-    .catch(error => console.error('Error:', error));
+            fetch('/addmachine', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualiza el DOM aquí, por ejemplo, añadiendo la nueva máquina a la lista
+                } else {
+                    alert('Error al añadir la máquina');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    } else {
+        console.error('El formulario de añadir máquina no existe en el DOM.');
+    }
   });
 
   function deleteMachine(machineId) {
@@ -74,24 +81,51 @@ function showQRCode(machineId) {
     }
   }
 
-  document.getElementById('edit-machine-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+  document.addEventListener('DOMContentLoaded', function() {
+    const editMachineForm = document.getElementById('edit-machine-form');
+    if (editMachineForm) {
+        editMachineForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-    const formData = new FormData(this);
+            const formData = new FormData(this);
 
-    fetch('/editmachine', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Actualiza el DOM con los nuevos datos de la máquina
+            fetch('/editmachine', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualiza el DOM con los nuevos datos de la máquina
+                } else {
+                    alert('Error al editar la máquina');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    } else {
+        console.error('El formulario de edición de máquina no existe en el DOM.');
+    }
+});
+
+  $(document).ready(function() {
+    function toggleButtonText() {
+        if ($(window).width() < 640) { // Si la resolución es menor a 640px, ocultar el texto
+            $('.add-machine-button .text, .add-csv-button .text').hide(); // Ocultar el texto de los botones
         } else {
-            alert('Error al editar la máquina');
+            $('.add-machine-button .text').show(); // Mostrar el texto del botón de añadir máquina
+            $('.add-csv-button .text').show(); // Mostrar el texto del botón de añadir máquina CSV
+            
         }
-    })
-    .catch(error => console.error('Error:', error));
+    }
+
+    // Llamar a la función cuando la página se carga
+    toggleButtonText();
+
+    // Llamar a la función cuando la ventana se redimensiona
+    $(window).resize(function() {
+        toggleButtonText();
+    });
   });
 
-  
+
