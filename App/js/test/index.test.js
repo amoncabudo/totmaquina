@@ -1,19 +1,34 @@
-import {add, resta} from "../hola.js";
+describe('showQRCode function', () => {
+    let openMock;
 
-describe('Addition', () => {
-    test('given 3 and 7 as inputs, should return 10', () => {
-        const expected = 10;
-        const actual = add(3,7);
-        expect(actual).toEqual(expected)
+    beforeEach(() => {
+        // Mock de fetch
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                text: () => Promise.resolve('<svg>QR Code</svg>'),
+            })
+        );
+
+        // Mock de window.open para simular la apertura de una ventana
+        openMock = jest.fn().mockReturnValue({ document: { write: jest.fn() } });
+        global.window.open = openMock;
     });
 
-    test('given -4 and 2 as inputs, should return -2', () => {
-        const expected = -2;
-        const actual = add(-4,2);
-        expect(actual).toEqual(expected)
-    });
-    
-    test('given 10 and 2 as inputs, should return 8', () => {
-        expect(resta(10,2)).toEqual(8)
+    // Test para showQRCode
+    test('should open a new window and write QR code data', async () => {
+        // Simulamos que el documento está disponible
+        document.body.innerHTML = `<div id="video"></div><canvas id="canvas"></canvas><button id="capture-photo"></button>`;
+
+        // Llamamos a la función con un ID de máquina ficticio
+        await showQRCode(123);
+
+        // Verificamos que fetch haya sido llamado con la URL correcta
+        expect(fetch).toHaveBeenCalledWith('/generate_qr.php?id=123');
+        
+        // Verificamos que se haya llamado window.open
+        expect(openMock).toHaveBeenCalled();
+        
+        // Verificamos que document.write haya sido llamado con los datos del QR
+        expect(openMock().document.write).toHaveBeenCalledWith('<svg>QR Code</svg>');
     });
 });
