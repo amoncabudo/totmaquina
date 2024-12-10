@@ -1,0 +1,27 @@
+# Indica que el rastreo está permitido para todos los bots
+User-agent: *
+
+# Permite el acceso a todas las páginas relevantes del sitio
+Allow: /
+
+# Bloquea directorios y archivos que no deberían ser indexados
+Disallow: /admin/
+Disallow: /login/
+Disallow: /private/
+Disallow: /config/
+Disallow: /scripts/
+Disallow: /test/
+Disallow: /tmp/
+
+# Bloquea URLs con parámetros específicos que puedan crear contenido duplicado
+Disallow: /*?sessionid=
+Disallow: /*&debug=
+
+# Específicamente para Googlebot
+User-agent: Googlebot
+Allow: /assets/
+Allow: /images/
+Disallow: /search/
+
+# Especifica la ubicación del mapa del sitio
+Sitemap: https://www.grup7dawcendrassos.cat/sitemap.xml
