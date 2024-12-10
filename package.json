@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "flowbite": "^2.5.2",
+    "sortablejs": "^1.15.6",
     "tot__maquina": "file:"
   },
   "name": "tot__maquina",

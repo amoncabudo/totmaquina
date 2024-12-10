@@ -45,7 +45,7 @@ class CtrlGenerateMachineQR
            $dataUri = $svg;
 
            // Mostrar el SVG como imagen
-           echo '<img src="' . $dataUri . '" alt="QR Code" style="transform: scale(0.4); transform-origin: top center; display: block; margin: 0;"/>';
+           echo '<img src="' . $dataUri . '" alt="QR Code" style="transform: scale(0.4); transform-origin: top center; display: block; margin: 0 auto; max-height: 100vh;"/>';
            exit; 
            
         } else {
