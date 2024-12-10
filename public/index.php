@@ -45,6 +45,8 @@ include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
+include "../App/Controllers/ctrlMapMachine.php";
+
 include "../App/Controllers/usermachines.php";
 include "../App/Controllers/HistoryIncidentsController.php";
 include "../App/Controllers/UserConfigController.php";
@@ -94,6 +96,9 @@ $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadC
 
 
 $app->get('/generate_machine_qr/{id}', [\App\Controllers\CtrlGenerateMachineQR::class, "generateQR"]);
+$app->route("mapmachines", [\App\Controllers\ctrlMapMachine::class, "mapmachines"]);
+$app->post('/update-machine-technicians/{id}', 'updateMachineTechnicians');
+
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
 $app->route("history", "history");
