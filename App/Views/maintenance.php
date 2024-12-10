@@ -158,7 +158,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <input type="hidden" name="technicians[]" id="selected-technicians">
+                        <input type="hidden" name="technicians_data" id="technicians-data">
                     </div>
 
                     <!-- Descripción -->

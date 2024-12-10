@@ -28,7 +28,7 @@
     "prod": "npm-run-all -p buildcss prodjs",
     "serve": "cd public && php -S localhost:8080 && echo 'Server started on http://localhost:8080'",
     "start": "npm-run-all -p watch serve",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --env=jsdom"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest --env=jsdom"
   },
   "jest": {
     "preset": "ts-jest",
@@ -36,6 +36,14 @@
   },
   "dependencies": {
     "flowbite": "^2.5.2",
-    "sortablejs": "^1.15.6"
-  }
+    "sortablejs": "^1.15.6",
+    "tot__maquina": "file:"
+  },
+  "name": "tot__maquina",
+  "version": "1.0.0",
+  "description": "Versió amb frontcontroller del \"Framework\" Emeset.",
+  "main": "tailwind.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
