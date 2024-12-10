@@ -12,7 +12,7 @@ Special thanks to everyone who supported this project, especially our testers an
 /* TECHNOLOGY */
 Built with: HTML5, CSS3, JavaScript, PHP
 Additional Tools: Open Source Libraries
-Hosted on: Nominalia
+Hosted on: Dinahosting
 
 /* MISSION */
 Our mission is to create a seamless, innovative, and sustainable technological experience for all.
