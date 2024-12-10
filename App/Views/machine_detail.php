@@ -25,6 +25,34 @@
         <img src="<?php echo htmlspecialchars('/Images/' . $machine['photo']); ?>" alt="Imagen de la máquina" class="w-full mb-4 shadow-md rounded-lg">
        
       </div>
+
+      <div class="md:col-span-2">
+                        <label id="tecnicos-label" class="block mb-2 text-sm font-medium text-gray-900">Asignar Técnicos</label>
+                        <div class="grid grid-cols-2 gap-4" role="group" aria-labelledby="tecnicos-label">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 id="disponibles-title" class="text-sm font-medium text-gray-700 mb-2">Técnicos Disponibles</h3>
+                                <ul id="tecnicos-disponibles" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2"
+                                    role="listbox" aria-labelledby="disponibles-title">
+                                    <?php foreach ($technicians as $technician): ?>
+                                        <li class="bg-white p-2 mb-2 rounded shadow cursor-move" role="option" tabindex="0" 
+                                            data-id="<?= $technician['id'] ?>">
+                                            <?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 id="asignados-title" class="text-sm font-medium text-gray-700 mb-2">Técnicos Asignados</h3>
+                                <ul id="tecnicos-asignados" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2"
+                                    role="listbox" aria-labelledby="asignados-title">
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Campo oculto para los técnicos seleccionados -->
+                        <input type="hidden" name="technicians[]" id="selected-technicians">
+                    </div>
+                </div>
+
     </div>
     
     <div class="flex justify-end mt-4">
