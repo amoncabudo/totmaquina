@@ -5,7 +5,6 @@ import hola from "./hola.js";
 
 import  "./map.js";
 import  "./machineinv.js";
-import  "./main.js";
 
 import {Example, obj} from "./example.ts";
 

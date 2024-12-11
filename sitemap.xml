@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Páginas principales -->
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/index</loc>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/login</loc>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/userManagement</loc>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Rutas de mantenimiento -->
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/maintenance</loc>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/maintenance/create</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/maintenance/stats</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/maintenance_history</loc>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- API (si deseas indexarlas) -->
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/api/maintenance/history/{id}</loc>
+        <priority>0.4</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/api/machine/{id}</loc>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- Gestión de máquinas -->
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/machineinv</loc>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/addmachine</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/machinedetail/{id}</loc>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/history</loc>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Notificaciones -->
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/notifications</loc>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Configuración del usuario -->
+    <url>
+        <loc>https://www.grup7dawcendrassos.cat/userconfig</loc>
+        <priority>0.7</priority>
+    </url>
+</urlset>

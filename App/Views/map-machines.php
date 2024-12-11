@@ -11,7 +11,7 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
     <link rel="stylesheet" href="/main.css">
-   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
@@ -20,7 +20,16 @@
     </div>
 
     <div id="map"></div>
+    <!-- Scripts necesarios -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/js/bundle.js"></script>
     <script src="/js/flowbite.min.js"></script>
+    <script>
+        const machines = <?php echo json_encode($machines); ?>;
+    document.addEventListener('DOMContentLoaded', function() {
+        loadMarkers(machines);
+    });
+    </script>
+
 </body>
 </html>
