@@ -9,15 +9,23 @@ class App {
 
     public static function execute(Request $request, Response $response, Container $container, $next) :Response
     {
-        // Asegurarnos de que la sesión esté iniciada
+        // Asegurarnos que la sesión está iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        // Si no existe la variable logat en la sesión, la inicializamos
-        if (!isset($_SESSION["logat"])) {
-            $_SESSION["logat"] = false;
+        // Inicializar variables de sesión si no existen
+        if (!isset($_SESSION['logat'])) {
+            $_SESSION['logat'] = false;
         }
+
+        if (!isset($_SESSION['user'])) {
+            $_SESSION['user'] = null;
+        }
+
+        // Sincronizar los valores con el response
+        $response->set("logat", $_SESSION['logat']);
+        $response->set("user", $_SESSION['user']);
 
         // Continuar con la ejecución
         if (is_array($next)) {
