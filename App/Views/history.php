@@ -6,40 +6,60 @@
     <title>Historial de Incidencias</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="/css/main.css">
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 min-h-screen flex flex-col">
     <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
-    <div class="container mx-auto bg-white p-6 rounded shadow mt-20">
-        <h1 class="text-2xl font-bold mb-6">Historial de Incidencias</h1>
-        
-        <?php if (isset($error)): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                <?= htmlspecialchars($error) ?>
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg p-4 md:p-6">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+                <h1 class="text-2xl font-bold text-gray-900">Historial de Incidencias</h1>
+                <div class="w-full md:w-1/3">
+                    <label for="machine-select" class="block text-sm font-medium text-gray-700 mb-2">
+                        Seleccionar Máquina
+                    </label>
+                    <select id="machine-select" class="w-full p-2 border rounded-lg">
+                        <option value="">Seleccione una máquina</option>
+                        <?php foreach ($machines as $machine): ?>
+                            <option value="<?php echo htmlspecialchars($machine['id']); ?>">
+                                <?php echo htmlspecialchars($machine['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
             </div>
-        <?php endif; ?>
 
-        <!-- Selector de máquinas -->
-        <div class="mb-6">
-            <label for="machine-select" class="block text-sm font-medium text-gray-700 mb-2">Selecciona una máquina:</label>
-            <select id="machine-select" name="machine" class="w-full border border-gray-300 rounded-md shadow-sm p-2">
-                <option value="">-- Selecciona una máquina --</option>
-                <?php foreach ($machines as $machine): ?>
-                    <option value="<?= htmlspecialchars($machine['id']) ?>">
-                        <?= htmlspecialchars($machine['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+            <!-- Información de la máquina -->
+            <div id="machine-info" class="mb-6 hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-blue-800">Total Incidencias</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="total-incidents">0</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-yellow-800">Pendientes</h3>
+                        <p class="text-3xl font-bold text-yellow-600" id="pending-incidents">0</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-orange-800">En Proceso</h3>
+                        <p class="text-3xl font-bold text-orange-600" id="in-progress-incidents">0</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-green-800">Resueltas</h3>
+                        <p class="text-3xl font-bold text-green-600" id="resolved-incidents">0</p>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Tabla de historial -->
-        <div id="history-content">
-            <p class="text-gray-600">Selecciona una máquina para ver su historial de incidencias.</p>
+            <!-- Contenido del historial -->
+            <div id="history-content" class="overflow-x-auto">
+                <p class="text-gray-600 text-center py-8">Seleccione una máquina para ver su historial de incidencias.</p>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <!-- Scripts -->
     <script src="/js/main.js"></script>
-    <script src="/js/flowbite.min.js"></script>
 </body>
 </html>
