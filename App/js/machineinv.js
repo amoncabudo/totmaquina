@@ -21,22 +21,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Error accessing webcam: ', error); // If there is an error accessing the webcam, log the error
                 }
             }
+            const video = document.getElementById('video'); // Get the video element
+            const canvas = document.getElementById('canvas'); // Get the canvas element
+            const captureButton = document.getElementById('capture-photo'); // Get the capture button element
+            if (canvas) {
+                const context = canvas.getContext('2d'); // Get the context of the canvas
+            } else {
+                console.error('El elemento canvas no se encontró en el DOM.');
+            }
+                
         });
     }
 
-    // Define la función showMachineQRCode
-    window.showMachineQRCode = function(machineId) { // Show the machine QR code
-        console.log("Generando QR para la máquina ID:", machineId); // Log the machine ID
-        window.location.href = `/generate_machine_qr/${machineId}`; // Redirect to the generate machine QR code page
-    };
-});
-
-
-const video = document.getElementById('video'); // Get the video element
-const canvas = document.getElementById('canvas'); // Get the canvas element
-const captureButton = document.getElementById('capture-photo'); // Get the capture button element
-const context = canvas.getContext('2d'); // Get the context of the canvas
-
+   // Define la función showMachineQRCode
+window.showMachineQRCode = function(machineId) {
+    console.log("Generando QR para la máquina ID:", machineId);
+    const url = `/generate_machine_qr/${machineId}`;
+    const windowFeatures = "width=400,height=400,scrollbars=no,resizable=no";
+    window.open(url, "_blank", windowFeatures);
+};
 
 function deleteMachine(machineId) {
   if (confirm('¿Estás seguro de que quieres eliminar esta máquina?')) { // If the user confirms the deletion
@@ -106,57 +109,160 @@ $(document).ready(function() { // When the document is ready
       toggleButtonText();
   });
 });
+$(document).ready(function () {
+    var dropZone = $('#drop-zone');
 
-   // Script to handle the drag and drop of technicians
-   document.addEventListener('DOMContentLoaded', function() {
-    const disponibles = document.getElementById('tecnicos-disponibles'); // Get the available technicians list
-    const asignados = document.getElementById('tecnicos-asignados'); // Get the assigned technicians list
-    const selectedTechnicians = document.getElementById('selected-technicians'); // Get the selected technicians field
+    // Cuando se arrastra un archivo sobre la zona de drop se añade la clase dragover
+    dropZone.on('dragover', function (e) {
+        e.preventDefault();
+        $(this).addClass('dragover');
+    });
 
-    if (disponibles && asignados) { // If the available technicians list and the assigned technicians list exist
-        // Function to update the hidden field with assigned technicians IDs
-        function updateSelectedTechnicians() {
-            const assignedTechnicians = Array.from(asignados.children).map(li => li.dataset.id); // Get the assigned technicians IDs
-            selectedTechnicians.value = assignedTechnicians.join(','); // Set the value of the selected technicians field to the assigned technicians IDs
-            
-            // Send update to server
-            fetch(`/update-machine-technicians/${machineId}`, { // Update the machine technicians
+    // Cuando se sale de la zona de drop se elimina la clase dragover
+    dropZone.on('dragleave', function (e) {
+        e.preventDefault();
+        $(this).removeClass('dragover');
+    });
+
+    // Cuando se suelta el archivo en la zona de drop se ejecuta la función handleFiles
+    dropZone.on('drop', function (e) {
+        e.preventDefault();
+        $(this).removeClass('dragover');
+
+        var files = e.originalEvent.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    // Cambia el selector para incluir dropzone-file dentro de drop-zone
+    $(document).on('change', '#dropzone-file', function () {
+        var files = $(this)[0].files;
+        handleFiles(files);
+    });
+
+    // Función para manejar los archivos
+    function handleFiles(files) {
+        for (var i = 0; i < files.length; i++) {
+            uploadFile(files[i]);
+        }
+    }
+
+    // Función para subir el archivo al servidor
+    function uploadFile(file) {
+        var formData = new FormData();
+        formData.append('file', file);
+        var usuarioID = $('#idUsuario').text();
+        console.log(usuarioID);
+        formData.append('usuarioID', usuarioID);
+
+        $.ajax({
+            url: '/fotoalumno1',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                console.log(response);
+                alert('Foto subida correctamente');
+            },
+            error: function (error) {
+                console.error('Error fotoalumno file:', error);
+            }
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const disponibles = document.getElementById('tecnicos-disponibles');
+    const asignados = document.getElementById('tecnicos-asignados');
+    const saveButton = document.getElementById('save-technicians');
+    const machineId = document.getElementById('machine-id')?.value;
+
+    if (!disponibles || !asignados || !saveButton || !machineId) {
+        console.error('Faltan elementos necesarios');
+        return;
+    }
+
+    // Función para mostrar notificaciones
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `fixed bottom-4 right-4 p-4 rounded-lg ${
+            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white z-50`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Función para guardar los cambios
+    async function saveChanges() {
+        const assignedTechnicians = Array.from(asignados.children);
+        if (assignedTechnicians.length > 1) {
+            showNotification('Solo se puede asignar un técnico por máquina', 'error');
+            return false;
+        }
+
+        const technicianId = assignedTechnicians.length ? assignedTechnicians[0].dataset.id : null;
+        console.log('Machine ID:', machineId);
+        console.log('Technician ID:', technicianId);
+
+        try {
+            const response = await fetch('/assign-technician', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
                 },
                 body: JSON.stringify({
-                    technicians: assignedTechnicians
+                    machine_id: machineId,
+                    technician_id: technicianId
                 })
-            })
-            .then(response => response.json()) // Get the response from the server
-            .then(data => {
-                if (data.success) { // If the update is successful
-                    console.log('Technicians updated successfully'); // Log the success
-                }
-            })
-            .catch(error => console.error('Error:', error)); // If there is an error, log the error
+            });
+
+            const data = await response.json();
+            console.log('Response data:', data);
+
+            if (!data.success) {
+                throw new Error(data.message || 'Error al guardar los cambios');
+            }
+
+            showNotification('Cambios guardados correctamente');
+            return true;
+
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification(error.message, 'error');
+            return false;
         }
-
-        // Initialize Sortable for available technicians list
-        new Sortable(disponibles, {
-            group: 'tecnicos',
-            animation: 150,
-            onSort: updateSelectedTechnicians,
-            onAdd: updateSelectedTechnicians,
-            onRemove: updateSelectedTechnicians
-        });
-
-        // Initialize Sortable for assigned technicians list
-        new Sortable(asignados, {
-            group: 'tecnicos',
-            animation: 150,
-            onSort: updateSelectedTechnicians,
-            onAdd: updateSelectedTechnicians,
-            onRemove: updateSelectedTechnicians
-        });
-
-        // Update hidden field on page load
-        updateSelectedTechnicians();
     }
+
+    // Inicializar Sortable
+    if (typeof Sortable !== 'undefined') {
+        Sortable.create(disponibles, {
+            group: 'tecnicos',
+            animation: 150
+        });
+
+        Sortable.create(asignados, {
+            group: 'tecnicos',
+            animation: 150,
+            onAdd: (evt) => {
+                // Si ya hay un técnico asignado, mover el nuevo de vuelta
+                if (asignados.children.length > 1) {
+                    disponibles.appendChild(evt.item);
+                    showNotification('Solo se puede asignar un técnico por máquina', 'error');
+                }
+            }
+        });
+    }
+
+    // Event listener para el botón de guardar
+    saveButton.addEventListener('click', async () => {
+        await saveChanges();
+    });
+});
+
 });

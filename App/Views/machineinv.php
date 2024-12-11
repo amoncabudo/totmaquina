@@ -239,22 +239,7 @@
             </div>
         </div>
 
-        <!-- Modal del Mapa -->
-    <div id="mapaModal" class="fixed inset-0 bg-black bg-opacity-20 z-50 hidden">
-      <div class="fixed inset-0 p-4 flex items-center justify-center">
-        <div class="bg-white rounded-lg w-full h-full md:h-[90vh] max-w-7xl relative">
-          <!-- Cabecera del modal -->
-          <div class="bg-gray-800 text-white p-4 rounded-t-lg flex justify-between items-center">
-            <h3 class="text-xl font-bold">Mapa de Máquinas</h3>
-            <button onclick="cerrarMapaModal()" class="text-white hover:text-gray-300 transition-colors">
-              <i class="fas fa-times text-2xl"></i>
-            </button>
-          </div>
-          <!-- Contenedor del mapa -->
-          <div id="mapa"></div>
-          </div>
-        </div>
-      </div>
+  
 
           <!-- Modal para editar maquinas -->
     <?php foreach ($machines as $machine) : ?>

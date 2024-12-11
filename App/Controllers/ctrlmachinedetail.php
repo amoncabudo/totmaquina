@@ -22,8 +22,12 @@ function ctrlMachineDetail($request, $response, $container)
         if ($machine) {
             $userModel = $container->get('User');
             $users = $userModel->getAllUser();
+            $technicians = array_filter($users, function ($user) {
+                return isset($user['role']) && $user['role'] === 'technician';
+            });
 
             $response->set('machine', $machine);
+            $response->set('technicians', $technicians);
             $response->set('users', $users);
             $response->setTemplate('machine_detail.php');
             return $response;
