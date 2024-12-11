@@ -13,7 +13,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 L.control.zoom({
     position: 'bottomright'
 }).addTo(map);
-
 // Definir el icono personalizado
 const customIcon = L.divIcon({
     html: '<i class="fa-solid fa-location-dot fa-2x" style="color: #ff4444;"></i>',
@@ -29,9 +28,7 @@ window.loadMarkers = function (machines) {
         console.log('No hay máquinas para mostrar');
         return;
     }
-
     console.log(machines);
-
     machines.forEach(function(machine) {
         // Verificar que machine.coordinates existe y no es undefined/null
         if (machine.coordinates && typeof machine.coordinates === 'string') {
