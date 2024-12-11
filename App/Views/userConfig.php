@@ -140,22 +140,32 @@ document.getElementById('avatarForm').addEventListener('submit', async function(
     formData.append('avatar', fileInput.files[0]);
 
     try {
+        showMessage('info', 'Subiendo imagen...');
+        
         const response = await fetch('/update-avatar', {
             method: 'POST',
             body: formData
         });
 
+        const text = await response.text(); // Primero obtener el texto de la respuesta
+        console.log('Respuesta del servidor:', text); // Para depuración
+
         let data;
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            data = await response.json();
-        } else {
-            throw new Error('La respuesta del servidor no es JSON válido');
+        try {
+            data = JSON.parse(text);
+        } catch (error) {
+            console.error('Error al parsear JSON:', error);
+            console.error('Respuesta recibida:', text);
+            throw new Error('Error al procesar la respuesta del servidor');
         }
 
         if (data.success) {
+            // Actualizar la imagen en la página
             updateAvatar(data.avatar);
             showMessage('success', data.message || 'Foto de perfil actualizada con éxito');
+            
+            // Limpiar el input de archivo
+            fileInput.value = '';
         } else {
             showMessage('error', data.error || 'Error al actualizar la foto de perfil');
         }
@@ -170,39 +180,54 @@ function showMessage(type, message) {
     const messageDiv = document.createElement('div');
     messageDiv.className = type === 'success' 
         ? 'mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50'
-        : 'mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50';
+        : type === 'info'
+            ? 'mb-4 p-4 text-sm text-blue-800 rounded-lg bg-blue-50'
+            : 'mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50';
     messageDiv.textContent = message;
 
     // Eliminar mensajes existentes
-    const existingSuccess = document.getElementById('successMessage');
-    const existingError = document.getElementById('errorMessage');
-    if (existingSuccess) existingSuccess.remove();
-    if (existingError) existingError.remove();
+    const existingMessages = document.querySelectorAll('.mb-4.p-4.text-sm');
+    existingMessages.forEach(msg => msg.remove());
 
     // Insertar nuevo mensaje
-    document.querySelector('h2').insertAdjacentElement('afterend', messageDiv);
+    const title = document.querySelector('h2');
+    title.insertAdjacentElement('afterend', messageDiv);
     
-    // Eliminar mensaje después de 3 segundos
-    setTimeout(() => messageDiv.remove(), 3000);
+    // Eliminar mensaje después de 3 segundos solo si es success o error
+    if (type !== 'info') {
+        setTimeout(() => messageDiv.remove(), 3000);
+    }
 }
 
 // Función para actualizar el avatar
 function updateAvatar(avatarFileName) {
+    if (!avatarFileName) return;
+
+    const timestamp = Date.now();
     const avatarContainer = document.getElementById('avatarContainer');
     const defaultAvatar = document.getElementById('defaultAvatar');
     const existingImage = document.getElementById('avatarImage');
+    const navbarAvatar = document.querySelector('.navbar-avatar');
 
-    if (avatarFileName) {
-        const newImage = `<img class="h-16 w-16 object-cover rounded-full" 
-                             src="/Images/${avatarFileName}?t=${Date.now()}" 
-                             alt="Foto de perfil actual"
-                             id="avatarImage">`;
-        
-        if (existingImage) {
-            existingImage.src = `/Images/${avatarFileName}?t=${Date.now()}`;
-        } else if (defaultAvatar) {
-            avatarContainer.innerHTML = newImage;
+    const updateImage = (imgElement) => {
+        if (imgElement) {
+            imgElement.src = `/Images/${avatarFileName}?t=${timestamp}`;
+            imgElement.alt = 'Foto de perfil actual';
         }
+    };
+
+    if (existingImage) {
+        updateImage(existingImage);
+    } else if (defaultAvatar) {
+        const newImage = document.createElement('img');
+        newImage.className = 'h-16 w-16 object-cover rounded-full';
+        newImage.id = 'avatarImage';
+        updateImage(newImage);
+        avatarContainer.innerHTML = '';
+        avatarContainer.appendChild(newImage);
     }
+
+    // Actualizar la imagen en el navbar
+    updateImage(navbarAvatar);
 }
 </script> 

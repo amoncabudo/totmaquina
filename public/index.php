@@ -265,15 +265,19 @@ role(['technician','administrator','supervisor'])]);
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
-$app->route("userconfig", [\App\Controllers\UserConfig::class, "index"],["auth",
+$app->route("userconfig", [\App\Controllers\UserConfigController::class, "index"], ["auth",
 role(['technician','administrator','supervisor'])]);
+
+$app->post("update-avatar", [\App\Controllers\UserConfigController::class, "updateAvatar"], ["auth",
+role(['technician','administrator','supervisor'])]);
+
+$app->post("update-profile", [\App\Controllers\UserConfigController::class, "updateProfile"], ["auth",
+role(['technician','administrator','supervisor'])]);
+
 $app->route("politica-cookies", function($request, $response) {
     $response->SetTemplate("politica-cookies.php");
     return $response;
 });
-
-$app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"],["auth",
-role(['technician','administrator','supervisor'])]);
 
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"],["auth",
 role(['technician','administrator','supervisor'])]);

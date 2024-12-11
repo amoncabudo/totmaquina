@@ -25,22 +25,25 @@ class UserConfigController {
     }
 
     public function updateAvatar(Request $request, Response $response, Container $container) {
-        // Asegurarnos de que no se ha enviado ningún output antes
-        if (headers_sent()) {
-            http_response_code(500);
-            die(json_encode(['success' => false, 'error' => 'Headers already sent']));
+        // Desactivar la salida de errores de PHP
+        ini_set('display_errors', 0);
+        error_reporting(0);
+        
+        // Asegurarse de que no haya salida previa
+        while (ob_get_level()) {
+            ob_end_clean();
         }
 
-        // Establecer headers para JSON
-        header('Content-Type: application/json');
+        // Establecer el header de Content-Type
+        header('Content-Type: application/json; charset=utf-8');
 
         try {
-            if (!isset($_FILES['avatar'])) {
-                http_response_code(400);
-                die(json_encode([
+            if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] === UPLOAD_ERR_NO_FILE) {
+                echo json_encode([
                     'success' => false,
                     'error' => "No se ha seleccionado ninguna imagen"
-                ]));
+                ]);
+                return;
             }
 
             $file = $_FILES['avatar'];
@@ -54,33 +57,39 @@ class UserConfigController {
             $allowed = ['jpg', 'jpeg', 'png', 'gif'];
 
             if (!in_array($fileExt, $allowed)) {
-                http_response_code(400);
-                die(json_encode([
+                echo json_encode([
                     'success' => false,
                     'error' => "Tipo de archivo no permitido. Solo se permiten imágenes JPG, PNG y GIF."
-                ]));
+                ]);
+                return;
             }
 
             if ($fileError !== 0) {
-                http_response_code(400);
-                die(json_encode([
+                echo json_encode([
                     'success' => false,
                     'error' => "Hubo un error al subir el archivo."
-                ]));
+                ]);
+                return;
             }
 
             if ($fileSize > 2097152) { // 2MB en bytes
-                http_response_code(400);
-                die(json_encode([
+                echo json_encode([
                     'success' => false,
                     'error' => "El archivo es demasiado grande. Máximo 2MB."
-                ]));
+                ]);
+                return;
             }
 
-            // Usar la carpeta Images existente
+            // Verificar y crear el directorio de imágenes
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Images/';
             if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
+                if (!mkdir($uploadDir, 0777, true)) {
+                    throw new \Exception("No se pudo crear el directorio de imágenes");
+                }
+            }
+
+            if (!is_writable($uploadDir)) {
+                throw new \Exception("El directorio de imágenes no tiene permisos de escritura");
             }
 
             // Generar nombre único para el archivo
@@ -91,17 +100,13 @@ class UserConfigController {
             if (isset($_SESSION['user']['avatar']) && !empty($_SESSION['user']['avatar'])) {
                 $oldAvatarPath = $uploadDir . $_SESSION['user']['avatar'];
                 if (file_exists($oldAvatarPath)) {
-                    unlink($oldAvatarPath);
+                    @unlink($oldAvatarPath);
                 }
             }
 
             // Mover el archivo
             if (!move_uploaded_file($fileTmpName, $uploadPath)) {
-                http_response_code(500);
-                die(json_encode([
-                    'success' => false,
-                    'error' => "Error al guardar el archivo."
-                ]));
+                throw new \Exception("Error al mover el archivo subido");
             }
 
             // Actualizar en la base de datos
@@ -114,29 +119,34 @@ class UserConfigController {
                 // Actualizar la sesión
                 $_SESSION['user']['avatar'] = $newFileName;
                 
-                die(json_encode([
+                echo json_encode([
                     'success' => true,
                     'avatar' => $newFileName,
                     'message' => "Foto de perfil actualizada correctamente."
-                ]));
+                ]);
+                return;
+
             } catch (\PDOException $e) {
                 // Si hay error en la BD, eliminar el archivo subido
                 if (file_exists($uploadPath)) {
-                    unlink($uploadPath);
+                    @unlink($uploadPath);
                 }
-                http_response_code(500);
-                die(json_encode([
-                    'success' => false,
-                    'error' => "Error al actualizar la base de datos: " . $e->getMessage()
-                ]));
+                throw new \Exception("Error al actualizar la base de datos: " . $e->getMessage());
             }
 
         } catch (\Exception $e) {
-            http_response_code(500);
-            die(json_encode([
+            error_log("Error en updateAvatar: " . $e->getMessage());
+            
+            // Si hay un archivo subido, intentar eliminarlo
+            if (isset($uploadPath) && file_exists($uploadPath)) {
+                @unlink($uploadPath);
+            }
+            
+            echo json_encode([
                 'success' => false,
                 'error' => "Error al procesar la solicitud: " . $e->getMessage()
-            ]));
+            ]);
+            return;
         }
     }
 
