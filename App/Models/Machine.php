@@ -26,7 +26,7 @@ class Machine
      */
     public function getAllMachine(){
         try {
-            $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, location FROM Machine ORDER BY name");
+            $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, coordinates, location FROM Machine ORDER BY name");
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
@@ -160,6 +160,12 @@ class Machine
         $stmt = $this->sql->prepare($query);
         $stmt->execute(['serial_number' => $serial_number]);
         return $stmt->fetch();
+    }
+
+    public function getAllTechnicians() {
+        $stmt = $this->sql->prepare("SELECT id, name, surname FROM User WHERE role = 'technician'");
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
 
