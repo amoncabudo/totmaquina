@@ -23,18 +23,27 @@ class Incident {
             
             $stmt = $this->sql->prepare($sql);
             
+            // Asegurarnos de que technician_id sea null si no hay técnico asignado
+            $technicianId = null;
+            if (isset($data['technicians']) && is_array($data['technicians']) && !empty($data['technicians'][0])) {
+                $technicianId = (int)$data['technicians'][0];
+            }
+            
             $params = [
-                'description' => $data['description'],
-                'priority' => $data['priority'],
-                'status' => 'pending',
-                'machine_id' => $data['machine_id'],
-                'technician_id' => $data['technicians'][0] ?? null
+                ':description' => $data['description'],
+                ':priority' => $data['priority'],
+                ':status' => 'pending',
+                ':machine_id' => (int)$data['machine_id'],
+                ':technician_id' => $technicianId
             ];
             
-            return $stmt->execute($params);
+            if (!$stmt->execute($params)) {
+                throw new \Exception("Error al ejecutar la consulta: " . implode(", ", $stmt->errorInfo()));
+            }
+            return true;
         } catch (\PDOException $e) {
-            echo "Error en la inserción: " . $e->getMessage();
-            exit;
+            error_log("Error en la inserción de incidencia: " . $e->getMessage());
+            throw new \Exception("Error al crear la incidencia: " . $e->getMessage());
         }
     }
 
