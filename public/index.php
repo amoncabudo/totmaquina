@@ -47,6 +47,7 @@ include "../App/Controllers/incidents.php";
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/ctrlMapMachine.php";
+include "../App/Controllers/ctrlWebcam.php";
 
 include "../App/Controllers/usermachines.php";
 include "../App/Controllers/HistoryIncidentsController.php";
@@ -217,7 +218,7 @@ role(['technician', 'administrator', 'supervisor'])]);
 $app->post('/update-machine-technicians/{id}', 'updateMachineTechnicians',["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 
-
+$app->route("webcam", "ctrlWebcam");
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"],["auth",
 role(['technician','administrator','supervisor'])]);
 $app->route("history", "history",["auth",

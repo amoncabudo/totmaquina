@@ -26,7 +26,7 @@ class Machine
      */
     public function getAllMachine(){
         try {
-            $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, coordinates, location FROM Machine ORDER BY name");
+            $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, coordinates,  location FROM Machine ORDER BY name");
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
