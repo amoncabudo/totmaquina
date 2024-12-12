@@ -1,47 +1,12 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const captureButton = document.getElementById('capture-photo'); // Capture button
-    if (captureButton) {
-        captureButton.addEventListener('click', async () => { // Capture button event listener
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { // If the browser supports media devices and getUserMedia
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true }); // Get the user media
-                    video.srcObject = stream; // Set the video source to the stream
-                    video.classList.remove('hidden'); // Remove the hidden class from the video
-                    captureButton.textContent = 'Tomar Foto'; // Set the text of the capture button to 'Tomar Foto'
-                    
-                    captureButton.onclick = () => {
-                        context.drawImage(video, 0, 0, 320, 240); // Draw the image from the video to the canvas
-                        video.classList.add('hidden'); // Add the hidden class to the video
-                        canvas.classList.remove('hidden'); // Remove the hidden class from the canvas
-                        captureButton.textContent = 'Capturar desde Webcam'; // Set the text of the capture button to 'Capturar desde Webcam'
-                        stream.getTracks().forEach(track => track.stop()); // Stop the stream
-                        saveImage(); // Save the image
-                    };
-                } catch (error) {
-                    console.error('Error accessing webcam: ', error); // If there is an error accessing the webcam, log the error
-                }
-            }
-            const video = document.getElementById('video'); // Get the video element
-            const canvas = document.getElementById('canvas'); // Get the canvas element
-            const captureButton = document.getElementById('capture-photo'); // Get the capture button element
-            if (canvas) {
-                const context = canvas.getContext('2d'); // Get the context of the canvas
-            } else {
-                console.error('El elemento canvas no se encontró en el DOM.');
-            }
-                
-        });
-    }
-
    // Define la función showMachineQRCode
-window.showMachineQRCode = function(machineId) {
+   window.showMachineQRCode = function(machineId) {
     console.log("Generando QR para la máquina ID:", machineId);
     const url = `/generate_machine_qr/${machineId}`;
     const windowFeatures = "width=400,height=400,scrollbars=no,resizable=no";
     window.open(url, "_blank", windowFeatures);
 };
 
-function deleteMachine(machineId) {
+window.deleteMachine=function(machineId) {
   if (confirm('¿Estás seguro de que quieres eliminar esta máquina?')) { // If the user confirms the deletion
       fetch(`/deletemachine/${machineId}`, { // Delete the machine
           method: 'POST'
@@ -90,25 +55,6 @@ document.addEventListener('DOMContentLoaded', function() { // When the DOM conte
   });
 });
 
-$(document).ready(function() { // When the document is ready
-  function toggleButtonText() { // Toggle the button text
-      if ($(window).width() < 640) { // If the resolution is less than 640px, hide the text
-          $('.add-machine-button .text, .add-csv-button .text').hide(); // Hide the text of both buttons    
-      } else {
-          $('.add-machine-button .text').show(); // Show the text of the add machine button
-          $('.add-csv-button .text').show(); // Show the text of the add machine CSV button
-          
-      }
-  }
-
-  // Call the function when the page loads
-  toggleButtonText();
-
-  // Call the function when the window is resized
-  $(window).resize(function() {
-      toggleButtonText();
-  });
-});
 $(document).ready(function () {
     var dropZone = $('#drop-zone');
 
@@ -140,36 +86,12 @@ $(document).ready(function () {
     });
 
     // Función para manejar los archivos
-    function handleFiles(files) {
+    window.handleFiles=function(files) {
         for (var i = 0; i < files.length; i++) {
             uploadFile(files[i]);
         }
     }
 
-    // Función para subir el archivo al servidor
-    function uploadFile(file) {
-        var formData = new FormData();
-        formData.append('file', file);
-        var usuarioID = $('#idUsuario').text();
-        console.log(usuarioID);
-        formData.append('usuarioID', usuarioID);
-
-        $.ajax({
-            url: '/fotoalumno1',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                console.log(response);
-                alert('Foto subida correctamente');
-            },
-            error: function (error) {
-                console.error('Error fotoalumno file:', error);
-            }
-        });
-    }
-});
 
 document.addEventListener('DOMContentLoaded', function() {
     const disponibles = document.getElementById('tecnicos-disponibles');
@@ -183,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Función para mostrar notificaciones
-    function showNotification(message, type = 'success') {
+    window.showNotification=function(message, type = 'success') {
         const notification = document.createElement('div');
         notification.className = `fixed bottom-4 right-4 p-4 rounded-lg ${
             type === 'success' ? 'bg-green-500' : 'bg-red-500'
@@ -198,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Función para guardar los cambios
-    async function saveChanges() {
+    window.saveChanges=async function() {
         const assignedTechnicians = Array.from(asignados.children);
         if (assignedTechnicians.length > 1) {
             showNotification('Solo se puede asignar un técnico por máquina', 'error');
@@ -263,6 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
     saveButton.addEventListener('click', async () => {
         await saveChanges();
     });
-});
+}); 
 
 });
