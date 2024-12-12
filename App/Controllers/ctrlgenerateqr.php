@@ -20,7 +20,7 @@ class CtrlGenerateMachineQR
                 'eccLevel'   => QRCode::ECC_L,
                 'svgViewBox' => true,
                 'drawCircularModules' => true,
-                'circleRadius' => 0.4,
+                'circleRadius' => 0.5,
                 'connectPaths' => true,
                 'keepAsSquare' => [
                     QRMatrix::M_FINDER_DARK,

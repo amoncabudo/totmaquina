@@ -1,20 +1,10 @@
-// Inicializar el mapa con un estilo más moderno
-var map = L.map("map", {
-  zoomControl: false, // Desactivamos el control de zoom predeterminado
-}).setView([42.27351400039436, 2.9648054015140053 ], 15);
-
-// Añadir un estilo de mapa más moderno
+var map = L.map("map").setView([42.2662, 2.9583], 13);// Añadir un estilo de mapa más moderno
 L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
   attribution: "© OpenStreetMap contributors",
   maxZoom: 19,
 }).addTo(map);
 
-// Añadir control de zoom en una posición personalizada
-L.control
-  .zoom({
-    position: "bottomright",
-  })
-  .addTo(map);
+
 // Definir el icono personalizado
 const customIcon = L.divIcon({
   html: '<i class="fa-solid fa-location-dot fa-2x" style="color: #4169e1;"></i>',
@@ -55,7 +45,9 @@ window.loadMarkers = function (machines) {
                     <div class="popup-content">
                         <h3 class="font-bold">${machine.name || "Máquina"}</h3>
                         <p>${machine.location || "Sin Ubicación"}</p>
-                        <a href="http://localhost/machinedetail/${machine.id}">Detalles de la maquina </a>
+                        <a href="http://localhost/machinedetail/${
+                          machine.id
+                        }">Detalles de la maquina </a>
                          
                     </div>
                 `
@@ -70,8 +62,6 @@ window.loadMarkers = function (machines) {
           machine
         );
       }
-    } else {
-      console.error("Coordenadas no definidas para la máquina:", machine);
     }
   });
 };

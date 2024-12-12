@@ -73,7 +73,6 @@ $app->route("validar-login", "ctrlValidarLogin");
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
 
-
 // Maintenance routes
 $app->route("maintenance", "maintenance", [
     "auth", 
