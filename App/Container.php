@@ -53,5 +53,11 @@ class Container extends EmesetContainer {
             $task = new \App\Models\Machine($db->getConnection());
             return $task;
         };
+
+        // Registro del modelo Incident
+        $this["Incident"] = function ($c) {
+            $db = $c->get("Db");
+            return new \App\Models\Incident($db->getConnection());
+        };
     }
 }

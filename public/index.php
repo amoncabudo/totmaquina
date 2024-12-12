@@ -91,7 +91,7 @@ $app->route("maintenance/stats", "maintenanceStats", [
 ]);
 
 $app->route("maintenance_history", [\App\Controllers\MaintenanceHistoryController::class, "index"],["auth",
-    role(['technician', 'administrator', 'supervisor'])]);
+    role(['administrator', 'supervisor'])]);
 
 // API routes
 $app->route("api/maintenance/history/{id}", function($request, $response) {
@@ -192,7 +192,7 @@ $app->route("api/search", function($request, $response) {
 
 // Ruta para el historial de incidencias
 $app->route("history/incidents/{id}", "getIncidentHistory", ["auth",
-role(['technician', 'administrator', 'supervisor'])]);
+role(['administrator', 'supervisor'])]);
 
 // Machine routes
 $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"],["auth",
@@ -245,11 +245,11 @@ role(['technician','administrator','supervisor'])]);
 $app->route('machines', [\App\Controllers\incidents::class, 'incidents'],["auth",
 role(['technician','administrator','supervisor'])]);
 
-$app->route("usermachines", "usermachines",["auth",
-role(['technician','administrator','supervisor'])]);
+$app->route("usermachines", [\App\Controllers\UserMachinesController::class, "index"], ["auth",
+role(['technician', 'administrator', 'supervisor'])]);
 
 $app->route("history", "history",["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 $app->get('/incidents', 'incidents',["auth",
 role(['technician','administrator','supervisor'])]);
 $app->post('/incidents/create', 'createIncident',["auth",
@@ -263,21 +263,30 @@ role(['technician','administrator','supervisor'])]);
 $app->get('/incidents/statistics', 'getStatistics',["auth",
 role(['technician','administrator','supervisor'])]);
 
+$app->post("user-machines/update-incident-status", [\App\Controllers\UserMachinesController::class, "updateIncidentStatus"], ["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+
+$app->post("user-machines/update-maintenance-status", [\App\Controllers\UserMachinesController::class, "updateMaintenanceStatus"], ["auth",
+role(['technician', 'administrator', 'supervisor'])]);
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
-$app->route("userconfig", [\App\Controllers\UserConfig::class, "index"],["auth",
+$app->route("userconfig", [\App\Controllers\UserConfigController::class, "index"], ["auth",
 role(['technician','administrator','supervisor'])]);
+
+$app->post("update-avatar", [\App\Controllers\UserConfigController::class, "updateAvatar"], ["auth",
+role(['technician','administrator','supervisor'])]);
+
+$app->post("update-profile", [\App\Controllers\UserConfigController::class, "updateProfile"], ["auth",
+role(['technician','administrator','supervisor'])]);
+
 $app->route("politica-cookies", function($request, $response) {
     $response->SetTemplate("politica-cookies.php");
     return $response;
 });
 
-$app->post("update-profile", [\App\Controllers\UserConfig::class, "updateProfile"],["auth",
-role(['technician','administrator','supervisor'])]);
-
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator'])]);
 $app->execute();
 
 
