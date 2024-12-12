@@ -4,8 +4,7 @@ import $ from "jquery";
 window.showMachineQRCode = function(machineId) {
     console.log("Generando QR para la máquina ID:", machineId);
     const url = `/generate_machine_qr/${machineId}`;
-    const windowFeatures = "width=400,height=400,scrollbars=no,resizable=no";
-    window.open(url, "_blank", windowFeatures);
+    window.open(url, "_blank");
 };
 
 window.deleteMachine=function(machineId) {
@@ -184,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
     // Event listener para el botón de guardar
     saveButton.addEventListener('click', async () => {
         await saveChanges();

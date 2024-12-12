@@ -74,7 +74,6 @@ $app->route("validar-login", "ctrlValidarLogin");
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
 
-
 // Maintenance routes
 $app->route("maintenance", "maintenance", [
     "auth", 
@@ -294,4 +293,9 @@ $app->post("/NuevaPassword", [\App\Controllers\ResetPassController::class, "upda
 
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"],["auth",
 role(['administrator'])]);
+$app->get("/assigned-technicians", [\App\Controllers\MachinesController::class, "showAssignedTechnicians"], ["auth", 
+role(['administrator', 'supervisor'])]);
+$app->post("/api/change-technician", [\App\Controllers\MachinesController::class, "changeTechnician"], ["auth", 
+role(['administrator', 'supervisor'])]);
+
 $app->execute();

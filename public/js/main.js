@@ -588,7 +588,7 @@
         form.setAttribute('data-has-maintenance-listener', 'true');
         console.log('Inicializando historial de mantenimiento...');
 
-        // Solo actualizar información de la máquina al cambiar selección
+        // Solo actualizar informaci��n de la máquina al cambiar selección
         machineSelect.addEventListener('change', async function() {
             const machineId = this.value;
             if (!machineId) {
@@ -1059,4 +1059,128 @@ function showTab(button, contentId) {
     // Mostrar el contenido seleccionado
     document.getElementById(contentId).classList.remove('hidden');
 }
+
+function changeTechnician(assignmentId) {
+    document.getElementById('assignmentId').value = assignmentId;
+    const modal = new bootstrap.Modal(document.getElementById('changeTechnicianModal'));
+    modal.show();
+}
+
+function saveTechnicianChange() {
+    const assignmentId = document.getElementById('assignmentId').value;
+    const newTechnicianId = document.getElementById('newTechnician').value;
+
+    fetch('/api/change-technician', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            assignmentId: assignmentId,
+            newTechnicianId: newTechnicianId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error al cambiar el técnico: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al procesar la solicitud');
+    });
+}
+
+// Función para mostrar toasts
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.className = `flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow ${type === 'success' ? 'text-green-500' : 'text-red-500'}`;
+    
+    toast.innerHTML = `
+        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 ${type === 'success' ? 'text-green-500 bg-green-100' : 'text-red-500 bg-red-100'} rounded-lg">
+            ${type === 'success' 
+                ? '<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg>'
+                : '<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/></svg>'
+            }
+        </div>
+        <div class="ml-3 text-sm font-normal">${message}</div>
+    `;
+
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// Función para cambiar técnico asignado
+function saveTechnicianChange(assignmentId) {
+    const newTechnicianId = document.getElementById(`newTechnician-${assignmentId}`).value;
+    const modalElement = document.getElementById(`changeTechnicianModal-${assignmentId}`);
+
+    if (!newTechnicianId || !modalElement) return;
+
+    // Mostrar mensaje de carga
+    showToast('Guardando cambios...', 'info');
+
+    fetch('/api/change-technician', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            assignmentId: assignmentId,
+            newTechnicianId: newTechnicianId
+        })
+    })
+    .then(response => {
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('La respuesta no es JSON válido');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Respuesta del servidor:', data);
+        if (data.success) {
+            showToast(data.message || 'Técnico actualizado correctamente', 'success');
+            // Cerrar el modal usando el botón de cerrar
+            const closeButton = modalElement.querySelector('[data-modal-hide]');
+            if (closeButton) {
+                closeButton.click();
+            }
+            // Recargar la página después de un breve retraso
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            throw new Error(data.message || 'Error al cambiar el técnico');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast(error.message || 'Error al procesar la solicitud', 'error');
+    });
+
+    return false;
+}
+
+// Inicializar los modales cuando el documento esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar los modales de técnicos asignados
+    const modals = document.querySelectorAll('[data-modal-toggle]');
+    modals.forEach(trigger => {
+        const modalId = trigger.getAttribute('data-modal-target');
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            const modalInstance = new Modal(modal);
+        }
+    });
+});
 
