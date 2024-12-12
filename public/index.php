@@ -49,6 +49,7 @@ include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/ctrlMapMachine.php";
 include "../App/Controllers/ctrlWebcam.php";
 
+
 include "../App/Controllers/usermachines.php";
 include "../App/Controllers/HistoryIncidentsController.php";
 include "../App/Controllers/UserConfigController.php";
@@ -75,7 +76,7 @@ $app->route("index", "ctrlindex");
 // Maintenance routes
 $app->route("maintenance", "maintenance", [
     "auth", 
-    role(['administrator', 'supervisor'])
+    role(['technician', 'administrator', 'supervisor'])
 ]);
 
 $app->route("maintenance/create", "createMaintenance", [
@@ -206,7 +207,9 @@ role(['technician', 'administrator', 'supervisor'])]);
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"],["auth",
-role(['technician', 'administrator', 'supervisor'])]);
+role(['administrator', 'supervisor'])]);
+
+
 $app->get('/generate_machine_qr/{id}', [\App\Controllers\CtrlGenerateMachineQR::class, "generateQR"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 $app->route("mapmachines", [\App\Controllers\ctrlMapMachine::class, "mapmachines"],["auth",
@@ -216,7 +219,7 @@ role(['technician', 'administrator', 'supervisor'])]);
 
 $app->route("webcam", "ctrlWebcam");
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 $app->route("history", "history",["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 
@@ -231,12 +234,12 @@ $app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsCon
 role(['technician','administrator','supervisor'])]);
 
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 
 $app->post("/editUser", [\App\Controllers\editUser::class, "editUser"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 
 $app->route('machines', [\App\Controllers\incidents::class, 'incidents'],["auth",
 role(['technician','administrator','supervisor'])]);
@@ -281,6 +284,17 @@ $app->route("politica-cookies", function($request, $response) {
     return $response;
 });
 
+$app->route("passwordRecovery", [\App\Controllers\ResetPassController::class, "index"]);
+$app->post("reset", [\App\Controllers\ResetPassController::class, "reset"]);
+// Ruta GET para mostrar el formulario de nueva contraseña
+$app->get("/NuevaPassword", [\App\Controllers\ResetPassController::class, "resetPassword"]);
+$app->post("/NuevaPassword", [\App\Controllers\ResetPassController::class, "updatePassword"]);
+
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"],["auth",
 role(['administrator'])]);
+$app->get("/assigned-technicians", [\App\Controllers\MachinesController::class, "showAssignedTechnicians"], ["auth", 
+role(['administrator', 'supervisor'])]);
+$app->post("/api/change-technician", [\App\Controllers\MachinesController::class, "changeTechnician"], ["auth", 
+role(['administrator', 'supervisor'])]);
+
 $app->execute();

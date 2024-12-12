@@ -40,7 +40,9 @@
                                         </svg>
                                     </button>
                                     <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
-                                        <a href="/userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
+                                        <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
+                                            <a href="/userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
+                                        <?php endif; ?>
                                         <a href="/machineinv" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Inventario de Máquinas</a>
                                     </div>
                                 </div>
@@ -75,7 +77,8 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Menú desplegable HISTORIAL -->
+                                <!-- Menú desplegable HISTORIAL (solo para administradores) -->
+                                <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
                                 <div class="relative group" role="menuitem">
                                     <button class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center" 
                                             aria-haspopup="true" 
@@ -90,6 +93,7 @@
                                         <a href="/history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registros</a>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -163,56 +167,65 @@
                             </button>
 
                             <!-- Dropdown menu -->
-                       <!-- Dropdown menu -->
                             <div id="dropdownUser" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
-    <div class="px-4 py-3 text-sm text-gray-900">
-        <div class="font-medium">Hola, <?= htmlspecialchars($_SESSION["user"]["name"]) ?></div>
-        <div class="text-xs text-gray-500 truncate"><?= htmlspecialchars($_SESSION["user"]["email"]) ?></div>
-    </div>
-    <ul class="py-2 text-sm text-gray-700">
-        <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
-        <!-- Panel de Administración (solo para administradores) -->
-        <li>
-            <a href="/adminPanel" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                </svg>
-                Panel de Administración
-            </a>
-        </li>
-        <?php endif; ?>
-        <!-- Configuración -->
-        <li>
-            <a href="/userconfig" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                Configuración
-            </a>
-        </li>
-        <!-- Mis Máquinas -->
-        <li>
-            <a href="/usermachines" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h4m-2-2v4" />
-                </svg>
-                Mis Máquinas
-            </a>
-        </li>
-    </ul>
-    <!-- Cerrar sesión -->
-    <div class="py-2">
-        <a href="/tancar-sessio" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            Cerrar sesión
-        </a>
-    </div>
+                                <div class="px-4 py-3 text-sm text-gray-900">
+                                    <div class="font-medium">Hola, <?= htmlspecialchars($_SESSION["user"]["name"]) ?></div>
+                                    <div class="text-xs text-gray-500 truncate"><?= htmlspecialchars($_SESSION["user"]["email"]) ?></div>
+                                </div>
+                                <ul class="py-2 text-sm text-gray-700">
+                                    <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
+                                    <!-- Panel de Administración (solo para administradores) -->
+                                    <li>
+                                        <a href="/adminPanel" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                                            </svg>
+                                            Panel de Administración
+                                        </a>
+                                    </li>
+                                    <?php endif; ?>
+                                    <!-- Configuración -->
+                                    <li>
+                                        <a href="/userconfig" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                            Configuración
+                                        </a>
+                                    </li>
+                                    <!-- Mis Máquinas -->
+                                    <li>
+                                        <a href="/usermachines" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h4m-2-2v4" />
+                                            </svg>
+                                            Mis Máquinas
+                                        </a>
+                                    </li>
+                                    <!-- Técnicos Asignados (solo para administradores y supervisores) -->
+                                    <?php if (isset($_SESSION["user"]["role"]) && in_array($_SESSION["user"]["role"], ['administrator', 'supervisor'])): ?>
+                                    <li>
+                                        <a href="/assigned-technicians" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                            Técnicos Asignados
+                                        </a>
+                                    </li>
+                                    <?php endif; ?>
+                                </ul>
+                                <!-- Cerrar sesión -->
+                                <div class="py-2">
+                                    <a href="/tancar-sessio" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Cerrar sesión
+                                    </a>
+                                </div>
                             </div>
-
 
                             <!-- Botón de cerrar sesión -->
                             <a href="/tancar-sessio" class="text-red-500 hover:text-red-400 transition-colors duration-200" aria-label="Cerrar sesión">
@@ -266,9 +279,11 @@
                     <!-- Menú desplegable GESTIÓN móvil -->
                     <div id="dropdownGestion" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownGestionLink">
                         <ul class="py-2 text-sm text-white">
+                            <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
                             <li>
-                                <a href="/userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gesti��n de Usuarios</a>
+                                <a href="/userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Usuarios</a>
                             </li>
+                            <?php endif; ?>
                             <li>
                                 <a href="/machineinv" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Inventario de Máquinas</a>
                             </li>
@@ -316,7 +331,8 @@
                         </ul>
                     </div>
                     
-                    <!-- Botón desplegable HISTORIAL móvil -->
+                    <!-- Botón desplegable HISTORIAL móvil (solo para administradores) -->
+                    <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
                     <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" 
                             class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
                             aria-expanded="false"
@@ -337,6 +353,7 @@
                             </li>
                         </ul>
                     </div>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>
