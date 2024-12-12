@@ -1,9 +1,9 @@
 /* TEAM */
-Developer: Alex Moncayo
+Developer: Adrià Montes Hostench
 Developer: Pau Bosch
 Developer: David Peñalva
-Lead Developer: Adrià Montes Hostench
-Contact: team@grup7dawcendrassos.cat
+Lead Developer: Alex Moncayo
+Contact: grup7dawcendrassos@grup7dawcendrassos.cat
 Website: https://www.grup7dawcendrassos.cat
 
 /* THANKS */

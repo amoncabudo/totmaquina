@@ -32,7 +32,7 @@
         <priority>0.6</priority>
     </url>
 
-    <!-- API (si deseas indexarlas) -->
+    <!-- API  -->
     <url>
         <loc>https://www.grup7dawcendrassos.cat/api/maintenance/history/{id}</loc>
         <priority>0.4</priority>
