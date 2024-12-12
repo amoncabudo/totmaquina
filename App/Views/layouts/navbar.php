@@ -193,7 +193,7 @@
         </li>
         <!-- Mis Máquinas -->
         <li>
-            <a href="/mis-maquinas" class="flex items-center px-4 py-2 hover:bg-gray-100">
+            <a href="/usermachines" class="flex items-center px-4 py-2 hover:bg-gray-100">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h4m-2-2v4" />
@@ -204,7 +204,7 @@
     </ul>
     <!-- Cerrar sesión -->
     <div class="py-2">
-        <a href="tancar-sessio" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+        <a href="/tancar-sessio" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
@@ -215,7 +215,7 @@
 
 
                             <!-- Botón de cerrar sesión -->
-                            <a href="tancar-sessio" class="text-red-500 hover:text-red-400 transition-colors duration-200" aria-label="Cerrar sesión">
+                            <a href="/tancar-sessio" class="text-red-500 hover:text-red-400 transition-colors duration-200" aria-label="Cerrar sesión">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
@@ -267,7 +267,7 @@
                     <div id="dropdownGestion" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownGestionLink">
                         <ul class="py-2 text-sm text-white">
                             <li>
-                                <a href="/userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Usuarios</a>
+                                <a href="/userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gesti��n de Usuarios</a>
                             </li>
                             <li>
                                 <a href="/machineinv" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Inventario de Máquinas</a>

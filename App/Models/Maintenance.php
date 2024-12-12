@@ -250,4 +250,40 @@ class Maintenance {
             throw new \Exception("Error al obtener las estadísticas de mantenimiento");
         }
     }
+
+    /**
+     * Actualiza el estado de un mantenimiento
+     * 
+     * @param int $maintenanceId ID del mantenimiento
+     * @param string $status Nuevo estado ('pending', 'in_progress', 'completed')
+     * @return bool
+     * @throws \Exception
+     */
+    public function updateMaintenanceStatus($maintenanceId, $status) {
+        try {
+            // Validar el estado
+            $validStatuses = ['pending', 'in_progress', 'completed'];
+            if (!in_array($status, $validStatuses)) {
+                throw new \Exception("Estado no válido");
+            }
+
+            // Verificar que el mantenimiento existe
+            $stmt = $this->sql->prepare("SELECT id FROM Maintenance WHERE id = ?");
+            $stmt->execute([$maintenanceId]);
+            if (!$stmt->fetch()) {
+                throw new \Exception("El mantenimiento no existe");
+            }
+
+            // Actualizar el estado
+            $stmt = $this->sql->prepare("UPDATE Maintenance SET status = ? WHERE id = ?");
+            if (!$stmt->execute([$status, $maintenanceId])) {
+                throw new \Exception("Error al actualizar el estado");
+            }
+
+            return true;
+        } catch (\PDOException $e) {
+            error_log("Error al actualizar el estado del mantenimiento: " . $e->getMessage());
+            throw new \Exception("Error al actualizar el estado: " . $e->getMessage());
+        }
+    }
 } 
