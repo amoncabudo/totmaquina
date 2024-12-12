@@ -90,6 +90,8 @@ $app->route("api/machine/{id}", function($request, $response) {
     return $controller->getMachineInfo($request, $response);
 });
 
+$app->route("api/search", [\App\Controllers\SearchController::class, "search"]);
+
 // Machine routes
 $app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
 $app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
@@ -136,12 +138,11 @@ $app->route("politica-cookies", function($request, $response) {
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"]);
 $app->route("passwordRecovery", [\App\Controllers\ResetPassController::class, "index"]);
 $app->post("reset", [\App\Controllers\ResetPassController::class, "reset"]);
-$app->route("resetpassword", [\App\Controllers\ResetPassController::class, "resetPassword"]);
-$app->route("update-password", [\App\Controllers\ResetPassController::class, "updatePassword"], [], "POST");
+// Ruta GET para mostrar el formulario de nueva contraseña
+$app->get("/NuevaPassword", [\App\Controllers\ResetPassController::class, "resetPassword"]);
+$app->post("/NuevaPassword", [\App\Controllers\ResetPassController::class, "updatePassword"]);
+
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
 $app->execute();
-
-
-

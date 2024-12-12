@@ -6,15 +6,15 @@
     <title>Tot Màquina - Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
     <link rel="stylesheet" href="/main.css">
+
 </head>
 <body class="bg-gray-100">
 
 <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
-<main class="bg-gray-100 min-h-screen">
+<main class="main-content">
     <!-- Carrusel de imágenes -->
     <div class="carousel-container">
         <div class="carousel-slide active">
