@@ -1,3 +1,5 @@
 vendor
 node_modules
 .env
+#bundle.js
+public/js/bundle.js

@@ -81,9 +81,31 @@ class Maintenance {
     }
 
     public function getAllTechnicians() {
-        $stmt = $this->sql->prepare("SELECT id, name, surname FROM User WHERE role = 'technician'");
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            // Si el usuario es técnico, solo se muestra a sí mismo
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+                $stmt = $this->sql->prepare("
+                    SELECT id, name, surname 
+                    FROM User 
+                    WHERE role = 'technician' 
+                    AND id = ?
+                ");
+                $stmt->execute([$_SESSION["user"]["id"]]);
+            } 
+            // Si es administrador o supervisor, muestra todos los técnicos
+            else {
+                $stmt = $this->sql->prepare("
+                    SELECT id, name, surname 
+                    FROM User 
+                    WHERE role = 'technician'
+                ");
+                $stmt->execute();
+            }
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getAllTechnicians: " . $e->getMessage());
+            throw new \Exception("Error al obtener los técnicos");
+        }
     }
 
     public function getAllMachines() {
@@ -248,6 +270,42 @@ class Maintenance {
         } catch (\PDOException $e) {
             error_log("Error en getMaintenanceStats: " . $e->getMessage());
             throw new \Exception("Error al obtener las estadísticas de mantenimiento");
+        }
+    }
+
+    /**
+     * Actualiza el estado de un mantenimiento
+     * 
+     * @param int $maintenanceId ID del mantenimiento
+     * @param string $status Nuevo estado ('pending', 'in_progress', 'completed')
+     * @return bool
+     * @throws \Exception
+     */
+    public function updateMaintenanceStatus($maintenanceId, $status) {
+        try {
+            // Validar el estado
+            $validStatuses = ['pending', 'in_progress', 'completed'];
+            if (!in_array($status, $validStatuses)) {
+                throw new \Exception("Estado no válido");
+            }
+
+            // Verificar que el mantenimiento existe
+            $stmt = $this->sql->prepare("SELECT id FROM Maintenance WHERE id = ?");
+            $stmt->execute([$maintenanceId]);
+            if (!$stmt->fetch()) {
+                throw new \Exception("El mantenimiento no existe");
+            }
+
+            // Actualizar el estado
+            $stmt = $this->sql->prepare("UPDATE Maintenance SET status = ? WHERE id = ?");
+            if (!$stmt->execute([$status, $maintenanceId])) {
+                throw new \Exception("Error al actualizar el estado");
+            }
+
+            return true;
+        } catch (\PDOException $e) {
+            error_log("Error al actualizar el estado del mantenimiento: " . $e->getMessage());
+            throw new \Exception("Error al actualizar el estado: " . $e->getMessage());
         }
     }
 } 

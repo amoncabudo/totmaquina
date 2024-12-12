@@ -26,7 +26,7 @@ class Machine
      */
     public function getAllMachine(){
         try {
-            $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, location FROM Machine ORDER BY name");
+            $stmt = $this->sql->prepare("SELECT id, name, model, manufacturer, coordinates,  location FROM Machine ORDER BY name");
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
@@ -160,6 +160,138 @@ class Machine
         $stmt = $this->sql->prepare($query);
         $stmt->execute(['serial_number' => $serial_number]);
         return $stmt->fetch();
+    }
+
+    public function getAllTechnicians() {
+        try {
+            // Si el usuario es técnico, solo se muestra a sí mismo
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+                $stmt = $this->sql->prepare("
+                    SELECT id, name, surname 
+                    FROM User 
+                    WHERE role = 'technician' 
+                    AND id = ?
+                ");
+                $stmt->execute([$_SESSION["user"]["id"]]);
+            } 
+            // Si es administrador o supervisor, muestra todos los técnicos
+            else {
+                $stmt = $this->sql->prepare("
+                    SELECT id, name, surname 
+                    FROM User 
+                    WHERE role = 'technician'
+                ");
+                $stmt->execute();
+            }
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getAllTechnicians: " . $e->getMessage());
+            throw new \Exception("Error al obtener los técnicos");
+        }
+    }
+
+    public function getMachinesByTechnician($technicianId) {
+        try {
+            $sql = "SELECT DISTINCT m.* 
+                    FROM Machine m 
+                    LEFT JOIN Incident i ON m.id = i.machine_id 
+                    LEFT JOIN Maintenance mt ON m.id = mt.machine_id 
+                    LEFT JOIN MaintenanceTechnician mtt ON mt.id = mtt.maintenance_id 
+                    WHERE m.assigned_technician_id = ? 
+                       OR i.responsible_technician_id = ?
+                       OR mtt.technician_id = ?
+                    ORDER BY m.name ASC";
+            
+            $stmt = $this->sql->prepare($sql);
+            $stmt->execute([$technicianId, $technicianId, $technicianId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getMachinesByTechnician: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getIncidentsByTechnicianAndMachine($technicianId, $machineId) {
+        try {
+            $params = [];
+            $sql = "SELECT i.* 
+                    FROM Incident i 
+                    WHERE i.responsible_technician_id = ?";
+            $params[] = $technicianId;
+            
+            if ($machineId !== null) {
+                $sql .= " AND i.machine_id = ?";
+                $params[] = $machineId;
+            }
+            
+            $sql .= " ORDER BY i.registered_date DESC";
+            
+            $stmt = $this->sql->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getIncidentsByTechnicianAndMachine: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getMaintenanceHistory($machineId) {
+        try {
+            $sql = "SELECT m.*, u.name as technician_name 
+                    FROM Maintenance m 
+                    LEFT JOIN MaintenanceTechnician mt ON m.id = mt.maintenance_id
+                    LEFT JOIN User u ON mt.technician_id = u.id 
+                    WHERE m.machine_id = ? 
+                    ORDER BY m.scheduled_date DESC";
+            
+            $stmt = $this->sql->prepare($sql);
+            $stmt->execute([$machineId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getMaintenanceHistory: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getMachineIncidents($machineId) {
+        try {
+            $sql = "SELECT i.*, u.name as technician_name 
+                    FROM Incident i 
+                    LEFT JOIN User u ON i.responsible_technician_id = u.id 
+                    WHERE i.machine_id = ? 
+                    ORDER BY i.registered_date DESC";
+            
+            $stmt = $this->sql->prepare($sql);
+            $stmt->execute([$machineId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getMachineIncidents: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getMaintenanceByTechnician($technicianId, $machineId = null) {
+        try {
+            $params = [$technicianId];
+            $sql = "SELECT DISTINCT m.* 
+                    FROM Maintenance m 
+                    INNER JOIN MaintenanceTechnician mt ON m.id = mt.maintenance_id 
+                    WHERE mt.technician_id = ?";
+            
+            if ($machineId !== null) {
+                $sql .= " AND m.machine_id = ?";
+                $params[] = $machineId;
+            }
+            
+            $sql .= " ORDER BY m.scheduled_date DESC";
+            
+            $stmt = $this->sql->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getMaintenanceByTechnician: " . $e->getMessage());
+            return [];
+        }
     }
 }
 

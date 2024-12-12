@@ -1,31 +1,77 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar el mapa con un nivel de zoom más bajo
-    var map = L.map('map').setView([41.5, 2.5], 8); // Coordenadas centradas entre Figueres y Barcelona
+// Inicializar el mapa con un estilo más moderno
+var map = L.map("map", {
+  zoomControl: false, // Desactivamos el control de zoom predeterminado
+}).setView([42.27351400039436, 2.9648054015140053 ], 15);
 
-    // Añadir capa de mapa base
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+// Añadir un estilo de mapa más moderno
+L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+  attribution: "© OpenStreetMap contributors",
+  maxZoom: 19,
+}).addTo(map);
 
-    // Añadir un marcador en Figueres
-    L.marker([42.27353135417709, 2.964941545247782]).addTo(map)
-        .bindPopup('Servidor Secundario, Figueres C/ Pelai Martinez 1')
-        .openPopup();
-
-    // Añadir un marcador en Barcelona
-    L.marker([41.387589, 2.171852]).addTo(map)
-        .bindPopup('Servidor Principal, Barcelona C/ Fontanella 23')
-        .openPopup();
-
-        var popup = L.popup();
-
-        function onMapClick(e) {
-            popup
-                .setLatLng(e.latlng)
-                .setContent("Hiciste click en el mapa en " + e.latlng.toString())
-                .openOn(map);
-        }
-        
-        map.on('click', onMapClick);
+// Añadir control de zoom en una posición personalizada
+L.control
+  .zoom({
+    position: "bottomright",
+  })
+  .addTo(map);
+// Definir el icono personalizado
+const customIcon = L.divIcon({
+  html: '<i class="fa-solid fa-location-dot fa-2x" style="color: #4169e1;"></i>',
+  iconSize: [30, 30],
+  className: "custom-div-icon",
+  iconAnchor: [15, 30],
+  popupAnchor: [0, -30],
 });
+
+// Función para cargar los marcadores
+window.loadMarkers = function (machines) {
+  if (!machines || machines.length === 0) {
+    console.log("No hay máquinas para mostrar");
+    return;
+  }
+  console.log(machines);
+  machines.forEach(function (machine) {
+    // Verificar que machine.coordinates existe y no es undefined/null
+    if (machine.coordinates && typeof machine.coordinates === "string") {
+      const coords = machine.coordinates.split(",");
+
+      // Verificar que tenemos dos valores después de dividir
+      if (coords.length === 2) {
+        const lat = parseFloat(coords[0].trim());
+        const lng = parseFloat(coords[1].trim());
+
+        // Verificar que los valores son números válidos
+        if (!isNaN(lat) && !isNaN(lng)) {
+          const marker = L.marker([lat, lng], {
+            icon: customIcon,
+          }).addTo(map);
+          // Añadir popup al marcador
+          console.log("Machine data:", machine); // Para debug
+
+          marker
+            .bindPopup(
+              `
+                    <div class="popup-content">
+                        <h3 class="font-bold">${machine.name || "Máquina"}</h3>
+                        <p>${machine.location || "Sin Ubicación"}</p>
+                        <a href="http://localhost/machinedetail/${machine.id}">Detalles de la maquina </a>
+                         
+                    </div>
+                `
+            )
+            .openPopup();
+        } else {
+          console.error("Coordenadas inválidas para la máquina:", machine);
+        }
+      } else {
+        console.error(
+          "Formato de coordenadas incorrecto para la máquina:",
+          machine
+        );
+      }
+    } else {
+      console.error("Coordenadas no definidas para la máquina:", machine);
+    }
+  });
+};
