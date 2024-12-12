@@ -367,116 +367,124 @@
             });
         }
     });
-            // Script para manejar el drag and drop de técnicos
-            document.addEventListener('DOMContentLoaded', function() {
-                const disponibles = document.getElementById('tecnicos-disponibles');
-                const asignados = document.getElementById('tecnicos-asignados');
-                const selectedTechnicians = document.getElementById('selected-technicians');
-    
-                if (disponibles && asignados) {
-                    // Función para actualizar el campo oculto con los IDs de los técnicos asignados
-                    function updateSelectedTechnicians() {
-                        const assignedTechnicians = Array.from(asignados.children).map(li => li.dataset.id);
-                        selectedTechnicians.value = assignedTechnicians.join(',');
-                        console.log('Técnicos seleccionados:', selectedTechnicians.value); // Debug
-                    }
 
-                    // Inicializar Sortable para la lista de disponibles
-                    new Sortable(disponibles, {
-                        group: 'tecnicos',
-                        animation: 150,
-                        onSort: updateSelectedTechnicians,
-                        onAdd: updateSelectedTechnicians,
-                        onRemove: updateSelectedTechnicians
-                    });
+    // Variable para rastrear si el formulario ya fue inicializado
+    let isMaintenanceFormInitialized = false;
 
-                    // Inicializar Sortable para la lista de asignados
-                    new Sortable(asignados, {
-                        group: 'tecnicos',
-                        animation: 150,
-                        onSort: updateSelectedTechnicians,
-                        onAdd: updateSelectedTechnicians,
-                        onRemove: updateSelectedTechnicians
-                    });
+    // Función para inicializar el manejo de técnicos
+    function initializeTechnicians() {
+        const disponibles = document.getElementById('tecnicos-disponibles');
+        const asignados = document.getElementById('tecnicos-asignados');
+        const techniciansData = document.getElementById('technicians-data');
 
-                    // Actualizar el campo oculto cuando se carga la página
-                    updateSelectedTechnicians();
+        if (disponibles && asignados && !isMaintenanceFormInitialized) {
+            // Función para actualizar el campo oculto con los IDs de los tcnicos asignados
+            function updateSelectedTechnicians() {
+                const assignedTechnicians = Array.from(asignados.children).map(li => li.dataset.id);
+                if (techniciansData) {
+                    techniciansData.value = assignedTechnicians.join(',');
                 }
+            }
+
+            // Inicializar Sortable para la lista de disponibles
+            new Sortable(disponibles, {
+                group: 'tecnicos',
+                animation: 150,
+                onSort: updateSelectedTechnicians,
+                onAdd: updateSelectedTechnicians,
+                onRemove: updateSelectedTechnicians
             });
 
-    // Manejo del formulario de mantenimiento
-    document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar Sortable para la lista de asignados
+            new Sortable(asignados, {
+                group: 'tecnicos',
+                animation: 150,
+                onSort: updateSelectedTechnicians,
+                onAdd: updateSelectedTechnicians,
+                onRemove: updateSelectedTechnicians
+            });
+
+            // Actualizar el campo oculto cuando se carga la página
+            updateSelectedTechnicians();
+        }
+    }
+
+    // Función para inicializar el formulario de mantenimiento
+    function initializeMaintenanceForm() {
+        if (isMaintenanceFormInitialized) return;
+
         const maintenanceForm = document.querySelector('form[action="/maintenance/create"]');
         if (maintenanceForm) {
             maintenanceForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                console.log('Enviando formulario de mantenimiento');
 
-                // Obtener los técnicos seleccionados
-                const selectedTechnicians = Array.from(document.querySelectorAll('#tecnicos-asignados li'))
-                    .map(li => li.getAttribute('data-id'));
-                console.log('Técnicos seleccionados:', selectedTechnicians);
+                // Deshabilitar el botón de submit para evitar múltiples envíos
+                const submitButton = this.querySelector('button[type="submit"]');
+                if (submitButton.disabled) return; // Si ya está deshabilitado, no continuar
+                submitButton.disabled = true;
 
-                // Crear FormData con los datos del formulario
-                const formData = new FormData(this);
-                
-                // Asegurarse de que la fecha tenga el formato correcto
-                const dateInput = document.getElementById('scheduled_date');
-                if (dateInput && dateInput.value) {
-                    formData.set('scheduled_date', dateInput.value);
-                }
+                try {
+                    // Crear FormData con los datos del formulario
+                    const formData = new FormData(this);
+                    
+                    // Obtener los técnicos seleccionados
+                    const selectedTechnicians = Array.from(document.querySelectorAll('#tecnicos-asignados li'))
+                        .map(li => li.getAttribute('data-id'));
 
-                // Agregar los técnicos seleccionados
-                if (selectedTechnicians.length > 0) {
+                    // Limpiar los técnicos existentes del FormData
+                    formData.delete('technicians[]');
+                    formData.delete('technicians_data');
+
+                    // Agregar los técnicos seleccionados
                     selectedTechnicians.forEach(techId => {
                         formData.append('technicians[]', techId);
                     });
-                }
 
-                try {
-                    console.log('Enviando datos al servidor:', Object.fromEntries(formData));
-                    
                     const response = await fetch('/maintenance/create', {
                         method: 'POST',
                         body: formData
                     });
 
-                    console.log('Respuesta del servidor:', response);
-                    console.log('Headers:', response.headers);
-                    
-                    // Intentar leer el texto de la respuesta primero
-                    const responseText = await response.text();
-                    console.log('Texto de respuesta:', responseText);
-
-                    let result;
-                    try {
-                        result = JSON.parse(responseText);
-                    } catch (e) {
-                        console.error('Error al parsear JSON:', e);
-                        throw new Error('La respuesta del servidor no es JSON válido. Respuesta: ' + responseText);
-                    }
-
-                    console.log('Respuesta parseada:', result);
+                    const result = await response.json();
 
                     if (result.success) {
-                        alert(result.message);
+                        // Mostrar mensaje de éxito
+                        const successMessage = document.createElement('div');
+                        successMessage.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4';
+                        successMessage.setAttribute('role', 'alert');
+                        successMessage.innerHTML = `<span class="block sm:inline">${result.message}</span>`;
+                        
+                        // Eliminar mensajes anteriores si existen
+                        const previousMessages = maintenanceForm.parentNode.querySelectorAll('[role="alert"]');
+                        previousMessages.forEach(msg => msg.remove());
+                        
+                        // Insertar el nuevo mensaje
+                        maintenanceForm.parentNode.insertBefore(successMessage, maintenanceForm);
+
+                        // Recargar la página después de un breve delay
                         setTimeout(() => {
                             window.location.reload();
-                        }, 1000);
+                        }, 1500);
                     } else {
-                        alert(result.message || 'Error al registrar el mantenimiento');
+                        throw new Error(result.message || 'Error al registrar el mantenimiento');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error al procesar la solicitud: ' + error.message);
+                    alert(error.message || 'Error al procesar la solicitud');
+                } finally {
+                    // Re-habilitar el botón de submit después de un breve delay
+                    setTimeout(() => {
+                        submitButton.disabled = false;
+                    }, 2000);
                 }
             });
+
+            isMaintenanceFormInitialized = true;
         }
-    });
-    
+    }
+
     // Configuración de los gráficos de mantenimiento
-    document.addEventListener('DOMContentLoaded', function() {
-        // Verificar si estamos en la página de estadísticas
+    function initializeCharts() {
         if (document.getElementById('typeChart')) {
             // Obtener los datos de los elementos data
             const statsContainer = document.getElementById('stats-data');
@@ -551,8 +559,182 @@
                 }
             });
         }
+    }
+
+    // Función para generar usuarios de prueba
+    function initializeUserManagement() {
+        $(document).ready(function() {
+            console.log('DOM cargado, configurando event listeners...');
+        
+            $('#createTestTechnician').on('click', function() {
+                generarUsuarioPrueba('technician');
+            });
+        
+            $('#createTestSupervisor').on('click', function() {
+                generarUsuarioPrueba('supervisor');
+            });
+        });
+    }
+
+    function generarUsuarioPrueba(role) {
+        console.log('Generando usuario de prueba para el rol:', role);
+
+        $.ajax({
+            url: 'https://randomuser.me/api/?nat=es&inc=email,name,login',
+            dataType: 'json',
+            success: function(data) {
+                const user = data.results[0];
+                const usuarioPrueba = {
+                    nombre: user.name.first,
+                    apellido: user.name.last,
+                    email: user.email,
+                    pass: 'Testing10.',
+                    rol: role
+                };
+
+                // Enviar al servidor
+                $.ajax({
+                    url: '/createTestUser',
+                    method: 'POST',
+                    data: usuarioPrueba,
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function(response) {
+                        console.log('Respuesta del servidor:', response);
+                        const result = typeof response === 'string' ? JSON.parse(response) : response;
+                        if (result.success) {
+                            window.location.reload();
+                        } else {
+                            console.error('Error del servidor:', result.message);
+                            alert('Error: ' + result.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la petición:', error);
+                        alert('Error al crear el usuario: ' + error);
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al obtener usuario aleatorio:', error);
+                alert('Error al generar usuario de prueba: ' + error);
+            }
+        });
+    }
+
+    // Validación de contraseña
+    function initializePasswordValidation() {
+        // Patrones individuales para cada requisito
+        const patterns = {
+            minLength: /.{6,13}/,
+            lowercase: /[a-z]/,
+            uppercase: /[A-Z]/,
+            number: /\d/,
+            special: /[$@$!%*?&-.,]/,
+            noSpaces: /^[^\s']+$/
+        };
+
+        function validatePassword(password) {
+            return {
+                minLength: patterns.minLength.test(password),
+                lowercase: patterns.lowercase.test(password),
+                uppercase: patterns.uppercase.test(password),
+                number: patterns.number.test(password),
+                special: patterns.special.test(password),
+                noSpaces: patterns.noSpaces.test(password)
+            };
+        }
+
+        function updatePasswordFeedback(results, messageContainer) {
+            const messages = {
+                minLength: 'Entre 6 y 13 caracteres',
+                lowercase: 'Al menos una minúscula',
+                uppercase: 'Al menos una mayúscula',
+                number: 'Al menos un número',
+                special: 'Al menos un carácter especial ($@!%*?&-.,)',
+                noSpaces: 'Sin espacios ni comillas simples'
+            };
+
+            let html = '<ul class="text-sm mt-2">';
+            for (const [requirement, passed] of Object.entries(results)) {
+                const color = passed ? 'text-green-600' : 'text-red-600';
+                const icon = passed ? '✔' : '✗';
+                html += `<li class="${color}"><span class="mr-2">${icon}</span>${messages[requirement]}</li>`;
+            }
+            html += '</ul>';
+
+            messageContainer.html(html);
+
+            // Verificar si todos los requisitos se cumplen
+            const allPassed = Object.values(results).every(result => result);
+            return allPassed;
+        }
+
+        function handlePasswordValidation() {
+            const password = $(this).val();
+            const results = validatePassword(password);
+            const messageContainer = $(this).siblings('.password-requirements');
+            
+            // Crear el contenedor de requisitos si no existe
+            if (messageContainer.length === 0) {
+                $(this).after('<div class="password-requirements"></div>');
+            }
+            
+            const allPassed = updatePasswordFeedback(results, $(this).siblings('.password-requirements'));
+            
+            // Actualizar el estilo del input y el estado del botón
+            if (allPassed) {
+                $(this).css("border", "2px solid green");
+                $("#btnEnviar").prop("disabled", false);
+            } else {
+                $(this).css("border", "2px solid red");
+                $("#btnEnviar").prop("disabled", true);
+            }
+        }
+
+        function handleEditPasswordValidation() {
+            const password = $(this).val();
+            const messageContainer = $(this).siblings('.password-requirements');
+            
+            // Crear el contenedor de requisitos si no existe
+            if (messageContainer.length === 0) {
+                $(this).after('<div class="password-requirements"></div>');
+            }
+            
+            // Si el campo está vacío en modo edición
+            if (password === "") {
+                $(this).css("border", "");
+                messageContainer.html("");
+                $("button[type='submit']").prop("disabled", false);
+                return;
+            }
+            
+            const results = validatePassword(password);
+            const allPassed = updatePasswordFeedback(results, messageContainer);
+            
+            // Actualizar el estilo del input y el estado del botón
+            if (allPassed) {
+                $(this).css("border", "2px solid green");
+                $("button[type='submit']").prop("disabled", false);
+            } else {
+                $(this).css("border", "2px solid red");
+                $("button[type='submit']").prop("disabled", true);
+            }
+        }
+
+        // Asignar eventos
+        $('#password').on('keyup', handlePasswordValidation);
+        $('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation);
+    }
+
+    // Un único event listener para DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTechnicians();
+        initializeMaintenanceForm();
+        initializeCharts();
+        initializeUserManagement();
+        initializePasswordValidation();
     });
-    
+
     // Función para manejar el historial de mantenimiento
     function initMaintenanceHistory() {
         const form = document.getElementById('maintenance-form');
@@ -682,107 +864,194 @@
         });
     }
 
-    // Función para manejar el historial de incidencias
+    // Función para formatear la prioridad
+    function formatPriority(priority) {
+        const classes = {
+            'high': 'bg-red-100 text-red-800',
+            'medium': 'bg-yellow-100 text-yellow-800',
+            'low': 'bg-green-100 text-green-800'
+        };
+        return classes[priority] || 'bg-gray-100 text-gray-800';
+    }
+
+    // Función para formatear el estado
+    function formatStatus(status) {
+        const classes = {
+            'pending': 'bg-yellow-100 text-yellow-800',
+            'in_progress': 'bg-blue-100 text-blue-800',
+            'resolved': 'bg-green-100 text-green-800'
+        };
+        return classes[status] || 'bg-gray-100 text-gray-800';
+    }
+
+    // Función para actualizar la información de la máquina
+    function updateMachineInfo(info) {
+        document.getElementById('total-incidents').textContent = info.total_incidents || 0;
+        document.getElementById('pending-incidents').textContent = info.pending_incidents || 0;
+        document.getElementById('in-progress-incidents').textContent = info.in_progress_incidents || 0;
+        document.getElementById('resolved-incidents').textContent = info.resolved_incidents || 0;
+        document.getElementById('machine-info').classList.remove('hidden');
+    }
+
+    // Función para formatear la fecha
+    function formatDate(dateString) {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            // Si la fecha no es válida, intentamos parsear el formato de MySQL (YYYY-MM-DD)
+            const parts = dateString.split('-');
+            if (parts.length === 3) {
+                return new Date(parts[0], parts[1] - 1, parts[2]).toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+            return dateString;
+        }
+        return date.toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    // Función para inicializar el historial de incidencias
     function initIncidentHistory() {
         const machineSelect = document.getElementById('machine-select');
         const historyContent = document.getElementById('history-content');
         
         // Si no estamos en la página de incidencias, salir
-        // Verificamos si estamos en la página de incidencias buscando un elemento específico del mantenimiento
-        const isMaintenancePage = document.getElementById('maintenance-form') !== null;
-        if (!machineSelect || !historyContent || isMaintenancePage) return;
+        if (!machineSelect || !historyContent) {
+            return;
+        }
 
         // Verificar si ya tiene un event listener para evitar duplicados
-        const hasListener = machineSelect.getAttribute('data-has-incident-listener');
-        if (hasListener) return;
+        if (machineSelect.getAttribute('data-has-incident-listener')) {
+            return;
+        }
 
-        machineSelect.setAttribute('data-has-incident-listener', 'true');
         console.log('Inicializando historial de incidencias...');
+        machineSelect.setAttribute('data-has-incident-listener', 'true');
 
         machineSelect.addEventListener('change', async function() {
             const machineId = this.value;
-            console.log('Máquina seleccionada para incidencias:', machineId);
+            console.log('Máquina seleccionada:', machineId);
 
             if (!machineId) {
-                historyContent.innerHTML = '<p class="text-gray-600">Selecciona una máquina para ver su historial.</p>';
+                historyContent.innerHTML = '<p class="text-gray-600 text-center">Seleccione una máquina para ver su historial.</p>';
+                document.getElementById('machine-info').classList.add('hidden');
                 return;
             }
 
             try {
-                historyContent.innerHTML = '<p class="text-gray-600">Cargando historial...</p>';
+                historyContent.innerHTML = '<p class="text-gray-600 text-center">Cargando historial...</p>';
                 const response = await fetch(`/history/incidents/${machineId}`);
                 console.log('Respuesta del servidor:', response);
                 
                 if (!response.ok) {
-                    throw new Error(`Error al obtener el historial: ${response.status} ${response.statusText}`);
+                    throw new Error(`Error al obtener el historial: ${response.status}`);
                 }
                 
-                const historial = await response.json();
-                console.log('Datos del historial:', historial);
+                const data = await response.json();
+                console.log('Datos recibidos:', data);
                 
-                if (historial && historial.length > 0) {
-                    let html = `
-                        <table class="min-w-full bg-white border border-gray-300 rounded-lg overflow-hidden">
-                            <thead>
-                                <tr class="bg-gray-200 text-gray-700 uppercase text-sm">
-                                    <th class="py-3 px-4 text-left border-b">Fecha</th>
-                                    <th class="py-3 px-4 text-left border-b">Prioridad</th>
-                                    <th class="py-3 px-4 text-left border-b">Descripción</th>
-                                    <th class="py-3 px-4 text-left border-b">Estado</th>
-                                    <th class="py-3 px-4 text-left border-b">Técnicos</th>
-                                    <th class="py-3 px-4 text-left border-b">Tiempo</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+                if (data.success) {
+                    // Actualizar estadísticas de la máquina
+                    if (data.machine) {
+                        document.getElementById('total-incidents').textContent = data.machine.total_incidents || 0;
+                        document.getElementById('pending-incidents').textContent = data.machine.pending_incidents || 0;
+                        document.getElementById('in-progress-incidents').textContent = data.machine.in_progress_incidents || 0;
+                        document.getElementById('resolved-incidents').textContent = data.machine.resolved_incidents || 0;
+                        document.getElementById('machine-info').classList.remove('hidden');
+                    }
 
-                    historial.forEach(registro => {
-                        const prioridadClass = registro.tipo === 'high' ? 'bg-red-100 text-red-800' : 
-                                             (registro.tipo === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                                             'bg-green-100 text-green-800');
-                        
-                        const estadoClass = registro.reparacion === 'resolved' ? 'bg-green-100 text-green-800' : 
-                                          (registro.reparacion === 'in_progress' ? 'bg-yellow-100 text-yellow-800' : 
-                                          'bg-red-100 text-red-800');
-
-                        const prioridadTexto = registro.tipo === 'high' ? 'Alta' : 
-                                             (registro.tipo === 'medium' ? 'Media' : 'Baja');
-
-                        const estadoTexto = registro.reparacion === 'resolved' ? 'Resuelto' : 
-                                          (registro.reparacion === 'in_progress' ? 'En Progreso' : 'Pendiente');
-
-                        html += `
-                            <tr class="hover:bg-gray-100">
-                                <td class="py-2 px-4 border-b">${registro.fecha}</td>
-                                <td class="py-2 px-4 border-b">
-                                    <span class="px-2 py-1 rounded-full text-sm ${prioridadClass}">
-                                        ${prioridadTexto}
-                                    </span>
-                                </td>
-                                <td class="py-2 px-4 border-b">${registro.fallo}</td>
-                                <td class="py-2 px-4 border-b">
-                                    <span class="px-2 py-1 rounded-full text-sm ${estadoClass}">
-                                        ${estadoTexto}
-                                    </span>
-                                </td>
-                                <td class="py-2 px-4 border-b">${registro.tecnicos.join(", ")}</td>
-                                <td class="py-2 px-4 border-b">${registro.tiempo}</td>
-                            </tr>`;
-                    });
-
-                    html += `
-                            </tbody>
-                        </table>`;
-                    
-                    historyContent.innerHTML = html;
+                    // Mostrar el historial de incidencias
+                    if (data.data && data.data.length > 0) {
+                        const table = `
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioridad</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Registro</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Resolución</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Técnico</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        ${data.data.map(incident => `
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-normal text-sm text-gray-900">${incident.description}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getPriorityClass(incident.priority)}">
+                                                        ${incident.priority_text || incident.priority}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(incident.status)}">
+                                                        ${incident.status_text || incident.status}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    ${formatDate(incident.registered_date)}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    ${formatDate(incident.resolved_date)}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    ${incident.technician_name || 'Sin asignar'}
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                        historyContent.innerHTML = table;
+                    } else {
+                        historyContent.innerHTML = '<p class="text-gray-600 text-center py-8">No hay incidencias registradas para esta máquina.</p>';
+                    }
                 } else {
-                    historyContent.innerHTML = '<p class="text-gray-600">No hay registros de incidencias para esta máquina.</p>';
+                    throw new Error(data.message || 'Error al cargar el historial');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                historyContent.innerHTML = `<p class="text-red-600">Error al cargar el historial: ${error.message}</p>`;
+                historyContent.innerHTML = `
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <p class="text-red-600 text-center">Error al cargar el historial: ${error.message}</p>
+                    </div>
+                `;
+                document.getElementById('machine-info').classList.add('hidden');
             }
         });
     }
+
+    // Funciones auxiliares para las clases de estilo
+    function getPriorityClass(priority) {
+        const classes = {
+            'alta': 'bg-red-100 text-red-800',
+            'media': 'bg-yellow-100 text-yellow-800',
+            'baja': 'bg-green-100 text-green-800'
+        };
+        return classes[priority.toLowerCase()] || 'bg-gray-100 text-gray-800';
+    }
+
+    function getStatusClass(status) {
+        const classes = {
+            'pendiente': 'bg-yellow-100 text-yellow-800',
+            'en_proceso': 'bg-blue-100 text-blue-800',
+            'resuelto': 'bg-green-100 text-green-800'
+        };
+        return classes[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
+    }
+
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        initIncidentHistory();
+    });
 
     // Función para hacer debounce de las búsquedas
     function debounce(func, wait) {
@@ -802,45 +1071,93 @@
         const searchResults = document.getElementById('searchResults');
         
         try {
-            const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
-            const data = await response.json();
+            // Validar la longitud de la búsqueda
+            if (!query || query.length < 2) {
+                searchResults.innerHTML = `
+                    <div class="px-4 py-2 text-sm text-gray-500">
+                        Ingrese al menos 2 caracteres para buscar
+                    </div>`;
+                searchResults.classList.remove('hidden');
+                return;
+            }
+
+            // Mostrar estado de carga
+            searchResults.innerHTML = `
+                <div class="px-4 py-2 text-sm text-gray-500">
+                    <svg class="animate-spin h-5 w-5 mr-3 inline" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Buscando...
+                </div>`;
+            searchResults.classList.remove('hidden');
+
+            // Construir la URL con el parámetro de búsqueda
+            const url = new URL('/api/search', window.location.origin);
+            url.searchParams.append('query', query);
             
+            console.log('URL de búsqueda:', url.toString());
+            
+            // Realizar la petición
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            // Obtener el texto de la respuesta para depuración
+            const responseText = await response.text();
+            console.log('Respuesta del servidor (texto):', responseText);
+
+            // Intentar parsear la respuesta como JSON
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.error('Error al parsear JSON:', e);
+                throw new Error('La respuesta del servidor no es JSON válido');
+            }
+
+            console.log('Respuesta de búsqueda (parseada):', data);
+
+            // Procesar la respuesta
             if (data.success) {
-                if (data.results.length === 0) {
+                if (!data.results || data.results.length === 0) {
                     searchResults.innerHTML = `
                         <div class="px-4 py-2 text-sm text-gray-500">
-                            No se encontraron resultados
+                            No se encontraron resultados para "${query}"
+                            ${data.total_machines ? `<br>Total de máquinas en la base de datos: ${data.total_machines}` : ''}
                         </div>`;
                 } else {
                     searchResults.innerHTML = data.results.map(machine => `
                         <a href="/machinedetail/${machine.id}" class="block hover:bg-gray-50">
                             <div class="px-4 py-2 border-b">
-                                <div class="text-sm font-medium text-gray-900">${machine.name}</div>
+                                <div class="text-sm font-medium text-gray-900">${machine.name || 'Sin nombre'}</div>
                                 <div class="text-sm text-gray-500">
-                                    ${machine.manufacturer} - ${machine.model}
-                                    <br>
-                                    Ubicación: ${machine.location}
+                                    ${machine.manufacturer ? `${machine.manufacturer}` : ''} 
+                                    ${machine.model ? `- ${machine.model}` : ''}
+                                    ${machine.location ? `<br>Ubicación: ${machine.location}` : ''}
                                 </div>
                             </div>
                         </a>
                     `).join('');
                 }
             } else {
-                searchResults.innerHTML = `
-                    <div class="px-4 py-2 text-sm text-red-500">
-                        ${data.error}
-                    </div>`;
+                throw new Error(data.error || 'Error en la búsqueda');
             }
-            
-            searchResults.classList.remove('hidden');
-            
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error en la búsqueda:', error);
             searchResults.innerHTML = `
-                <div class="px-4 py-2 text-sm text-red-500">
-                    Error al realizar la búsqueda
+                <div class="px-4 py-2">
+                    <div class="text-sm text-red-500 mb-2">
+                        ${error.message || 'Error al realizar la búsqueda'}
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        Por favor, inténtelo de nuevo. Si el problema persiste, contacte al administrador.
+                    </div>
                 </div>`;
-            searchResults.classList.remove('hidden');
         }
     }
 
@@ -860,15 +1177,6 @@
                     return;
                 }
                 
-                if (query.length < 3) {
-                    searchResults.innerHTML = `
-                        <div class="px-4 py-2 text-sm text-gray-500">
-                            Escribe al menos 3 caracteres para buscar
-                        </div>`;
-                    searchResults.classList.remove('hidden');
-                    return;
-                }
-                
                 performSearch(query);
             }, 300));
             
@@ -878,14 +1186,6 @@
                     searchResults.classList.add('hidden');
                 }
             });
-            
-            // Prevenir envío del formulario
-            const form = searchInput.closest('form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                });
-            }
         }
     });
 
@@ -1016,4 +1316,140 @@ function handleEditPasswordValidation() {
 // Asignar eventos
 $('#password').on('keyup', handlePasswordValidation);
 $('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation);
+
+// Función para inicializar el drag and drop de técnicos
+function initTechnicianDragDrop() {
+    const disponibles = document.getElementById('tecnicos-disponibles');
+    const asignados = document.getElementById('tecnicos-asignados');
+    const selectedTechnician = document.getElementById('selected-technician');
+    const form = document.querySelector('form');
+
+    if (disponibles && asignados && selectedTechnician) {
+        console.log('Inicializando drag and drop de técnicos');
+
+        // Función para actualizar el técnico seleccionado
+        function updateSelectedTechnician() {
+            const assignedTechnicians = asignados.children;
+            if (assignedTechnicians.length > 0) {
+                // Solo tomamos el primer técnico asignado
+                selectedTechnician.value = assignedTechnicians[0].dataset.id;
+                console.log('Técnico seleccionado:', selectedTechnician.value);
+            } else {
+                selectedTechnician.value = '';
+                console.log('No hay técnico seleccionado');
+            }
+        }
+
+        // Inicializar Sortable para la lista de disponibles
+        new Sortable(disponibles, {
+            group: {
+                name: 'tecnicos',
+                pull: 'clone',
+                put: true
+            },
+            animation: 150,
+            sort: false
+        });
+
+        // Inicializar Sortable para la lista de asignados
+        new Sortable(asignados, {
+            group: {
+                name: 'tecnicos',
+                pull: true,
+                put: function() {
+                    // Solo permitir un técnico en la lista de asignados
+                    return this.el.children.length < 1;
+                }
+            },
+            animation: 150,
+            sort: false,
+            onAdd: function(evt) {
+                // Si hay más de un elemento, remover los anteriores
+                while (asignados.children.length > 1) {
+                    disponibles.appendChild(asignados.children[0]);
+                }
+                updateSelectedTechnician();
+                console.log('Técnico asignado:', selectedTechnician.value);
+            },
+            onRemove: function(evt) {
+                updateSelectedTechnician();
+                console.log('Técnico removido, valor actual:', selectedTechnician.value);
+            }
+        });
+
+        // Validación del formulario
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const machine = document.getElementById('machine_id').value;
+                const priority = document.getElementById('priority').value;
+                const description = document.getElementById('description').value;
+                const technicianValue = selectedTechnician.value;
+
+                console.log('Validando formulario:', {
+                    machine,
+                    priority,
+                    description,
+                    technicianValue
+                });
+
+                if (!machine || !priority || !description || !technicianValue) {
+                    e.preventDefault();
+                    alert('Por favor, complete todos los campos obligatorios');
+                    return false;
+                }
+            });
+        }
+
+        // Inicializar el valor del técnico seleccionado
+        updateSelectedTechnician();
+    } else {
+        console.error('No se encontraron los elementos necesarios para el drag and drop de técnicos');
+    }
+}
+
+// Función para resetear los técnicos al limpiar el formulario
+function resetTechnicians() {
+    const disponibles = document.getElementById('tecnicos-disponibles');
+    const asignados = document.getElementById('tecnicos-asignados');
+    const selectedTechnician = document.getElementById('selected-technician');
+
+    if (disponibles && asignados && selectedTechnician) {
+        console.log('Reseteando técnicos');
+        // Mover todos los técnicos de vuelta a disponibles
+        while (asignados.firstChild) {
+            disponibles.appendChild(asignados.firstChild);
+        }
+        selectedTechnician.value = '';
+    }
+}
+
+// Inicializar el drag and drop cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, inicializando drag and drop');
+    initTechnicianDragDrop();
+});
+
+// Función para mostrar/ocultar pestañas
+function showTab(button, contentId) {
+    // Obtener el contenedor padre de las pestañas
+    const tabContainer = button.closest('.bg-white');
+    
+    // Desactivar todas las pestañas en este contenedor
+    tabContainer.querySelectorAll('.tab-button').forEach(tab => {
+        tab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+        tab.classList.add('text-gray-500');
+    });
+    
+    // Activar la pestaña seleccionada
+    button.classList.remove('text-gray-500');
+    button.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+    
+    // Ocultar todos los contenidos en este contenedor
+    tabContainer.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Mostrar el contenido seleccionado
+    document.getElementById(contentId).classList.remove('hidden');
+}
 

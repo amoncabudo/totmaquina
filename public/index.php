@@ -16,6 +16,7 @@
 
 use \Emeset\Contracts\Routers\Router;
 
+
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 include "../vendor/autoload.php";
 include "../App/Controllers/portada.php";
@@ -43,15 +44,19 @@ include "../App/Controllers/ctrlUploadCSV.php";
 include "../App/Controllers/ctrlEditMachine.php";
 include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
-include "../App/Controllers/ctrlmachines.php"; 
 include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/ctrlMapMachine.php";
 include "../App/Controllers/ctrlResetPassword.php";
 
 
+include "../App/Controllers/usermachines.php";
 include "../App/Controllers/HistoryIncidentsController.php";
 include "../App/Controllers/UserConfigController.php";
+
+include "../App/Middleware/supervisor.php";
+include "../App/Middleware/technician.php";
+include "../App/Middleware/administrator.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -69,15 +74,25 @@ $app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middlew
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
 
-$app->route("maintenance", "maintenance");
-// Ruta para mostrar las máquinas disponibles
-
 
 // Maintenance routes
-$app->route("maintenance", "maintenance");
-$app->route("maintenance/create", "createMaintenance");
-$app->route("maintenance/stats", "maintenanceStats");
-$app->route("maintenance_history", [\App\Controllers\MaintenanceHistoryController::class, "index"]);
+$app->route("maintenance", "maintenance", [
+    "auth", 
+    role(['administrator', 'supervisor'])
+]);
+
+$app->route("maintenance/create", "createMaintenance", [
+    "auth", 
+    role(['technician', 'administrator', 'supervisor'])
+]);
+
+$app->route("maintenance/stats", "maintenanceStats", [
+    "auth", 
+    role(['technician', 'administrator', 'supervisor'])
+]);
+
+$app->route("maintenance_history", [\App\Controllers\MaintenanceHistoryController::class, "index"],["auth",
+    role(['administrator', 'supervisor'])]);
 
 // API routes
 $app->route("api/maintenance/history/{id}", function($request, $response) {
@@ -90,52 +105,187 @@ $app->route("api/machine/{id}", function($request, $response) {
     return $controller->getMachineInfo($request, $response);
 });
 
-$app->route("api/search", [\App\Controllers\SearchController::class, "search"]);
+// Ruta para la búsqueda de máquinas
+$app->route("api/search", function($request, $response) {
+    try {
+        // Desactivar la salida de errores de PHP
+        ini_set('display_errors', '0');
+        error_reporting(0);
+        
+        // Asegurar que no haya salida antes de los headers
+        if (ob_get_level()) ob_end_clean();
+        
+        // Establecer headers para JSON
+        header('Content-Type: application/json; charset=utf-8');
+        
+        // Obtener el parámetro de búsqueda
+        $query = trim($request->get(INPUT_GET, 'query') ?? '');
+        error_log("Término de búsqueda recibido: '" . $query . "'");
+        
+        // Validar que la consulta tenga al menos 2 caracteres
+        if (strlen($query) < 2) {
+            echo json_encode([
+                'success' => true,
+                'message' => "Ingrese al menos 2 caracteres para buscar",
+                'results' => []
+            ]);
+            return;
+        }
+
+        // Conectar a la base de datos
+        $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+        $sql = $db->getConnection();
+
+        // Consulta de prueba para verificar datos
+        $testStmt = $sql->query("SELECT COUNT(*) as total FROM Machine");
+        $totalMachines = $testStmt->fetch(\PDO::FETCH_ASSOC)['total'];
+        error_log("Total de máquinas en la base de datos: " . $totalMachines);
+
+        // Preparar y ejecutar la consulta
+        $stmt = $sql->prepare("
+            SELECT id, name, model, manufacturer, location 
+            FROM Machine 
+            WHERE LOWER(name) LIKE LOWER(:query) 
+            OR LOWER(model) LIKE LOWER(:query) 
+            OR LOWER(manufacturer) LIKE LOWER(:query) 
+            OR LOWER(location) LIKE LOWER(:query)
+            LIMIT 10
+        ");
+
+        $searchTerm = "%" . $query . "%";
+        error_log("Término de búsqueda SQL: " . $searchTerm);
+        
+        $stmt->execute(['query' => $searchTerm]);
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        error_log("Resultados encontrados: " . count($results));
+        error_log("Resultados: " . print_r($results, true));
+
+        // Devolver resultados
+        echo json_encode([
+            'success' => true,
+            'query' => $query,
+            'total_machines' => $totalMachines,
+            'results' => $results
+        ]);
+        
+    } catch (\PDOException $e) {
+        error_log("Error de base de datos en la búsqueda: " . $e->getMessage());
+        http_response_code(200); // Cambiar a 200 para evitar error 500
+        echo json_encode([
+            'success' => false,
+            'error' => "Error en la base de datos",
+            'debug' => $e->getMessage(),
+            'results' => []
+        ]);
+    } catch (\Exception $e) {
+        error_log("Error en la búsqueda: " . $e->getMessage());
+        http_response_code(200); // Cambiar a 200 para evitar error 500
+        echo json_encode([
+            'success' => false,
+            'error' => "Error al realizar la búsqueda",
+            'debug' => $e->getMessage(),
+            'results' => []
+        ]);
+    }
+    return;
+});
+
+// Ruta para el historial de incidencias
+$app->route("history/incidents/{id}", "getIncidentHistory", ["auth",
+role(['administrator', 'supervisor'])]);
 
 // Machine routes
-$app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"]);
-$app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"]);
-$app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"]);
-$app->route("history", [\App\Controllers\HistoryIncidentsController::class, "index"]);
-$app->route("history/incidents/{id}", [\App\Controllers\HistoryIncidentsController::class, "getHistory"]);
-$app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"]);
-$app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"]);
-$app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"]);
+$app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"],["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+$app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"],["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+$app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"],["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+$app->route("history", "history",["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+$app->route("/deletemachine/{id}", [\App\Controllers\ctrlDeleteMachine::class, "deleteMachine"],["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+$app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"],["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+$app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"],["auth",
+role(['technician', 'administrator', 'supervisor'])]);
 
-$app->route("mapmachines", [\App\Controllers\ctrlMapMachine::class, "mapmachines"]);
 
-$app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"]);
-$app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"]);
+$app->get('/generate_machine_qr/{id}', [\App\Controllers\CtrlGenerateMachineQR::class, "generateQR"],["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+$app->route("mapmachines", [\App\Controllers\ctrlMapMachine::class, "mapmachines"],["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+$app->post('/update-machine-technicians/{id}', 'updateMachineTechnicians',["auth",
+role(['technician', 'administrator', 'supervisor'])]);
 
+
+$app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"],["auth",
+role(['technician','administrator','supervisor'])]);
+$app->route("history", "history",["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+
+$app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"], ["auth", 
+role(['administrator'])]);
 // Rutas de notificaciones
-$app->route("notifications", [\App\Controllers\NotificationsController::class, "index"]);
-$app->post("notifications/delete/{id}", [\App\Controllers\NotificationsController::class, "delete"]);
-$app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsController::class, "markAsRead"]);
+$app->route("notifications", [\App\Controllers\NotificationsController::class, "index"], ["auth",
+role(['technician','administrator','supervisor'])]);
+$app->post("notifications/delete/{id}", [\App\Controllers\NotificationsController::class, "delete"],["auth",
+role(['technician','administrator','supervisor'])]);
+$app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsController::class, "markAsRead"],["auth",
+role(['technician','administrator','supervisor'])]);
 
-$app->post("/addUser", [\App\Controllers\UserController::class, "createUser"]);
-$app->post("/editUser", [\App\Controllers\editUser::class, "editUser"]);
-$app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"]);
+$app->post("/addUser", [\App\Controllers\UserController::class, "createUser"],["auth",
+role(['technician','administrator','supervisor'])]);
 
-$app->route('machines', [\App\Controllers\incidents::class, 'incidents']);
+$app->post("/editUser", [\App\Controllers\editUser::class, "editUser"],["auth",
+role(['technician','administrator','supervisor'])]);
+$app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"],["auth",
+role(['technician','administrator','supervisor'])]);
 
-$app->get('/incidents', 'incidents');
-$app->post('/incidents/create', 'createIncident');
-$app->post('/incidents/update-status', 'updateStatus');
-$app->post('/incidents/assign-technician', 'assignTechnician');
-$app->post('/incidents/delete', 'deleteIncident');
-$app->get('/incidents/statistics', 'getStatistics');
+$app->route('machines', [\App\Controllers\incidents::class, 'incidents'],["auth",
+role(['technician','administrator','supervisor'])]);
 
-// Rutas de configuración de usuario
-$app->route("userconfig", [\App\Controllers\UserConfigController::class, "index"]);
-$app->route("update-avatar", [\App\Controllers\UserConfigController::class, "updateAvatar"], [], "POST");
-$app->route("update-profile", [\App\Controllers\UserConfigController::class, "updateProfile"], [], "POST");
+$app->route("usermachines", [\App\Controllers\UserMachinesController::class, "index"], ["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+
+$app->route("history", "history",["auth",
+role(['administrator','supervisor'])]);
+$app->get('/incidents', 'incidents',["auth",
+role(['technician','administrator','supervisor'])]);
+$app->post('/incidents/create', 'createIncident',["auth",
+role(['technician','administrator','supervisor'])]);
+$app->post('/incidents/update-status', 'updateStatus',["auth",
+role(['technician','administrator','supervisor'])]);
+$app->post('/incidents/assign-technician', 'assignTechnician',["auth",
+role(['technician','administrator','supervisor'])]);
+$app->post('/incidents/delete', 'deleteIncident',["auth",
+role(['technician','administrator','supervisor'])]);
+$app->get('/incidents/statistics', 'getStatistics',["auth",
+role(['technician','administrator','supervisor'])]);
+
+$app->post("user-machines/update-incident-status", [\App\Controllers\UserMachinesController::class, "updateIncidentStatus"], ["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+
+$app->post("user-machines/update-maintenance-status", [\App\Controllers\UserMachinesController::class, "updateMaintenanceStatus"], ["auth",
+role(['technician', 'administrator', 'supervisor'])]);
+
+$app->route(Router::DEFAULT_ROUTE, "ctrlError");
+
+$app->route("userconfig", [\App\Controllers\UserConfigController::class, "index"], ["auth",
+role(['technician','administrator','supervisor'])]);
+
+$app->post("update-avatar", [\App\Controllers\UserConfigController::class, "updateAvatar"], ["auth",
+role(['technician','administrator','supervisor'])]);
+
+$app->post("update-profile", [\App\Controllers\UserConfigController::class, "updateProfile"], ["auth",
+role(['technician','administrator','supervisor'])]);
 
 $app->route("politica-cookies", function($request, $response) {
     $response->SetTemplate("politica-cookies.php");
     return $response;
 });
 
-$app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"]);
 $app->route("passwordRecovery", [\App\Controllers\ResetPassController::class, "index"]);
 $app->post("reset", [\App\Controllers\ResetPassController::class, "reset"]);
 // Ruta GET para mostrar el formulario de nueva contraseña
@@ -146,3 +296,9 @@ $app->post("/NuevaPassword", [\App\Controllers\ResetPassController::class, "upda
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");
 
 $app->execute();
+$app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"],["auth",
+role(['administrator'])]);
+$app->execute();
+
+
+

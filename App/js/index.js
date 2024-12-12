@@ -1,13 +1,10 @@
 import $ from "jquery";
+import Sortable from "sortablejs";
 
 import hola from "./hola.js";
 
 import  "./map.js";
 import  "./machineinv.js";
-
-import main from "./main.js";
-import  "./password.js";
-import "./testUser.js";
 
 import {Example, obj} from "./example.ts";
 

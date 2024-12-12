@@ -1,0 +1,18 @@
+User-agent: *
+Disallow: /login
+Disallow: /validar-login
+Disallow: /tancar-sessio
+Disallow: /privat
+Disallow: /api/
+Disallow: /addmachine
+Disallow: /editmachine
+Disallow: /deletemachine
+Disallow: /notifications/delete
+Disallow: /notifications/mark-as-read
+Disallow: /incidents/create
+Disallow: /incidents/update-status
+Disallow: /incidents/assign-technician
+Disallow: /incidents/delete
+
+# Permitir sitemap para indexación
+Sitemap: https://grup7dawcendrassos.cat/sitemap.xml
