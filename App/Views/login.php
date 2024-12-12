@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - TOT Màquina</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
+    <script src="/js/bundle.js"></script>
 </head>
 
 <body class="bg-gray-900 min-h-screen">
