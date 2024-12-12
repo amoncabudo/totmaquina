@@ -781,17 +781,17 @@
         });
 
         // Mostrar historial solo cuando se hace clic en el botón
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const machineId = machineSelect.value;
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const machineId = machineSelect.value;
             console.log('Consultando historial de mantenimiento para máquina:', machineId);
             
-            if (!machineId) {
-                alert('Por favor, selecciona una máquina');
-                return;
-            }
-
-            try {
+                if (!machineId) {
+                    alert('Por favor, selecciona una máquina');
+                    return;
+                }
+                
+                try {
                 historyContent.innerHTML = '<p class="text-gray-600">Cargando historial...</p>';
                 const response = await fetch(`/api/maintenance/history/${machineId}`);
                 console.log('Respuesta del servidor:', response);
@@ -953,10 +953,10 @@
                     throw new Error(`Error al obtener el historial: ${response.status}`);
                 }
                 
-                const data = await response.json();
+                    const data = await response.json();
                 console.log('Datos recibidos:', data);
-                
-                if (data.success) {
+                    
+                    if (data.success) {
                     // Actualizar estadísticas de la máquina
                     if (data.machine) {
                         document.getElementById('total-incidents').textContent = data.machine.total_incidents || 0;
@@ -1016,18 +1016,18 @@
                     }
                 } else {
                     throw new Error(data.message || 'Error al cargar el historial');
-                }
-            } catch (error) {
-                console.error('Error:', error);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
                 historyContent.innerHTML = `
                     <div class="bg-red-50 p-4 rounded-lg">
                         <p class="text-red-600 text-center">Error al cargar el historial: ${error.message}</p>
                     </div>
                 `;
                 document.getElementById('machine-info').classList.add('hidden');
-            }
-        });
-    }
+                }
+            });
+        }
 
     // Funciones auxiliares para las clases de estilo
     function getPriorityClass(priority) {
@@ -1048,156 +1048,31 @@
         return classes[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
     }
 
-    // Inicializar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-        initIncidentHistory();
-    });
-
-    // Función para hacer debounce de las búsquedas
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    // Función para realizar la búsqueda
-    async function performSearch(query) {
-        const searchResults = document.getElementById('searchResults');
-        
-        try {
-            // Validar la longitud de la búsqueda
-            if (!query || query.length < 2) {
-                searchResults.innerHTML = `
-                    <div class="px-4 py-2 text-sm text-gray-500">
-                        Ingrese al menos 2 caracteres para buscar
-                    </div>`;
-                searchResults.classList.remove('hidden');
-                return;
-            }
-
-            // Mostrar estado de carga
-            searchResults.innerHTML = `
-                <div class="px-4 py-2 text-sm text-gray-500">
-                    <svg class="animate-spin h-5 w-5 mr-3 inline" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Buscando...
-                </div>`;
-            searchResults.classList.remove('hidden');
-
-            // Construir la URL con el parámetro de búsqueda
-            const url = new URL('/api/search', window.location.origin);
-            url.searchParams.append('query', query);
-            
-            console.log('URL de búsqueda:', url.toString());
-            
-            // Realizar la petición
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            // Obtener el texto de la respuesta para depuración
-            const responseText = await response.text();
-            console.log('Respuesta del servidor (texto):', responseText);
-
-            // Intentar parsear la respuesta como JSON
-            let data;
-            try {
-                data = JSON.parse(responseText);
-            } catch (e) {
-                console.error('Error al parsear JSON:', e);
-                throw new Error('La respuesta del servidor no es JSON válido');
-            }
-
-            console.log('Respuesta de búsqueda (parseada):', data);
-
-            // Procesar la respuesta
-            if (data.success) {
-                if (!data.results || data.results.length === 0) {
-                    searchResults.innerHTML = `
-                        <div class="px-4 py-2 text-sm text-gray-500">
-                            No se encontraron resultados para "${query}"
-                            ${data.total_machines ? `<br>Total de máquinas en la base de datos: ${data.total_machines}` : ''}
-                        </div>`;
-                } else {
-                    searchResults.innerHTML = data.results.map(machine => `
-                        <a href="/machinedetail/${machine.id}" class="block hover:bg-gray-50">
-                            <div class="px-4 py-2 border-b">
-                                <div class="text-sm font-medium text-gray-900">${machine.name || 'Sin nombre'}</div>
-                                <div class="text-sm text-gray-500">
-                                    ${machine.manufacturer ? `${machine.manufacturer}` : ''} 
-                                    ${machine.model ? `- ${machine.model}` : ''}
-                                    ${machine.location ? `<br>Ubicación: ${machine.location}` : ''}
-                                </div>
-                            </div>
-                        </a>
-                    `).join('');
-                }
-            } else {
-                throw new Error(data.error || 'Error en la búsqueda');
-            }
-        } catch (error) {
-            console.error('Error en la búsqueda:', error);
-            searchResults.innerHTML = `
-                <div class="px-4 py-2">
-                    <div class="text-sm text-red-500 mb-2">
-                        ${error.message || 'Error al realizar la búsqueda'}
-                    </div>
-                    <div class="text-xs text-gray-500">
-                        Por favor, inténtelo de nuevo. Si el problema persiste, contacte al administrador.
-                    </div>
-                </div>`;
-        }
-    }
-
-    // Inicializar la búsqueda cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-        
-        if (searchInput && searchResults) {
-            // Manejar la entrada de búsqueda con debounce
-            searchInput.addEventListener('input', debounce(function(e) {
-                const query = e.target.value.trim();
-                
-                if (query.length === 0) {
-                    searchResults.innerHTML = '';
-                    searchResults.classList.add('hidden');
-                    return;
-                }
-                
-                performSearch(query);
-            }, 300));
-            
-            // Ocultar resultados cuando se hace clic fuera
-            document.addEventListener('click', function(e) {
-                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.classList.add('hidden');
-                }
-            });
-        }
-    });
-
     // Inicializar las funciones cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            initMaintenanceHistory();
-            initIncidentHistory();
+            // Determinar en qué página estamos
+            const currentPath = window.location.pathname;
+            
+            if (currentPath.includes('maintenance_history')) {
+                console.log('Inicializando solo historial de mantenimiento');
+                initMaintenanceHistory();
+            } else if (currentPath.includes('history')) {
+                console.log('Inicializando solo historial de incidencias');
+                initIncidentHistory();
+            }
         });
     } else {
-        initMaintenanceHistory();
-        initIncidentHistory();
+        // Determinar en qué página estamos
+        const currentPath = window.location.pathname;
+        
+        if (currentPath.includes('maintenance_history')) {
+            console.log('Inicializando solo historial de mantenimiento');
+            initMaintenanceHistory();
+        } else if (currentPath.includes('history')) {
+            console.log('Inicializando solo historial de incidencias');
+            initIncidentHistory();
+        }
     }
 
     $(document).ready(function() {
