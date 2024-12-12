@@ -48,6 +48,7 @@ include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/ctrlMapMachine.php";
 include "../App/Controllers/ctrlWebcam.php";
+include "../App/Controllers/ctrlResetPassword.php";
 
 
 include "../App/Controllers/usermachines.php";

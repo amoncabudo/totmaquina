@@ -2,6 +2,9 @@
 $viewsPath = __DIR__;
 include $viewsPath . "/layouts/navbar.php";
 ?>
+<!DOCTYPE html>
+<html lang="es">
+
 
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">

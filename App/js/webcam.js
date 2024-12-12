@@ -38,6 +38,8 @@ window.takePhoto=function() {
     }, 'image/jpeg', 0.8);
 }
 
-// Iniciar la cámara al cargar la página
-window.addEventListener('load', startCamera);
-takePhotoButton.addEventListener('click', takePhoto);
+if (document.getElementById("webcam")) {
+    // Iniciar la cámara al cargar la página
+    window.addEventListener('load', startCamera);
+    takePhotoButton.addEventListener('click', takePhoto);
+}
