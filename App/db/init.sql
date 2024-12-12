@@ -77,3 +77,20 @@ CREATE TABLE Maintenance_History (
     FOREIGN KEY (maintenance_id) REFERENCES Maintenance (id) ON DELETE CASCADE,
     FOREIGN KEY (technician_id) REFERENCES User (id) ON DELETE SET NULL
 );
+
+CREATE TABLE IF NOT EXISTS MaintenanceTechnician (
+    maintenance_id INT,
+    technician_id INT,
+    PRIMARY KEY (maintenance_id, technician_id),
+    FOREIGN KEY (maintenance_id) REFERENCES Maintenance (id) ON DELETE CASCADE,
+    FOREIGN KEY (technician_id) REFERENCES User (id) ON DELETE CASCADE
+);
+
+ALTER TABLE Maintenance MODIFY COLUMN status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending';
+ALTER TABLE Maintenance ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE Maintenance DROP FOREIGN KEY IF EXISTS maintenance_ibfk_1;
+ALTER TABLE Maintenance DROP COLUMN IF EXISTS responsible_technician_id;
+
+ALTER TABLE User
+ADD COLUMN reset_token_hash VARCHAR(64) NULL,
+ADD COLUMN reset_token_expires_at DATETIME NULL;

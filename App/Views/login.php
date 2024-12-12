@@ -86,7 +86,7 @@
                         </label>
                     </div>
                     <div class="text-sm">
-                        <a href="#" class="font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200">
+                        <a href="/passwordRecovery" class="font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200">
                             ¿Olvidaste tu contraseña?
                         </a>
                     </div>

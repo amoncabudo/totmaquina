@@ -49,6 +49,7 @@ include "../App/Controllers/ctrlgenerateqr.php";
 include "../App/Controllers/ctrlMapMachine.php";
 include "../App/Controllers/ctrlWebcam.php";
 
+
 include "../App/Controllers/usermachines.php";
 include "../App/Controllers/HistoryIncidentsController.php";
 include "../App/Controllers/UserConfigController.php";
@@ -69,7 +70,6 @@ $app->middleware(function($request, $response, $container, $next) {
 $app->route("", "ctrlPortada");
 $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
-$app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
 
@@ -285,9 +285,12 @@ $app->route("politica-cookies", function($request, $response) {
     return $response;
 });
 
+$app->route("passwordRecovery", [\App\Controllers\ResetPassController::class, "index"]);
+$app->post("reset", [\App\Controllers\ResetPassController::class, "reset"]);
+// Ruta GET para mostrar el formulario de nueva contraseña
+$app->get("/NuevaPassword", [\App\Controllers\ResetPassController::class, "resetPassword"]);
+$app->post("/NuevaPassword", [\App\Controllers\ResetPassController::class, "updatePassword"]);
+
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"],["auth",
 role(['administrator'])]);
 $app->execute();
-
-
-
