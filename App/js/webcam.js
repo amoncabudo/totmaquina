@@ -1,43 +1,52 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const captureButton = document.getElementById('capture-photo');
+    if (captureButton) {
+        captureButton.addEventListener('click', async () => {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream;
+                    video.classList.remove('hidden');
+                    captureButton.textContent = 'Tomar Foto';
+                    
+                    captureButton.onclick = () => {
+                        context.drawImage(video, 0, 0, 320, 240);
+                        video.classList.add('hidden');
+                        canvas.classList.remove('hidden');
+                        captureButton.textContent = 'Capturar desde Webcam';
+                        stream.getTracks().forEach(track => track.stop());
+                        saveImage(); // Guardar la imagen
+                    };
+                } catch (error) {
+                    console.error('Error accessing webcam: ', error);
+                }
+            }
+        });
+    }
+    // Define la función showMachineQRCode
+    window.showMachineQRCode = function(machineId) {
+        console.log("Generando QR para la máquina ID:", machineId);
+        window.location.href = `/generate_machine_qr/${machineId}`;
+    };
+});
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
-const photo = document.getElementById('photo');
-const takePhotoButton = document.getElementById('take-photo');
-
-// Configuración de la cámara
-const constraints = {
-    video: {
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        facingMode: "user"
-    }
-};
-
-// Función para abrir la cámara
-window.startCamera=async function() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = stream;
-    } catch (err) {
-        console.error('Error accessing camera:', err);
-        alert('No se pudo acceder a la cámara. Por favor, asegúrate de dar los permisos necesarios.');
-    }
+const captureButton = document.getElementById('capture-photo');
+const context = canvas.getContext('2d');
+function deleteMachine(machineId) {
+  if (confirm('¿Estás seguro de que quieres eliminar esta máquina?')) {
+      fetch(`/deletemachine/${machineId}`, {
+          method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              // Elimina la máquina del DOM
+              document.getElementById(`machine-${machineId}`).remove();
+          } else {
+              alert('Error al eliminar la máquina');
+          }
+      })
+      .catch(error => console.error('Error:', error));
+  }
 }
-
-// Función para capturar la foto
-window.takePhoto=function() {
-    const context = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Convertir la imagen a blob
-    canvas.toBlob(async (blob) => {
-        const imageUrl = URL.createObjectURL(blob);
-        photo.src = imageUrl; // Mostrar la imagen capturada
-        photo.style.display = 'block'; // Hacer visible la imagen
-    }, 'image/jpeg', 0.8);
-}
-
-// Iniciar la cámara al cargar la página
-window.addEventListener('load', startCamera);
-takePhotoButton.addEventListener('click', takePhoto);

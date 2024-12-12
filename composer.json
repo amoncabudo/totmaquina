@@ -10,7 +10,8 @@
     },
     "require": {
         "emeset/framework": "^0.4",
-        "chillerlan/php-qrcode": "^5.0"
+        "chillerlan/php-qrcode": "^5.0",
+        "phpmailer/phpmailer": "^6.9"
     },
 
     "autoload": {

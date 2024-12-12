@@ -69,10 +69,8 @@ $app->middleware(function($request, $response, $container, $next) {
 $app->route("", "ctrlPortada");
 $app->route("login", "ctrlLogin");
 $app->route("validar-login", "ctrlValidarLogin");
-$app->route("privat", [\App\Controllers\Privat::class, "privat"], [[\App\Middleware\Auth::class, "auth"]]);
 $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
-
 
 // Maintenance routes
 $app->route("maintenance", "maintenance", [
@@ -209,8 +207,6 @@ $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachin
 role(['technician', 'administrator', 'supervisor'])]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
-
-
 $app->get('/generate_machine_qr/{id}', [\App\Controllers\CtrlGenerateMachineQR::class, "generateQR"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 $app->route("mapmachines", [\App\Controllers\ctrlMapMachine::class, "mapmachines"],["auth",
@@ -288,6 +284,3 @@ $app->route("politica-cookies", function($request, $response) {
 $app->post("/createTestUser", [\App\Controllers\TestUserController::class, "createTestUser"],["auth",
 role(['administrator'])]);
 $app->execute();
-
-
-

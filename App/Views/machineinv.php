@@ -21,7 +21,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-                <span class="hidden md:inline">Añadir M��quina</span>
+                <span class="hidden md:inline">Añadir Máquina</span>
             </button>
             <button data-modal-target="csv-upload-modal" data-modal-toggle="csv-upload-modal"
                 class="bg-blue-800 text-white hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
@@ -278,9 +278,10 @@
                         <button type="button" data-modal-target="edit-machine-modal-<?php echo $machine['id'] ?>" data-modal-toggle="edit-machine-modal-<?php echo $machine['id'] ?>" class="block w-full text-left px-4 py-2 text-sm text-blue-800 hover:bg-blue-50">
                             Editar
                         </button>
-                        <button type="button" onclick="showQRCode('<?php echo htmlspecialchars($machine['id']); ?>')" class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
-                                Generar QR
-                            </button>
+                        <button type="button" onclick="showMachineQRCode('<?php echo htmlspecialchars($machine['id']); ?>')"
+                            class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
+                            Generar QR
+                        </button>
 
                         <form action="/deletemachine/<?php echo htmlspecialchars($machine['id']); ?>" method="POST" class="block">
                             <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
@@ -295,7 +296,7 @@
     </div>
     <script src="/js/bundle.js"></script>
     <script src="/js/flowbite.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </body>
 
 </html>
