@@ -163,9 +163,31 @@ class Machine
     }
 
     public function getAllTechnicians() {
-        $stmt = $this->sql->prepare("SELECT id, name, surname FROM User WHERE role = 'technician'");
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            // Si el usuario es técnico, solo se muestra a sí mismo
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+                $stmt = $this->sql->prepare("
+                    SELECT id, name, surname 
+                    FROM User 
+                    WHERE role = 'technician' 
+                    AND id = ?
+                ");
+                $stmt->execute([$_SESSION["user"]["id"]]);
+            } 
+            // Si es administrador o supervisor, muestra todos los técnicos
+            else {
+                $stmt = $this->sql->prepare("
+                    SELECT id, name, surname 
+                    FROM User 
+                    WHERE role = 'technician'
+                ");
+                $stmt->execute();
+            }
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getAllTechnicians: " . $e->getMessage());
+            throw new \Exception("Error al obtener los técnicos");
+        }
     }
 
     public function getMachinesByTechnician($technicianId) {

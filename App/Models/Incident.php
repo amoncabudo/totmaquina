@@ -84,15 +84,61 @@ class Incident {
     }
 
     public function getAllTechnicians() {
-        $stmt = $this->sql->prepare("SELECT id, name, surname FROM User WHERE role = 'technician'");
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            // Si el usuario es técnico, solo se muestra a sí mismo
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+                $stmt = $this->sql->prepare("
+                    SELECT id, name, surname 
+                    FROM User 
+                    WHERE role = 'technician' 
+                    AND id = ?
+                ");
+                $stmt->execute([$_SESSION["user"]["id"]]);
+            } 
+            // Si es administrador o supervisor, muestra todos los técnicos
+            else {
+                $stmt = $this->sql->prepare("
+                    SELECT id, name, surname 
+                    FROM User 
+                    WHERE role = 'technician'
+                ");
+                $stmt->execute();
+            }
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getAllTechnicians: " . $e->getMessage());
+            throw new \Exception("Error al obtener los técnicos");
+        }
     }
 
     public function getAllMachines() {
-        $stmt = $this->sql->prepare("SELECT id, name FROM Machine");
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            // Si el usuario es técnico, solo mostrar máquinas sin técnico asignado
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+                $sql = "SELECT m.id, m.name 
+                       FROM Machine m 
+                       LEFT JOIN Incident i ON m.id = i.machine_id AND i.status != 'resolved'
+                       WHERE i.id IS NULL 
+                       OR NOT EXISTS (
+                           SELECT 1 
+                           FROM Incident i2 
+                           WHERE i2.machine_id = m.id 
+                           AND i2.status != 'resolved'
+                       )
+                       GROUP BY m.id, m.name";
+            } 
+            // Si es administrador o supervisor, mostrar todas las máquinas
+            else {
+                $sql = "SELECT id, name FROM Machine";
+            }
+            
+            $stmt = $this->sql->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log("Error en getAllMachines: " . $e->getMessage());
+            throw new \Exception("Error al obtener las máquinas");
+        }
     }
 
     public function getIncidentById($id) {

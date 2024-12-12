@@ -76,7 +76,7 @@ $app->route("index", "ctrlindex");
 // Maintenance routes
 $app->route("maintenance", "maintenance", [
     "auth", 
-    role(['administrator', 'supervisor'])
+    role(['technician', 'administrator', 'supervisor'])
 ]);
 
 $app->route("maintenance/create", "createMaintenance", [
@@ -207,7 +207,7 @@ role(['technician', 'administrator', 'supervisor'])]);
 $app->post("/editmachine", [\App\Controllers\CtrlEditMachine::class, "editMachine"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 $app->route("/uploadcsv", [\App\Controllers\UploadCSVController::class, "uploadCSV"],["auth",
-role(['technician', 'administrator', 'supervisor'])]);
+role(['administrator', 'supervisor'])]);
 
 
 $app->get('/generate_machine_qr/{id}', [\App\Controllers\CtrlGenerateMachineQR::class, "generateQR"],["auth",
@@ -219,7 +219,7 @@ role(['technician', 'administrator', 'supervisor'])]);
 
 
 $app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 $app->route("history", "history",["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 
@@ -234,12 +234,12 @@ $app->post("notifications/mark-as-read/{id}", [\App\Controllers\NotificationsCon
 role(['technician','administrator','supervisor'])]);
 
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 
 $app->post("/editUser", [\App\Controllers\editUser::class, "editUser"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 $app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"],["auth",
-role(['technician','administrator','supervisor'])]);
+role(['administrator','supervisor'])]);
 
 $app->route('machines', [\App\Controllers\incidents::class, 'incidents'],["auth",
 role(['technician','administrator','supervisor'])]);
