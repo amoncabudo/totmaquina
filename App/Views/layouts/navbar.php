@@ -40,7 +40,9 @@
                                         </svg>
                                     </button>
                                     <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
-                                        <a href="/userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
+                                        <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
+                                            <a href="/userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
+                                        <?php endif; ?>
                                         <a href="/machineinv" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Inventario de Máquinas</a>
                                     </div>
                                 </div>
@@ -75,7 +77,8 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Menú desplegable HISTORIAL -->
+                                <!-- Menú desplegable HISTORIAL (solo para administradores) -->
+                                <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
                                 <div class="relative group" role="menuitem">
                                     <button class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center" 
                                             aria-haspopup="true" 
@@ -90,6 +93,7 @@
                                         <a href="/history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registros</a>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -266,9 +270,11 @@
                     <!-- Menú desplegable GESTIÓN móvil -->
                     <div id="dropdownGestion" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownGestionLink">
                         <ul class="py-2 text-sm text-white">
+                            <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
                             <li>
-                                <a href="/userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gesti��n de Usuarios</a>
+                                <a href="/userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Usuarios</a>
                             </li>
+                            <?php endif; ?>
                             <li>
                                 <a href="/machineinv" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Inventario de Máquinas</a>
                             </li>
@@ -316,7 +322,8 @@
                         </ul>
                     </div>
                     
-                    <!-- Botón desplegable HISTORIAL móvil -->
+                    <!-- Botón desplegable HISTORIAL móvil (solo para administradores) -->
+                    <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
                     <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" 
                             class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
                             aria-expanded="false"
@@ -337,6 +344,7 @@
                             </li>
                         </ul>
                     </div>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>
