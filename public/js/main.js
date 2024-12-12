@@ -657,7 +657,7 @@
             let html = '<ul class="text-sm mt-2">';
             for (const [requirement, passed] of Object.entries(results)) {
                 const color = passed ? 'text-green-600' : 'text-red-600';
-                const icon = passed ? '✓' : '✗';
+                const icon = passed ? '✔' : '✗';
                 html += `<li class="${color}"><span class="mr-2">${icon}</span>${messages[requirement]}</li>`;
             }
             html += '</ul>';
@@ -1316,4 +1316,140 @@ function handleEditPasswordValidation() {
 // Asignar eventos
 $('#password').on('keyup', handlePasswordValidation);
 $('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation);
+
+// Función para inicializar el drag and drop de técnicos
+function initTechnicianDragDrop() {
+    const disponibles = document.getElementById('tecnicos-disponibles');
+    const asignados = document.getElementById('tecnicos-asignados');
+    const selectedTechnician = document.getElementById('selected-technician');
+    const form = document.querySelector('form');
+
+    if (disponibles && asignados && selectedTechnician) {
+        console.log('Inicializando drag and drop de técnicos');
+
+        // Función para actualizar el técnico seleccionado
+        function updateSelectedTechnician() {
+            const assignedTechnicians = asignados.children;
+            if (assignedTechnicians.length > 0) {
+                // Solo tomamos el primer técnico asignado
+                selectedTechnician.value = assignedTechnicians[0].dataset.id;
+                console.log('Técnico seleccionado:', selectedTechnician.value);
+            } else {
+                selectedTechnician.value = '';
+                console.log('No hay técnico seleccionado');
+            }
+        }
+
+        // Inicializar Sortable para la lista de disponibles
+        new Sortable(disponibles, {
+            group: {
+                name: 'tecnicos',
+                pull: 'clone',
+                put: true
+            },
+            animation: 150,
+            sort: false
+        });
+
+        // Inicializar Sortable para la lista de asignados
+        new Sortable(asignados, {
+            group: {
+                name: 'tecnicos',
+                pull: true,
+                put: function() {
+                    // Solo permitir un técnico en la lista de asignados
+                    return this.el.children.length < 1;
+                }
+            },
+            animation: 150,
+            sort: false,
+            onAdd: function(evt) {
+                // Si hay más de un elemento, remover los anteriores
+                while (asignados.children.length > 1) {
+                    disponibles.appendChild(asignados.children[0]);
+                }
+                updateSelectedTechnician();
+                console.log('Técnico asignado:', selectedTechnician.value);
+            },
+            onRemove: function(evt) {
+                updateSelectedTechnician();
+                console.log('Técnico removido, valor actual:', selectedTechnician.value);
+            }
+        });
+
+        // Validación del formulario
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const machine = document.getElementById('machine_id').value;
+                const priority = document.getElementById('priority').value;
+                const description = document.getElementById('description').value;
+                const technicianValue = selectedTechnician.value;
+
+                console.log('Validando formulario:', {
+                    machine,
+                    priority,
+                    description,
+                    technicianValue
+                });
+
+                if (!machine || !priority || !description || !technicianValue) {
+                    e.preventDefault();
+                    alert('Por favor, complete todos los campos obligatorios');
+                    return false;
+                }
+            });
+        }
+
+        // Inicializar el valor del técnico seleccionado
+        updateSelectedTechnician();
+    } else {
+        console.error('No se encontraron los elementos necesarios para el drag and drop de técnicos');
+    }
+}
+
+// Función para resetear los técnicos al limpiar el formulario
+function resetTechnicians() {
+    const disponibles = document.getElementById('tecnicos-disponibles');
+    const asignados = document.getElementById('tecnicos-asignados');
+    const selectedTechnician = document.getElementById('selected-technician');
+
+    if (disponibles && asignados && selectedTechnician) {
+        console.log('Reseteando técnicos');
+        // Mover todos los técnicos de vuelta a disponibles
+        while (asignados.firstChild) {
+            disponibles.appendChild(asignados.firstChild);
+        }
+        selectedTechnician.value = '';
+    }
+}
+
+// Inicializar el drag and drop cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, inicializando drag and drop');
+    initTechnicianDragDrop();
+});
+
+// Función para mostrar/ocultar pestañas
+function showTab(button, contentId) {
+    // Obtener el contenedor padre de las pestañas
+    const tabContainer = button.closest('.bg-white');
+    
+    // Desactivar todas las pestañas en este contenedor
+    tabContainer.querySelectorAll('.tab-button').forEach(tab => {
+        tab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+        tab.classList.add('text-gray-500');
+    });
+    
+    // Activar la pestaña seleccionada
+    button.classList.remove('text-gray-500');
+    button.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+    
+    // Ocultar todos los contenidos en este contenedor
+    tabContainer.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Mostrar el contenido seleccionado
+    document.getElementById(contentId).classList.remove('hidden');
+}
 
