@@ -6,7 +6,7 @@ use \Emeset\Contracts\Http\Request;
 use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
-class getMachine
+class ctrlmachineinv
 {
     function ctrlmachineinv($request, $response, $container)
     {

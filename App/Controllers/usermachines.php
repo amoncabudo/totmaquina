@@ -6,7 +6,7 @@ use \Emeset\Contracts\Http\Request;
 use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
-class UserMachinesController {
+class usermachines {
     public function index(Request $request, Response $response, Container $container) {
         if (!isset($_SESSION["logat"]) || !$_SESSION["logat"]) {
             $response->redirect("Location: /login");

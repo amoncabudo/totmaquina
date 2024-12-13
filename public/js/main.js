@@ -1183,4 +1183,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-

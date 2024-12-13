@@ -24,40 +24,23 @@ include "../App/Controllers/error.php";
 include "../App/Controllers/login.php";
 include "../App/Controllers/validarLogin.php";
 include "../App/Controllers/tancarSessio.php";
-include "../App/Controllers/maintenance_history.php";
-include "../App/Middleware/auth.php";
-include "../App/Middleware/test.php";
-include "../App/Controllers/ctrlmachineinv.php";
 include "../App/Controllers/ctrlindex.php";
 include "../App/Controllers/maintenance.php";
 include "../App/Controllers/maintenanceStats.php";
-include "../App/Controllers/ctrlmachinedetail.php";
-include "../App/Controllers/ctrluserManagement.php";
 include "../App/Controllers/history.php";
 include "../App/Controllers/ctrlAddUser.php";
-include "../App/Controllers/NotificationsController.php";
-include "../App/Controllers/ctrlAddMachine.php";
 include "../App/Controllers/ctrlUserConfig.php";
-include "../App/Controllers/ctrlEditUser.php";
-include "../App/Controllers/ctrlDeleteUser.php";
 include "../App/Controllers/ctrlUploadCSV.php";
-include "../App/Controllers/ctrlEditMachine.php";
-include "../App/Controllers/ctrladminPanel.php";
 include "../App/Controllers/incidents.php";
-include "../App/Controllers/TestUserController.php";
 include "../App/Controllers/ctrlgenerateqr.php";
-include "../App/Controllers/ctrlMapMachine.php";
-include "../App/Controllers/ctrlWebcam.php";
 include "../App/Controllers/ctrlResetPassword.php";
-
-
-include "../App/Controllers/usermachines.php";
 include "../App/Controllers/HistoryIncidentsController.php";
-include "../App/Controllers/UserConfigController.php";
-
+// Middleware
 include "../App/Middleware/supervisor.php";
 include "../App/Middleware/technician.php";
 include "../App/Middleware/administrator.php";
+include "../App/Middleware/auth.php";
+include "../App/Middleware/test.php";
 
 /* Creem els diferents models */
 $contenidor = new \App\Container(__DIR__ . "/../App/config.php");
@@ -90,17 +73,17 @@ $app->route("maintenance/stats", "maintenanceStats", [
     role(['technician', 'administrator', 'supervisor'])
 ]);
 
-$app->route("maintenance_history", [\App\Controllers\MaintenanceHistoryController::class, "index"],["auth",
+$app->route("maintenance_history", [\App\Controllers\maintenance_history::class, "index"],["auth",
     role(['administrator', 'supervisor'])]);
 
 // API routes
 $app->route("api/maintenance/history/{id}", function($request, $response) {
-    $controller = new \App\Controllers\MaintenanceHistoryController();
+    $controller = new \App\Controllers\maintenance_history();
     return $controller->getHistory($request, $response);
 });
 
 $app->route("api/machine/{id}", function($request, $response) {
-    $controller = new \App\Controllers\MaintenanceHistoryController();
+    $controller = new \App\Controllers\maintenance_history();
     return $controller->getMachineInfo($request, $response);
 });
 
@@ -195,11 +178,11 @@ $app->route("history/incidents/{id}", "getIncidentHistory", ["auth",
 role(['administrator', 'supervisor'])]);
 
 // Machine routes
-$app->route("machineinv", [\App\Controllers\getMachine::class, "ctrlmachineinv"],["auth",
+$app->route("machineinv", [\App\Controllers\ctrlmachineinv::class, "ctrlmachineinv"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
-$app->route("/addmachine", [\App\Controllers\MachineController::class, "createMachine"],["auth",
+$app->route("/addmachine", [\App\Controllers\ctrlAddMachine::class, "createMachine"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
-$app->route('machinedetail/{id}', [\App\Controllers\getMachinebyid::class, "ctrlMachineDetail"],["auth",
+$app->route('machinedetail/{id}', [\App\Controllers\ctrlmachinedetail::class, "ctrlMachineDetail"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 $app->route("history", "history",["auth",
 role(['technician', 'administrator', 'supervisor'])]);
@@ -218,8 +201,7 @@ role(['technician', 'administrator', 'supervisor'])]);
 $app->post('/update-machine-technicians/{id}', 'updateMachineTechnicians',["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 
-$app->route("webcam", "ctrlWebcam");
-$app->route("userManagement", [\App\Controllers\getUser::class, "ctrlUserManagement"],["auth",
+$app->route("userManagement", [\App\Controllers\ctrluserManagement::class, "ctrlUserManagement"],["auth",
 role(['administrator','supervisor'])]);
 $app->route("history", "history",["auth",
 role(['technician', 'administrator', 'supervisor'])]);
@@ -237,15 +219,15 @@ role(['technician','administrator','supervisor'])]);
 $app->post("/addUser", [\App\Controllers\UserController::class, "createUser"],["auth",
 role(['administrator','supervisor'])]);
 
-$app->post("/editUser", [\App\Controllers\editUser::class, "editUser"],["auth",
+$app->post("/editUser", [\App\Controllers\ctrlEditUser::class, "editUser"],["auth",
 role(['administrator','supervisor'])]);
-$app->post("/deleteUser", [\App\Controllers\deleteUser::class, "deleteUser"],["auth",
+$app->post("/deleteUser", [\App\Controllers\ctrlDeleteUser::class, "deleteUser"],["auth",
 role(['administrator','supervisor'])]);
 
 $app->route('machines', [\App\Controllers\incidents::class, 'incidents'],["auth",
 role(['technician','administrator','supervisor'])]);
 
-$app->route("usermachines", [\App\Controllers\UserMachinesController::class, "index"], ["auth",
+$app->route("usermachines", [\App\Controllers\usermachines::class, "index"], ["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 
 $app->route("history", "history",["auth",
@@ -263,10 +245,10 @@ role(['technician','administrator','supervisor'])]);
 $app->get('/incidents/statistics', 'getStatistics',["auth",
 role(['technician','administrator','supervisor'])]);
 
-$app->post("user-machines/update-incident-status", [\App\Controllers\UserMachinesController::class, "updateIncidentStatus"], ["auth",
+$app->post("user-machines/update-incident-status", [\App\Controllers\usermachines::class, "updateIncidentStatus"], ["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 
-$app->post("user-machines/update-maintenance-status", [\App\Controllers\UserMachinesController::class, "updateMaintenanceStatus"], ["auth",
+$app->post("user-machines/update-maintenance-status", [\App\Controllers\usermachines::class, "updateMaintenanceStatus"], ["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 
 $app->route(Router::DEFAULT_ROUTE, "ctrlError");

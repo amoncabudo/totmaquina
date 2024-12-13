@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Models/Maintenance.php';
 require_once __DIR__ . '/../Models/Machine.php';
 require_once __DIR__ . '/../Models/Db.php';
 
-class MaintenanceHistoryController {
+class maintenance_history {
     private $maintenanceModel;
     private $machineModel;
     private $db;
