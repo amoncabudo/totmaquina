@@ -36,14 +36,14 @@ class MaintenanceHistoryController {
             error_log("Historial obtenido: " . print_r($history, true));
 
             // Configurar la respuesta como JSON
-            $response->setHeader('Content-Type', 'application/json');
+           
             $response->setBody(json_encode($history));
             
         } catch (\Exception $e) {
             error_log("Error en getHistory: " . $e->getMessage());
             
             // Configurar respuesta de error
-           
+       
             $response->setStatus(500);
             $response->setBody(json_encode([
                 'error' => true,
@@ -63,7 +63,7 @@ class MaintenanceHistoryController {
             error_log("Información de máquina obtenida: " . print_r($machine, true));
 
             // Configurar la respuesta como JSON
-            $response->setHeader('Content-Type', 'application/json');
+         
             
             if ($machine) {
                 $response->setBody(json_encode([
@@ -82,7 +82,7 @@ class MaintenanceHistoryController {
             error_log("Error en getMachineInfo: " . $e->getMessage());
             
             // Configurar respuesta de error
-            $response->setHeader('Content-Type', 'application/json');
+          
             $response->setStatus(500);
             $response->setBody(json_encode([
                 'success' => false,
