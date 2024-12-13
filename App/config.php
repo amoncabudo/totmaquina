@@ -2,9 +2,9 @@
 
 return [
     "db" => [
-        "user" => "root",
-        "pass" => "12345",
+        "user" => "grup7",
+        "pass" => "*Grup777*",
         "db" => "totmaquina",
-        "host" => "mariadb"
+        "host" => "hl1373.dinaserver.com"
     ]
 ];
