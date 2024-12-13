@@ -31,7 +31,7 @@ class ctrladminPanel
 
         try {
             // Obtener estadísticas para el panel de administración
-            $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+            $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
             $sql = $db->getConnection();
 
             // Total de usuarios

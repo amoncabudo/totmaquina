@@ -2,7 +2,7 @@
 function history($request, $response, $container) {
     try {
         error_log("Iniciando función history");
-        $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+        $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
         $model = new \App\Models\HistoryIncidents($db->getConnection());
         
         // Obtener la lista de máquinas
@@ -35,7 +35,7 @@ function getIncidentHistory($request, $response, $container) {
             throw new \Exception("ID de máquina no proporcionado");
         }
 
-        $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+        $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
         $model = new \App\Models\HistoryIncidents($db->getConnection());
         
         // Obtener la información de la máquina

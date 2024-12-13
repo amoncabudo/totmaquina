@@ -121,7 +121,7 @@ class usermachines {
             }
 
             // Verificar que el mantenimiento pertenece al técnico
-            $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+            $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
             $maintenanceModel = new \App\Models\Maintenance($db->getConnection());
             
             // Verificar que el mantenimiento existe y que el técnico está asignado

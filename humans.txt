@@ -18,4 +18,4 @@ Hosted on: Dinahosting
 Our mission is to create a seamless, innovative, and sustainable technological experience for all.
 
 /* LAST UPDATED */
-Date: December 2024
+Date: December 2024.
