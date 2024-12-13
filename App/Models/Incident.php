@@ -162,7 +162,7 @@ class Incident {
      * 
      * @param int $incidentId ID de la incidencia
      * @param string $status Nuevo estado ('pending', 'in progress', 'resolved')
-     * @return bool
+     * @return bool 
      * @throws \Exception
      */
     public function updateIncidentStatus($incidentId, $status) {

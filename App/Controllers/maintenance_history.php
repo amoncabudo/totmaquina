@@ -5,26 +5,36 @@ require_once __DIR__ . '/../Models/Maintenance.php';
 require_once __DIR__ . '/../Models/Machine.php';
 require_once __DIR__ . '/../Models/Db.php';
 
-class MaintenanceHistoryController {
+class maintenance_history {
     private $maintenanceModel;
     private $machineModel;
     private $db;
 
     public function __construct() {
-        $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
-        $this->maintenanceModel = new \App\Models\Maintenance($this->db->getConnection());
-        $this->machineModel = new \App\Models\Machine($this->db->getConnection());
+        // Crear la conexión a la base de datos primero
+        $this->db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
+        
+        // Luego crear los modelos usando la conexión
+        $connection = $this->db->getConnection();
+        $this->maintenanceModel = new \App\Models\Maintenance($connection);
+        $this->machineModel = new \App\Models\Machine($connection);
     }
 
     public function index($request, $response) {
-        // Obtener todas las máquinas
-        $machines = $this->machineModel->getAllMachine();
-        
-        // Pasar las máquinas a la vista
-        $response->set("machines", $machines);
-        
-        $response->setTemplate("maintenance_history.php");
-        return $response;
+        try {
+            // Obtener todas las máquinas
+            $machines = $this->machineModel->getAllMachine();
+            
+            // Pasar las máquinas a la vista
+            $response->set("machines", $machines);
+            
+            $response->setTemplate("maintenance_history.php");
+            return $response;
+        } catch (\Exception $e) {
+            error_log("Error en maintenance_history/index: " . $e->getMessage());
+            $response->setTemplate("error.php");
+            return $response;
+        }
     }
 
     public function getHistory($request, $response) {
@@ -39,6 +49,8 @@ class MaintenanceHistoryController {
             $response->setHeader('Content-Type', 'application/json');
             $response->setBody(json_encode($history));
             
+            return $response;
+            
         } catch (\Exception $e) {
             error_log("Error en getHistory: " . $e->getMessage());
             
@@ -49,9 +61,9 @@ class MaintenanceHistoryController {
                 'error' => true,
                 'message' => $e->getMessage()
             ]));
+            
+            return $response;
         }
-        
-        return $response;
     }
 
     public function getMachineInfo($request, $response) {
@@ -78,6 +90,8 @@ class MaintenanceHistoryController {
                 ]));
             }
             
+            return $response;
+            
         } catch (\Exception $e) {
             error_log("Error en getMachineInfo: " . $e->getMessage());
             
@@ -88,8 +102,8 @@ class MaintenanceHistoryController {
                 'success' => false,
                 'message' => "Error: " . $e->getMessage()
             ]));
+            
+            return $response;
         }
-        
-        return $response;
     }
 } 

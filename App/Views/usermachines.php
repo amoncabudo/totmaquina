@@ -2,7 +2,17 @@
 $viewsPath = __DIR__;
 include $viewsPath . "/layouts/navbar.php";
 ?>
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
+</head>
+<body>
+    
+</body>
+</html>
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Mis Máquinas Asignadas</h1>
 

@@ -53,16 +53,14 @@ function getIncidentHistory($request, $response, $container) {
         $response->setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         $response->setHeader("Pragma", "no-cache");
         $response->setHeader("Expires", "0");
-        
+
         $jsonResponse = [
             'success' => true,
             'machine' => $machineInfo,
             'data' => $history
         ];
-        
         error_log("Preparando respuesta JSON: " . json_encode($jsonResponse));
         $response->setBody(json_encode($jsonResponse));
-        
         return $response;
     } catch (\Exception $e) {
         error_log("Error en getIncidentHistory: " . $e->getMessage());
