@@ -1,7 +1,7 @@
 <?php
 
 function maintenance($request, $response, $container) {
-    $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+    $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
     
     $maintenance = new \App\Models\Maintenance($db->getConnection());
     

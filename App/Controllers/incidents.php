@@ -25,7 +25,7 @@ function createIncident($request, $response, $container) {
             throw new \Exception("No autorizado");
         }
 
-        $db = new \App\Models\Db("root", "12345", "totmaquina", "mariadb");
+        $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
         $incident = new \App\Models\Incident($db->getConnection());
         
         // Obtener y validar los datos del formulario
