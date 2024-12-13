@@ -11,39 +11,60 @@ class MaintenanceHistoryController {
     private $db;
 
     public function __construct() {
-        $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
-        $this->maintenanceModel = new \App\Models\Maintenance($this->db->getConnection());
-        $this->machineModel = new \App\Models\Machine($this->db->getConnection());
+        $this->db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
+        $connection = $this->db->getConnection();
+
+        if (!$connection) {
+            throw new \Exception("No es pot establir la connexió amb la base de dades.");
+        }
+
+        $this->maintenanceModel = new \App\Models\Maintenance($connection);
+        $this->machineModel = new \App\Models\Machine($connection);
     }
 
     public function index($request, $response) {
-        // Obtener todas las máquinas
-        $machines = $this->machineModel->getAllMachine();
+        try {
+            // Obtenir totes les màquines
+            $machines = $this->machineModel->getAllMachine();
+            if (!$machines) {
+                $machines = [];
+            }
+
+            // Passar les màquines a la vista
+            $response->set("machines", $machines);
+            $response->setTemplate("maintenance_history.php");
+        } catch (\Exception $e) {
+            error_log("Error en index: " . $e->getMessage());
+            $response->setStatus(500);
+            $response->setTemplate("error.php");
+        }
         
-        // Pasar las máquinas a la vista
-        $response->set("machines", $machines);
-        
-        $response->setTemplate("maintenance_history.php");
         return $response;
     }
 
     public function getHistory($request, $response) {
         try {
             $machineId = $request->getParam("id");
-            error_log("Obteniendo historial para máquina ID: " . $machineId);
+            if (!$machineId) {
+                throw new \Exception("ID de màquina no proporcionat.");
+            }
+
+            error_log("Obtenint historial per a màquina ID: " . $machineId);
 
             $history = $this->maintenanceModel->getMaintenanceHistory($machineId);
-            error_log("Historial obtenido: " . print_r($history, true));
+            if (!$history) {
+                $history = [];
+            }
 
-            // Configurar la respuesta como JSON
-           
-            $response->setBody(json_encode($history));
-            
+            // Configurar la resposta com a JSON
+            $response->setHeader('Content-Type', 'application/json');
+            $response->setBody(json_encode([
+                'success' => true,
+                'data' => $history
+            ]));
         } catch (\Exception $e) {
             error_log("Error en getHistory: " . $e->getMessage());
-            
-            // Configurar respuesta de error
-       
+            $response->setHeader('Content-Type', 'application/json');
             $response->setStatus(500);
             $response->setBody(json_encode([
                 'error' => true,
@@ -57,36 +78,30 @@ class MaintenanceHistoryController {
     public function getMachineInfo($request, $response) {
         try {
             $machineId = $request->getParam("id");
-            error_log("Obteniendo información de máquina ID: " . $machineId);
+            if (!$machineId) {
+                throw new \Exception("ID de màquina no proporcionat.");
+            }
+
+            error_log("Obtenint informació de màquina ID: " . $machineId);
 
             $machine = $this->machineModel->getMachineById($machineId);
-            error_log("Información de máquina obtenida: " . print_r($machine, true));
-
-            // Configurar la respuesta como JSON
-         
-            
-            if ($machine) {
-                $response->setBody(json_encode([
-                    'success' => true,
-                    'data' => $machine
-                ]));
-            } else {
-                $response->setStatus(404);
-                $response->setBody(json_encode([
-                    'success' => false,
-                    'message' => 'Máquina no encontrada'
-                ]));
+            if (!$machine) {
+                throw new \Exception("Màquina no trobada.");
             }
-            
+
+            // Configurar la resposta com a JSON
+            $response->setHeader('Content-Type', 'application/json');
+            $response->setBody(json_encode([
+                'success' => true,
+                'data' => $machine
+            ]));
         } catch (\Exception $e) {
             error_log("Error en getMachineInfo: " . $e->getMessage());
-            
-            // Configurar respuesta de error
-          
+            $response->setHeader('Content-Type', 'application/json');
             $response->setStatus(500);
             $response->setBody(json_encode([
                 'success' => false,
-                'message' => "Error: " . $e->getMessage()
+                'message' => $e->getMessage()
             ]));
         }
         
