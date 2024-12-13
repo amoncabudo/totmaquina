@@ -5,41 +5,36 @@ require_once __DIR__ . '/../Models/Maintenance.php';
 require_once __DIR__ . '/../Models/Machine.php';
 require_once __DIR__ . '/../Models/Db.php';
 
-class MaintenanceHistoryController {
+class maintenance_history {
     private $maintenanceModel;
     private $machineModel;
     private $db;
 
     public function __construct() {
+        // Crear la conexión a la base de datos primero
         $this->db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
+        
+        // Luego crear los modelos usando la conexión
         $connection = $this->db->getConnection();
-
-        if (!$connection) {
-            throw new \Exception("No es pot establir la connexió amb la base de dades.");
-        }
-
         $this->maintenanceModel = new \App\Models\Maintenance($connection);
         $this->machineModel = new \App\Models\Machine($connection);
     }
 
     public function index($request, $response) {
         try {
-            // Obtenir totes les màquines
+            // Obtener todas las máquinas
             $machines = $this->machineModel->getAllMachine();
-            if (!$machines) {
-                $machines = [];
-            }
-
-            // Passar les màquines a la vista
+            
+            // Pasar las máquinas a la vista
             $response->set("machines", $machines);
+            
             $response->setTemplate("maintenance_history.php");
+            return $response;
         } catch (\Exception $e) {
-            error_log("Error en index: " . $e->getMessage());
-            $response->setStatus(500);
+            error_log("Error en maintenance_history/index: " . $e->getMessage());
             $response->setTemplate("error.php");
+            return $response;
         }
-        
-        return $response;
     }
 
     public function getHistory($request, $response) {
@@ -58,10 +53,10 @@ class MaintenanceHistoryController {
 
             // Configurar la resposta com a JSON
             $response->setHeader('Content-Type', 'application/json');
-            $response->setBody(json_encode([
-                'success' => true,
-                'data' => $history
-            ]));
+            $response->setBody(json_encode($history));
+            
+            return $response;
+            
         } catch (\Exception $e) {
             error_log("Error en getHistory: " . $e->getMessage());
             $response->setHeader('Content-Type', 'application/json');
@@ -70,9 +65,9 @@ class MaintenanceHistoryController {
                 'error' => true,
                 'message' => $e->getMessage()
             ]));
+            
+            return $response;
         }
-        
-        return $response;
     }
 
     public function getMachineInfo($request, $response) {
@@ -91,10 +86,22 @@ class MaintenanceHistoryController {
 
             // Configurar la resposta com a JSON
             $response->setHeader('Content-Type', 'application/json');
-            $response->setBody(json_encode([
-                'success' => true,
-                'data' => $machine
-            ]));
+            
+            if ($machine) {
+                $response->setBody(json_encode([
+                    'success' => true,
+                    'data' => $machine
+                ]));
+            } else {
+                $response->setStatus(404);
+                $response->setBody(json_encode([
+                    'success' => false,
+                    'message' => 'Máquina no encontrada'
+                ]));
+            }
+            
+            return $response;
+            
         } catch (\Exception $e) {
             error_log("Error en getMachineInfo: " . $e->getMessage());
             $response->setHeader('Content-Type', 'application/json');
@@ -103,8 +110,8 @@ class MaintenanceHistoryController {
                 'success' => false,
                 'message' => $e->getMessage()
             ]));
+            
+            return $response;
         }
-        
-        return $response;
     }
-}
+} 

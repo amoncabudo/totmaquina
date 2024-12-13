@@ -6,7 +6,7 @@ use \Emeset\Contracts\Http\Request;
 use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
-class MachineController
+class ctrlAddMachine
 {
 
     function createMachine($request, $response, $container)

@@ -4,7 +4,9 @@ include $viewsPath . "/layouts/navbar.php";
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
+<head>
+<link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
+</head>
 
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">

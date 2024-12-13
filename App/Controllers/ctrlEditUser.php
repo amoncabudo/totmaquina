@@ -6,7 +6,7 @@ use Emeset\Contracts\Http\Request;
 use Emeset\Contracts\Http\Response;
 use Emeset\Contracts\Container;
 
-class editUser
+class ctrlEditUser
 {
     public function editUser(Request $request, Response $response, Container $container)
     {
