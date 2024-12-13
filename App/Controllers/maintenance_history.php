@@ -43,7 +43,7 @@ class MaintenanceHistoryController {
             error_log("Error en getHistory: " . $e->getMessage());
             
             // Configurar respuesta de error
-            $response->setHeader('Content-Type', 'application/json');
+           
             $response->setStatus(500);
             $response->setBody(json_encode([
                 'error' => true,
