@@ -561,178 +561,13 @@
         }
     }
 
-    // Función para generar usuarios de prueba
-    function initializeUserManagement() {
-        $(document).ready(function() {
-            console.log('DOM cargado, configurando event listeners...');
-        
-            $('#createTestTechnician').on('click', function() {
-                generarUsuarioPrueba('technician');
-            });
-        
-            $('#createTestSupervisor').on('click', function() {
-                generarUsuarioPrueba('supervisor');
-            });
-        });
-    }
-
-    function generarUsuarioPrueba(role) {
-        console.log('Generando usuario de prueba para el rol:', role);
-
-        $.ajax({
-            url: 'https://randomuser.me/api/?nat=es&inc=email,name,login',
-            dataType: 'json',
-            success: function(data) {
-                const user = data.results[0];
-                const usuarioPrueba = {
-                    nombre: user.name.first,
-                    apellido: user.name.last,
-                    email: user.email,
-                    pass: 'Testing10.',
-                    rol: role
-                };
-
-                // Enviar al servidor
-                $.ajax({
-                    url: '/createTestUser',
-                    method: 'POST',
-                    data: usuarioPrueba,
-                    contentType: 'application/x-www-form-urlencoded',
-                    success: function(response) {
-                        console.log('Respuesta del servidor:', response);
-                        const result = typeof response === 'string' ? JSON.parse(response) : response;
-                        if (result.success) {
-                            window.location.reload();
-                        } else {
-                            console.error('Error del servidor:', result.message);
-                            alert('Error: ' + result.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error en la petición:', error);
-                        alert('Error al crear el usuario: ' + error);
-                    }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error al obtener usuario aleatorio:', error);
-                alert('Error al generar usuario de prueba: ' + error);
-            }
-        });
-    }
-
-    // Validación de contraseña
-    function initializePasswordValidation() {
-        // Patrones individuales para cada requisito
-        const patterns = {
-            minLength: /.{6,13}/,
-            lowercase: /[a-z]/,
-            uppercase: /[A-Z]/,
-            number: /\d/,
-            special: /[$@$!%*?&-.,]/,
-            noSpaces: /^[^\s']+$/
-        };
-
-        function validatePassword(password) {
-            return {
-                minLength: patterns.minLength.test(password),
-                lowercase: patterns.lowercase.test(password),
-                uppercase: patterns.uppercase.test(password),
-                number: patterns.number.test(password),
-                special: patterns.special.test(password),
-                noSpaces: patterns.noSpaces.test(password)
-            };
-        }
-
-        function updatePasswordFeedback(results, messageContainer) {
-            const messages = {
-                minLength: 'Entre 6 y 13 caracteres',
-                lowercase: 'Al menos una minúscula',
-                uppercase: 'Al menos una mayúscula',
-                number: 'Al menos un número',
-                special: 'Al menos un carácter especial ($@!%*?&-.,)',
-                noSpaces: 'Sin espacios ni comillas simples'
-            };
-
-            let html = '<ul class="text-sm mt-2">';
-            for (const [requirement, passed] of Object.entries(results)) {
-                const color = passed ? 'text-green-600' : 'text-red-600';
-                const icon = passed ? '✔' : '✗';
-                html += `<li class="${color}"><span class="mr-2">${icon}</span>${messages[requirement]}</li>`;
-            }
-            html += '</ul>';
-
-            messageContainer.html(html);
-
-            // Verificar si todos los requisitos se cumplen
-            const allPassed = Object.values(results).every(result => result);
-            return allPassed;
-        }
-
-        function handlePasswordValidation() {
-            const password = $(this).val();
-            const results = validatePassword(password);
-            const messageContainer = $(this).siblings('.password-requirements');
-            
-            // Crear el contenedor de requisitos si no existe
-            if (messageContainer.length === 0) {
-                $(this).after('<div class="password-requirements"></div>');
-            }
-            
-            const allPassed = updatePasswordFeedback(results, $(this).siblings('.password-requirements'));
-            
-            // Actualizar el estilo del input y el estado del botón
-            if (allPassed) {
-                $(this).css("border", "2px solid green");
-                $("#btnEnviar").prop("disabled", false);
-            } else {
-                $(this).css("border", "2px solid red");
-                $("#btnEnviar").prop("disabled", true);
-            }
-        }
-
-        function handleEditPasswordValidation() {
-            const password = $(this).val();
-            const messageContainer = $(this).siblings('.password-requirements');
-            
-            // Crear el contenedor de requisitos si no existe
-            if (messageContainer.length === 0) {
-                $(this).after('<div class="password-requirements"></div>');
-            }
-            
-            // Si el campo está vacío en modo edición
-            if (password === "") {
-                $(this).css("border", "");
-                messageContainer.html("");
-                $("button[type='submit']").prop("disabled", false);
-                return;
-            }
-            
-            const results = validatePassword(password);
-            const allPassed = updatePasswordFeedback(results, messageContainer);
-            
-            // Actualizar el estilo del input y el estado del botón
-            if (allPassed) {
-                $(this).css("border", "2px solid green");
-                $("button[type='submit']").prop("disabled", false);
-            } else {
-                $(this).css("border", "2px solid red");
-                $("button[type='submit']").prop("disabled", true);
-            }
-        }
-
-        // Asignar eventos
-        $('#password').on('keyup', handlePasswordValidation);
-        $('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation);
-    }
+   
 
     // Un único event listener para DOMContentLoaded
     document.addEventListener('DOMContentLoaded', function() {
         initializeTechnicians();
         initializeMaintenanceForm();
         initializeCharts();
-        initializeUserManagement();
-        initializePasswordValidation();
     });
 
     // Función para manejar el historial de mantenimiento
@@ -753,7 +588,7 @@
         form.setAttribute('data-has-maintenance-listener', 'true');
         console.log('Inicializando historial de mantenimiento...');
 
-        // Solo actualizar información de la máquina al cambiar selección
+        // Solo actualizar informaci��n de la máquina al cambiar selección
         machineSelect.addEventListener('change', async function() {
             const machineId = this.value;
             if (!machineId) {
@@ -1087,110 +922,7 @@
         });
     });
     
-    function generarUsuarioPrueba(role) {
-        console.log('Generando usuario de prueba para el rol:', role);
-    
-        $.ajax({
-            url: 'https://randomuser.me/api/?nat=es&inc=email,name,login',
-            dataType: 'json',
-            success: function(data) {
-                const user = data.results[0];
-                const usuarioPrueba = {
-                    nombre: user.name.first,
-                    apellido: user.name.last,
-                    email: user.email,
-                    pass: 'Testing10.',
-                    rol: role
-                };
-    
-                // Enviar al servidor
-                $.ajax({
-                    url: '/createTestUser',
-                    method: 'POST',
-                    data: usuarioPrueba,
-                    contentType: 'application/x-www-form-urlencoded',
-                    success: function(response) {
-                        console.log('Respuesta del servidor:', response);
-                        const result = typeof response === 'string' ? JSON.parse(response) : response;
-                        if (result.success) {
-                            // En lugar de intentar insertar el usuario en el DOM, recargamos la página
-                            window.location.reload();
-                        } else {
-                            console.error('Error del servidor:', result.message);
-                            alert('Error: ' + result.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error en la petición:', error);
-                        alert('Error al crear el usuario: ' + error);
-                    }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error al obtener usuario aleatorio:', error);
-                alert('Error al generar usuario de prueba: ' + error);
-            }
-        });
-    } 
 
-    
-
-console.log("password.js loaded");
-console.log("messi");
-
-// La expresión regular para validar la contraseña 
-//(debe contener al menos una minúscula, una mayúscula, un número, un carácter especial y tener una longitud de entre 6 y 13 caracteres)
-var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&-.,])[A-Za-z\d$@$!%*?&-.,]{6,13}[^'\s]/;
-
-// Función para manejar la validación de la contraseña en el formulario de creación
-function handlePasswordValidation() {
-    var password = $(this).val();
-    console.log(password);
-    
-    if (pattern.test(password)) {
-        $(this).css("border", "2px solid green");
-        $("#mss").html("Contraseña válida").css("color", "green");
-        $("#btnEnviar").prop("disabled", false);
-    } else {
-        $(this).css("border", "2px solid red");
-        $("#mss").html("Contraseña inválida").css("color", "red");
-        $("#btnEnviar").prop("disabled", true);
-    }
-}
-
-// Función para manejar la validación de la contraseña en el formulario de edición
-function handleEditPasswordValidation() {
-    var password = $(this).val();
-    console.log(password);
-    
-    // Si el campo está vacío, permitir el envío (password opcional en edición)
-    if (password === "") {
-        $(this).css("border", "");
-        $("#edit-mss").html("").css("display", "none");
-        $("button[type='submit']").prop("disabled", false);
-        return;
-    }
-    
-    if (pattern.test(password)) {
-        $(this).css("border", "2px solid green");
-        $("#edit-mss").html("Contraseña válida").css({
-            "color": "green",
-            "display": "block"
-        });
-        $("button[type='submit']").prop("disabled", false);
-    } else {
-        $(this).css("border", "2px solid red");
-        $("#edit-mss").html("Contraseña inválida").css({
-            "color": "red",
-            "display": "block"
-        });
-        $("button[type='submit']").prop("disabled", true);
-    }
-}
-
-// Asignar eventos
-$('#password').on('keyup', handlePasswordValidation);
-$('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation);
 
 // Función para inicializar el drag and drop de técnicos
 function initTechnicianDragDrop() {
@@ -1327,4 +1059,128 @@ function showTab(button, contentId) {
     // Mostrar el contenido seleccionado
     document.getElementById(contentId).classList.remove('hidden');
 }
+
+function changeTechnician(assignmentId) {
+    document.getElementById('assignmentId').value = assignmentId;
+    const modal = new bootstrap.Modal(document.getElementById('changeTechnicianModal'));
+    modal.show();
+}
+
+function saveTechnicianChange() {
+    const assignmentId = document.getElementById('assignmentId').value;
+    const newTechnicianId = document.getElementById('newTechnician').value;
+
+    fetch('/api/change-technician', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            assignmentId: assignmentId,
+            newTechnicianId: newTechnicianId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error al cambiar el técnico: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al procesar la solicitud');
+    });
+}
+
+// Función para mostrar toasts
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.className = `flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow ${type === 'success' ? 'text-green-500' : 'text-red-500'}`;
+    
+    toast.innerHTML = `
+        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 ${type === 'success' ? 'text-green-500 bg-green-100' : 'text-red-500 bg-red-100'} rounded-lg">
+            ${type === 'success' 
+                ? '<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg>'
+                : '<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/></svg>'
+            }
+        </div>
+        <div class="ml-3 text-sm font-normal">${message}</div>
+    `;
+
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// Función para cambiar técnico asignado
+function saveTechnicianChange(assignmentId) {
+    const newTechnicianId = document.getElementById(`newTechnician-${assignmentId}`).value;
+    const modalElement = document.getElementById(`changeTechnicianModal-${assignmentId}`);
+
+    if (!newTechnicianId || !modalElement) return;
+
+    // Mostrar mensaje de carga
+    showToast('Guardando cambios...', 'info');
+
+    fetch('/api/change-technician', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            assignmentId: assignmentId,
+            newTechnicianId: newTechnicianId
+        })
+    })
+    .then(response => {
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('La respuesta no es JSON válido');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Respuesta del servidor:', data);
+        if (data.success) {
+            showToast(data.message || 'Técnico actualizado correctamente', 'success');
+            // Cerrar el modal usando el botón de cerrar
+            const closeButton = modalElement.querySelector('[data-modal-hide]');
+            if (closeButton) {
+                closeButton.click();
+            }
+            // Recargar la página después de un breve retraso
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            throw new Error(data.message || 'Error al cambiar el técnico');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast(error.message || 'Error al procesar la solicitud', 'error');
+    });
+
+    return false;
+}
+
+// Inicializar los modales cuando el documento esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar los modales de técnicos asignados
+    const modals = document.querySelectorAll('[data-modal-toggle]');
+    modals.forEach(trigger => {
+        const modalId = trigger.getAttribute('data-modal-target');
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            const modalInstance = new Modal(modal);
+        }
+    });
+});
 

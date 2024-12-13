@@ -1,9 +1,10 @@
-   // Define la función showMachineQRCode
-   window.showMachineQRCode = function(machineId) {
+import $ from "jquery";
+
+// Define la función showMachineQRCode
+window.showMachineQRCode = function(machineId) {
     console.log("Generando QR para la máquina ID:", machineId);
     const url = `/generate_machine_qr/${machineId}`;
-    const windowFeatures = "width=400,height=400,scrollbars=no,resizable=no";
-    window.open(url, "_blank", windowFeatures);
+    window.open(url, "_blank");
 };
 
 window.deleteMachine=function(machineId) {
@@ -25,16 +26,18 @@ window.deleteMachine=function(machineId) {
 }
 
 document.addEventListener('DOMContentLoaded', function() { // When the DOM content is loaded
-  document.getElementById('edit-machine-form').addEventListener('submit', function(event) { // When the edit machine form is submitted
-      event.preventDefault(); // Prevent the default form submission
+    if (document.getElementById('edit-machine-form')){
+        document.getElementById('edit-machine-form').addEventListener('submit', function(event) { // When the edit machine form is submitted
+        event.preventDefault(); // Prevent the default form submission
 
-      const formData = new FormData(this); // Get the form data
+        const formData = new FormData(this); // Get the form data
 
-      fetch('/editmachine', { // Edit the machine
-          method: 'POST',
-          body: formData
-      });
-  });
+        fetch('/editmachine', { // Edit the machine
+            method: 'POST',
+            body: formData
+        });
+    });
+    }
 
   const dropdownButtons = document.querySelectorAll('[data-dropdown-toggle]'); // Get the dropdown buttons
   dropdownButtons.forEach(button => { // For each dropdown button
@@ -180,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
     // Event listener para el botón de guardar
     saveButton.addEventListener('click', async () => {
         await saveChanges();

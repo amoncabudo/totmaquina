@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Machine Inventory</title>
     <link rel="stylesheet" href="/main.css">
+    <link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
 
 
 </head>
@@ -296,7 +297,7 @@
     </div>
     <script src="/js/bundle.js"></script>
     <script src="/js/flowbite.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </body>
 
 </html>
