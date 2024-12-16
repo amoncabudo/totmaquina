@@ -174,8 +174,10 @@ $app->route("api/search", function($request, $response) {
 });
 
 // Ruta para el historial de incidencias
-$app->route("history/incidents/{id}", "getIncidentHistory", ["auth",
-role(['administrator', 'supervisor'])]);
+$app->route("history", "history", ["auth", role(['technician', 'administrator', 'supervisor'])]);
+
+// Ruta para obtener el historial de una máquina específica
+$app->route("history/incidents/{id}", "getIncidentHistory", ["auth", role(['technician', 'administrator', 'supervisor'])]);
 
 // Machine routes
 $app->route("machineinv", [\App\Controllers\ctrlmachineinv::class, "ctrlmachineinv"],["auth",
