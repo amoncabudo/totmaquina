@@ -51,6 +51,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         await loadIncidentHistory(machineId);
     });
+
+    // Manejar el formulario de consulta de historial
+    const historyForm = document.getElementById('maintenance-history-form');
+    if (historyForm) {
+        historyForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevenir el envío tradicional del formulario
+            
+            const machineSelect = this.querySelector('select[name="machine_id"]');
+            if (!machineSelect) return;
+
+            const machineId = machineSelect.value;
+            if (!machineId) {
+                showToast('Por favor, seleccione una máquina', 'error');
+                return;
+            }
+
+            await loadMaintenanceHistory(machineId);
+        });
+    }
 });
 
 // Función para mostrar notificaciones toast
@@ -306,5 +325,145 @@ function updateIncidentsList(incidents) {
     incidentsListDiv.appendChild(fragment);
 }
 
-// Funciones auxiliares existentes (getStatusClass, getStatusText, formatDate, etc.)
+// Función para cargar el historial de mantenimiento
+async function loadMaintenanceHistory(machineId) {
+    try {
+        console.log('Cargando historial de mantenimiento para máquina:', machineId);
+        
+        const response = await fetch(`/maintenance-history/get/${machineId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        });
+
+        // Log para debug
+        console.log('URL:', `/maintenance-history/get/${machineId}`);
+        console.log('Response status:', response.status);
+        const responseText = await response.text();
+        console.log('Response text:', responseText);
+
+        try {
+            const data = JSON.parse(responseText);
+            console.log('Datos del historial de mantenimiento:', data);
+
+            if (!data.success) {
+                throw new Error(data.message || 'Error al cargar el historial de mantenimiento');
+            }
+
+            updateMaintenanceHistory(data.history);
+        } catch (parseError) {
+            console.error('Error parsing JSON:', parseError);
+            throw new Error('La respuesta del servidor no es JSON válido');
+        }
+        
+    } catch (error) {
+        console.error('Error al cargar el historial de mantenimiento:', error);
+        showToast(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Función para actualizar la vista del historial de mantenimiento
+function updateMaintenanceHistory(history) {
+    const historyContainer = document.getElementById('maintenance-history');
+    if (!historyContainer) return;
+
+    if (!history || history.length === 0) {
+        historyContainer.innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+                <p>No hay registros de mantenimiento para esta máquina</p>
+            </div>
+        `;
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    history.forEach(record => {
+        const recordDiv = document.createElement('div');
+        recordDiv.className = 'border-b border-gray-200 py-4 last:border-0';
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'flex justify-between items-start mb-2';
+
+        const title = document.createElement('h3');
+        title.className = 'font-semibold text-lg';
+        title.textContent = record.description || 'Sin descripción';
+
+        const status = document.createElement('span');
+        status.className = `px-3 py-1 rounded-full text-sm ${getMaintenanceStatusClass(record.status)}`;
+        status.textContent = getMaintenanceStatusText(record.status);
+
+        headerDiv.appendChild(title);
+        headerDiv.appendChild(status);
+
+        const detailsDiv = document.createElement('div');
+        detailsDiv.className = 'grid grid-cols-2 gap-4 text-sm';
+
+        const type = document.createElement('p');
+        type.innerHTML = `<span class="font-medium">Tipo:</span> ${getMaintenanceTypeText(record.type)}`;
+
+        const frequency = document.createElement('p');
+        frequency.innerHTML = `<span class="font-medium">Frecuencia:</span> ${getFrequencyText(record.frequency)}`;
+
+        const date = document.createElement('p');
+        date.innerHTML = `<span class="font-medium">Fecha programada:</span> ${formatDate(record.scheduled_date)}`;
+
+        const technicians = document.createElement('p');
+        technicians.innerHTML = `<span class="font-medium">Técnicos:</span> ${record.technicians || 'No asignados'}`;
+
+        detailsDiv.appendChild(type);
+        detailsDiv.appendChild(frequency);
+        detailsDiv.appendChild(date);
+        detailsDiv.appendChild(technicians);
+
+        recordDiv.appendChild(headerDiv);
+        recordDiv.appendChild(detailsDiv);
+
+        fragment.appendChild(recordDiv);
+    });
+
+    historyContainer.innerHTML = '';
+    historyContainer.appendChild(fragment);
+}
+
+// Funciones auxiliares
+function getMaintenanceStatusClass(status) {
+    const classes = {
+        'pending': 'bg-yellow-100 text-yellow-800',
+        'in_progress': 'bg-blue-100 text-blue-800',
+        'completed': 'bg-green-100 text-green-800'
+    };
+    return classes[status] || 'bg-gray-100 text-gray-800';
+}
+
+function getMaintenanceStatusText(status) {
+    const texts = {
+        'pending': 'Pendiente',
+        'in_progress': 'En Progreso',
+        'completed': 'Completado'
+    };
+    return texts[status] || status;
+}
+
+function getMaintenanceTypeText(type) {
+    const texts = {
+        'preventive': 'Preventivo',
+        'corrective': 'Correctivo'
+    };
+    return texts[type] || type;
+}
+
+function getFrequencyText(frequency) {
+    const texts = {
+        'weekly': 'Semanal',
+        'monthly': 'Mensual',
+        'quarterly': 'Trimestral',
+        'yearly': 'Anual'
+    };
+    return texts[frequency] || frequency;
+}
 
