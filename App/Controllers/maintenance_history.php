@@ -40,12 +40,18 @@ class maintenance_history {
     public function getHistory($request, $response) {
         try {
             $machineId = $request->getParam("id");
-            error_log("Obteniendo historial para máquina ID: " . $machineId);
+            if (!$machineId) {
+                throw new \Exception("ID de màquina no proporcionat.");
+            }
+
+            error_log("Obtenint historial per a màquina ID: " . $machineId);
 
             $history = $this->maintenanceModel->getMaintenanceHistory($machineId);
-            error_log("Historial obtenido: " . print_r($history, true));
+            if (!$history) {
+                $history = [];
+            }
 
-            // Configurar la respuesta como JSON
+            // Configurar la resposta com a JSON
             $response->setHeader('Content-Type', 'application/json');
             $response->setBody(json_encode($history));
             
@@ -53,8 +59,6 @@ class maintenance_history {
             
         } catch (\Exception $e) {
             error_log("Error en getHistory: " . $e->getMessage());
-            
-            // Configurar respuesta de error
             $response->setHeader('Content-Type', 'application/json');
             $response->setStatus(500);
             $response->setBody(json_encode([
@@ -69,12 +73,18 @@ class maintenance_history {
     public function getMachineInfo($request, $response) {
         try {
             $machineId = $request->getParam("id");
-            error_log("Obteniendo información de máquina ID: " . $machineId);
+            if (!$machineId) {
+                throw new \Exception("ID de màquina no proporcionat.");
+            }
+
+            error_log("Obtenint informació de màquina ID: " . $machineId);
 
             $machine = $this->machineModel->getMachineById($machineId);
-            error_log("Información de máquina obtenida: " . print_r($machine, true));
+            if (!$machine) {
+                throw new \Exception("Màquina no trobada.");
+            }
 
-            // Configurar la respuesta como JSON
+            // Configurar la resposta com a JSON
             $response->setHeader('Content-Type', 'application/json');
             
             if ($machine) {
@@ -94,13 +104,11 @@ class maintenance_history {
             
         } catch (\Exception $e) {
             error_log("Error en getMachineInfo: " . $e->getMessage());
-            
-            // Configurar respuesta de error
             $response->setHeader('Content-Type', 'application/json');
             $response->setStatus(500);
             $response->setBody(json_encode([
                 'success' => false,
-                'message' => "Error: " . $e->getMessage()
+                'message' => $e->getMessage()
             ]));
             
             return $response;
