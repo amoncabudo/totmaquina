@@ -31,12 +31,12 @@ function createMaintenance($request, $response, $container) {
         $maintenance = new \App\Models\Maintenance($db->getConnection());
         
         // Obtener los datos del formulario usando FILTER_SANITIZE_STRING
-        $scheduled_date = $request->get(INPUT_POST, "scheduled_date", FILTER_SANITIZE_STRING);
-        $frequency = $request->get(INPUT_POST, "frequency", FILTER_SANITIZE_STRING);
-        $type = $request->get(INPUT_POST, "type", FILTER_SANITIZE_STRING);
+        $scheduled_date = $request->get(INPUT_POST, "scheduled_date");
+        $frequency = $request->get(INPUT_POST, "frequency");
+        $type = $request->get(INPUT_POST, "type");
         $machine_id = $request->get(INPUT_POST, "machine_id", FILTER_SANITIZE_NUMBER_INT);
         $technicians = $request->get(INPUT_POST, "technicians", FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-        $description = $request->get(INPUT_POST, "description", FILTER_SANITIZE_STRING) ?? '';
+        $description = $request->get(INPUT_POST, "description") ?? '';
 
         // Debug: Imprimir los datos recibidos
         error_log("Datos recibidos en createMaintenance:");
@@ -59,11 +59,12 @@ function createMaintenance($request, $response, $container) {
             'type' => $type,
             'machine_id' => $machine_id,
             'technicians' => $technicians,
-            'description' => $description
+            'description' => $description,
+            'status' => 'pending' // Estado por defecto
         ];
 
-        // Crear el mantenimiento
-        $result = $maintenance->create($data);
+        // Crear el mantenimiento usando addMaintenance en lugar de create
+        $result = $maintenance->addMaintenance($data);
         
         // Limpiar cualquier salida que pudiera haberse generado
         @ob_end_clean();

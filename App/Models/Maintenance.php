@@ -3,9 +3,11 @@ namespace App\Models;
 
 class Maintenance {
     private $sql;
+    private $machineModel;
 
     public function __construct($connection) {
         $this->sql = $connection;
+        $this->machineModel = new Machine($connection);
     }
 
     public function getMaintenanceHistory($machineId) {
@@ -112,6 +114,155 @@ class Maintenance {
         } catch (\Exception $e) {
             $this->sql->rollBack();
             error_log("Error en addMaintenance: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAllTechnicians() {
+        try {
+            $stmt = $this->sql->prepare("
+                SELECT 
+                    id,
+                    name,
+                    surname,
+                    email,
+                    role
+                FROM User 
+                WHERE role IN ('technician', 'administrator', 'supervisor')
+                ORDER BY name, surname
+            ");
+            
+            $stmt->execute();
+            $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Formatear los resultados para mostrar nombre completo
+            return array_map(function($technician) {
+                $technician['full_name'] = trim($technician['name'] . ' ' . $technician['surname']);
+                return $technician;
+            }, $results);
+            
+        } catch (\PDOException $e) {
+            error_log("Error PDO en getAllTechnicians: " . $e->getMessage());
+            throw $e;
+        } catch (\Exception $e) {
+            error_log("Error general en getAllTechnicians: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAllMachines() {
+        return $this->machineModel->getAllMachine();
+    }
+
+    public function getAllMaintenances() {
+        try {
+            $stmt = $this->sql->prepare("
+                SELECT 
+                    m.id,
+                    m.scheduled_date,
+                    m.frequency,
+                    m.type,
+                    m.status,
+                    m.description,
+                    ma.name as machine_name,
+                    GROUP_CONCAT(
+                        CONCAT(COALESCE(u.name, ''), ' ', COALESCE(u.surname, ''))
+                        SEPARATOR ', '
+                    ) as technicians
+                FROM Maintenance m
+                LEFT JOIN Machine ma ON m.machine_id = ma.id
+                LEFT JOIN MaintenanceTechnician mt ON m.id = mt.maintenance_id
+                LEFT JOIN User u ON mt.technician_id = u.id
+                GROUP BY m.id, m.scheduled_date, m.frequency, m.type, m.status, m.description, ma.name
+                ORDER BY m.scheduled_date DESC
+            ");
+            
+            $stmt->execute();
+            $maintenances = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Formatear las fechas y otros campos si es necesario
+            return array_map(function($maintenance) {
+                $maintenance['scheduled_date'] = date('Y-m-d H:i:s', strtotime($maintenance['scheduled_date']));
+                $maintenance['status_text'] = $this->getStatusText($maintenance['status']);
+                $maintenance['type_text'] = $this->getTypeText($maintenance['type']);
+                $maintenance['frequency_text'] = $this->getFrequencyText($maintenance['frequency']);
+                return $maintenance;
+            }, $maintenances);
+            
+        } catch (\PDOException $e) {
+            error_log("Error PDO en getAllMaintenances: " . $e->getMessage());
+            throw $e;
+        } catch (\Exception $e) {
+            error_log("Error general en getAllMaintenances: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function getStatusText($status) {
+        $texts = [
+            'pending' => 'Pendiente',
+            'in_progress' => 'En Progreso',
+            'completed' => 'Completado'
+        ];
+        return $texts[$status] ?? $status;
+    }
+
+    private function getTypeText($type) {
+        $texts = [
+            'preventive' => 'Preventivo',
+            'corrective' => 'Correctivo'
+        ];
+        return $texts[$type] ?? $type;
+    }
+
+    private function getFrequencyText($frequency) {
+        $texts = [
+            'weekly' => 'Semanal',
+            'monthly' => 'Mensual',
+            'quarterly' => 'Trimestral',
+            'yearly' => 'Anual'
+        ];
+        return $texts[$frequency] ?? $frequency;
+    }
+
+    public function assignTechnician($maintenanceId, $technicianId) {
+        try {
+            // Verificar si ya está asignado
+            $stmt = $this->sql->prepare("
+                SELECT 1 FROM MaintenanceTechnician 
+                WHERE maintenance_id = ? AND technician_id = ?
+            ");
+            $stmt->execute([$maintenanceId, $technicianId]);
+            
+            if ($stmt->fetch()) {
+                return true; // Ya está asignado
+            }
+
+            // Asignar el técnico
+            $stmt = $this->sql->prepare("
+                INSERT INTO MaintenanceTechnician (maintenance_id, technician_id)
+                VALUES (?, ?)
+            ");
+            
+            return $stmt->execute([$maintenanceId, $technicianId]);
+            
+        } catch (\Exception $e) {
+            error_log("Error en assignTechnician: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function removeTechnician($maintenanceId, $technicianId) {
+        try {
+            $stmt = $this->sql->prepare("
+                DELETE FROM MaintenanceTechnician 
+                WHERE maintenance_id = ? AND technician_id = ?
+            ");
+            
+            return $stmt->execute([$maintenanceId, $technicianId]);
+            
+        } catch (\Exception $e) {
+            error_log("Error en removeTechnician: " . $e->getMessage());
             throw $e;
         }
     }

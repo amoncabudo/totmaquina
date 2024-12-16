@@ -293,4 +293,15 @@ $app->get("maintenance-history/get/{id}", function($request, $response) {
     exit; // Importante: asegurarnos de que no hay más salida después
 }, ["auth", role(['technician', 'administrator', 'supervisor'])]);
 
+// Rutas para asignación de técnicos
+$app->post("maintenance/assign-technician", function($request, $response) {
+    $controller = new \App\Controllers\maintenance();
+    return $controller->assignTechnician($request, $response);
+}, ["auth", role(['administrator', 'supervisor'])]);
+
+$app->post("maintenance/remove-technician", function($request, $response) {
+    $controller = new \App\Controllers\maintenance();
+    return $controller->removeTechnician($request, $response);
+}, ["auth", role(['administrator', 'supervisor'])]);
+
 $app->execute();

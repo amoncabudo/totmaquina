@@ -146,7 +146,9 @@
                                 <h3 class="text-sm font-medium text-gray-700 mb-2">Técnicos Disponibles</h3>
                                 <ul id="tecnicos-disponibles" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2">
                                     <?php foreach ($technicians as $technician): ?>
-                                        <li class="bg-white p-2 mb-2 rounded shadow cursor-move" data-id="<?= $technician['id'] ?>">
+                                        <li class="technician-item bg-white p-2 mb-2 rounded shadow cursor-move" 
+                                            data-id="<?= $technician['id'] ?>"
+                                            data-name="<?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?>">
                                             <?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?>
                                         </li>
                                     <?php endforeach; ?>
@@ -158,6 +160,7 @@
                                 </ul>
                             </div>
                         </div>
+                        <input type="hidden" name="maintenance_id" id="maintenance_id" value="<?= isset($maintenance['id']) ? $maintenance['id'] : '' ?>">
                         <input type="hidden" name="technicians_data" id="technicians-data">
                     </div>
 
