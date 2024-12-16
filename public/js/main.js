@@ -74,38 +74,74 @@
         const machineInfoDiv = document.getElementById('machine-info');
         if (!machineInfoDiv) return;
 
-    // Asegurarse de que machine no sea undefined
-    if (!machine) {
-        machineInfoDiv.innerHTML = '<p class="text-red-500">Error: No se pudo cargar la información de la máquina</p>';
-        return;
-    }
+        if (!machine) {
+            const errorP = document.createElement('p');
+            errorP.className = 'text-red-500';
+            errorP.textContent = 'Error: No se pudo cargar la información de la máquina';
+            machineInfoDiv.innerHTML = '';
+            machineInfoDiv.appendChild(errorP);
+            return;
+        }
 
-        machineInfoDiv.innerHTML = `
-        <h2 class="text-xl font-bold mb-4">${machine.name || 'Sin nombre'}</h2>
-            <div class="space-y-2">
-                <p><span class="font-semibold">Modelo:</span> ${machine.model || 'No especificado'}</p>
-                <p><span class="font-semibold">Fabricante:</span> ${machine.manufacturer || 'No especificado'}</p>
-                <p><span class="font-semibold">Ubicación:</span> ${machine.location || 'No especificada'}</p>
-            </div>
-            <div class="mt-6 grid grid-cols-2 gap-4">
-                <div class="bg-blue-50 p-3 rounded-lg">
-                    <p class="text-sm text-blue-600">Total Incidencias</p>
-                <p class="text-2xl font-bold text-blue-700">${machine.total_incidents || 0}</p>
-                </div>
-                <div class="bg-yellow-50 p-3 rounded-lg">
-                    <p class="text-sm text-yellow-600">Pendientes</p>
-                <p class="text-2xl font-bold text-yellow-700">${machine.pending_incidents || 0}</p>
-                </div>
-                <div class="bg-orange-50 p-3 rounded-lg">
-                    <p class="text-sm text-orange-600">En Progreso</p>
-                <p class="text-2xl font-bold text-orange-700">${machine.in_progress_incidents || 0}</p>
-                </div>
-                <div class="bg-green-50 p-3 rounded-lg">
-                    <p class="text-sm text-green-600">Resueltas</p>
-                <p class="text-2xl font-bold text-green-700">${machine.resolved_incidents || 0}</p>
-                </div>
-            </div>
-        `;
+        // Crear elementos manualmente
+        const fragment = document.createDocumentFragment();
+
+        // Título
+        const title = document.createElement('h2');
+        title.className = 'text-xl font-bold mb-4';
+        title.textContent = machine.name || 'Sin nombre';
+        fragment.appendChild(title);
+
+        // Información básica
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'space-y-2';
+
+        const createInfoP = (label, value) => {
+            const p = document.createElement('p');
+            const span = document.createElement('span');
+            span.className = 'font-semibold';
+            span.textContent = label + ': ';
+            p.appendChild(span);
+            p.appendChild(document.createTextNode(value || 'No especificado'));
+            return p;
+        };
+
+        infoDiv.appendChild(createInfoP('Modelo', machine.model));
+        infoDiv.appendChild(createInfoP('Fabricante', machine.manufacturer));
+        infoDiv.appendChild(createInfoP('Ubicación', machine.location));
+        fragment.appendChild(infoDiv);
+
+        // Estadísticas
+        const statsDiv = document.createElement('div');
+        statsDiv.className = 'mt-6 grid grid-cols-2 gap-4';
+
+        const createStatDiv = (label, value, colorClass) => {
+            const div = document.createElement('div');
+            div.className = `${colorClass} p-3 rounded-lg`;
+            
+            const labelP = document.createElement('p');
+            labelP.className = `text-sm ${colorClass.replace('bg-', 'text-').replace('-50', '-600')}`;
+            labelP.textContent = label;
+            
+            const valueP = document.createElement('p');
+            valueP.className = `text-2xl font-bold ${colorClass.replace('bg-', 'text-').replace('-50', '-700')}`;
+            valueP.textContent = value || '0';
+            
+            div.appendChild(labelP);
+            div.appendChild(valueP);
+            return div;
+        };
+
+        statsDiv.appendChild(createStatDiv('Total Incidencias', machine.total_incidents, 'bg-blue-50'));
+        statsDiv.appendChild(createStatDiv('Pendientes', machine.pending_incidents, 'bg-yellow-50'));
+        statsDiv.appendChild(createStatDiv('En Progreso', machine.in_progress_incidents, 'bg-orange-50'));
+        statsDiv.appendChild(createStatDiv('Resueltas', machine.resolved_incidents, 'bg-green-50'));
+
+        fragment.appendChild(statsDiv);
+
+        // Actualizar el contenido
+        machineInfoDiv.innerHTML = '';
+        machineInfoDiv.appendChild(fragment);
     }
 
     // Función auxiliar para obtener la clase CSS según el estado
@@ -155,23 +191,64 @@
             return;
         }
 
-        const incidentsList = incidents.map(incident => `
-            <div class="border-b border-gray-200 py-4 last:border-0">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-semibold text-lg">${incident.description || 'Sin descripción'}</h3>
-                    <span class="px-3 py-1 rounded-full text-sm ${getStatusClass(incident.status)}">
-                        ${getStatusText(incident.status)}
-                    </span>
-                </div>
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                    <p><span class="font-medium">Prioridad:</span> ${incident.priority || 'No especificada'}</p>
-                    <p><span class="font-medium">Técnico:</span> ${incident.technician_name || 'No asignado'}</p>
-                    <p><span class="font-medium">Fecha:</span> ${formatDate(incident.registered_date)}</p>
-                </div>
-            </div>
-        `).join('');
+        // Crear elementos manualmente en lugar de usar template strings
+        const fragment = document.createDocumentFragment();
 
-        incidentsListDiv.innerHTML = incidentsList;
+        incidents.forEach(incident => {
+            const incidentDiv = document.createElement('div');
+            incidentDiv.className = 'border-b border-gray-200 py-4 last:border-0';
+
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'flex justify-between items-start mb-2';
+
+            const title = document.createElement('h3');
+            title.className = 'font-semibold text-lg';
+            title.textContent = incident.description || 'Sin descripción';
+
+            const status = document.createElement('span');
+            status.className = `px-3 py-1 rounded-full text-sm ${getStatusClass(incident.status)}`;
+            status.textContent = getStatusText(incident.status);
+
+            headerDiv.appendChild(title);
+            headerDiv.appendChild(status);
+
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'grid grid-cols-2 gap-4 text-sm';
+
+            const priority = document.createElement('p');
+            const priorityLabel = document.createElement('span');
+            priorityLabel.className = 'font-medium';
+            priorityLabel.textContent = 'Prioridad: ';
+            priority.appendChild(priorityLabel);
+            priority.appendChild(document.createTextNode(incident.priority || 'No especificada'));
+
+            const technician = document.createElement('p');
+            const technicianLabel = document.createElement('span');
+            technicianLabel.className = 'font-medium';
+            technicianLabel.textContent = 'Técnico: ';
+            technician.appendChild(technicianLabel);
+            technician.appendChild(document.createTextNode(incident.technician_name || 'No asignado'));
+
+            const date = document.createElement('p');
+            const dateLabel = document.createElement('span');
+            dateLabel.className = 'font-medium';
+            dateLabel.textContent = 'Fecha: ';
+            date.appendChild(dateLabel);
+            date.appendChild(document.createTextNode(formatDate(incident.registered_date)));
+
+            detailsDiv.appendChild(priority);
+            detailsDiv.appendChild(technician);
+            detailsDiv.appendChild(date);
+
+            incidentDiv.appendChild(headerDiv);
+            incidentDiv.appendChild(detailsDiv);
+
+            fragment.appendChild(incidentDiv);
+        });
+
+        // Limpiar y añadir el nuevo contenido
+        incidentsListDiv.innerHTML = '';
+        incidentsListDiv.appendChild(fragment);
     }
 
 // Inicializar cuando el DOM esté listo
