@@ -114,7 +114,7 @@ class Incident {
     public function getAllMachines() {
         try {
             // Si el usuario es técnico, solo mostrar máquinas sin técnico asignado
-            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {-
                 $sql = "SELECT m.id, m.name 
                        FROM Machine m 
                        LEFT JOIN Incident i ON m.id = i.machine_id AND i.status != 'resolved'
@@ -190,6 +190,124 @@ class Incident {
         } catch (\PDOException $e) {
             error_log("Error al actualizar el estado de la incidencia: " . $e->getMessage());
             throw new \Exception("Error al actualizar el estado: " . $e->getMessage());
+        }
+    }
+
+    public function getIncidentsByMachine($machineId) {
+        try {
+            // Función auxiliar para limpiar strings
+            $cleanString = function($str) {
+                if (!is_string($str)) return $str;
+                
+                // Convertir a UTF-8 si no lo está
+                if (!mb_check_encoding($str, 'UTF-8')) {
+                    $str = mb_convert_encoding($str, 'UTF-8', 'auto');
+                }
+                
+                // Eliminar caracteres no imprimibles y normalizar espacios
+                $str = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $str);
+                $str = preg_replace('/\s+/u', ' ', $str);
+                return trim($str);
+            };
+
+            // Obtener información de la máquina
+            $machineStmt = $this->sql->prepare("
+                SELECT 
+                    id,
+                    name,
+                    model,
+                    manufacturer,
+                    location
+                FROM Machine
+                WHERE id = ?
+            ");
+            
+            $machineStmt->execute([$machineId]);
+            $machineInfo = $machineStmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$machineInfo) {
+                return [
+                    'success' => false,
+                    'message' => "Máquina no encontrada"
+                ];
+            }
+
+            // Limpiar datos de la máquina
+            foreach ($machineInfo as $key => $value) {
+                $machineInfo[$key] = $cleanString($value);
+            }
+
+            // Obtener incidencias
+            $stmt = $this->sql->prepare("
+                SELECT 
+                    i.id,
+                    i.description,
+                    i.priority,
+                    i.status,
+                    DATE_FORMAT(i.registered_date, '%Y-%m-%d %H:%i:%s') as registered_date,
+                    COALESCE(CONCAT(TRIM(u.name), ' ', TRIM(u.surname)), '') as technician_name
+                FROM Incident i
+                LEFT JOIN User u ON i.responsible_technician_id = u.id
+                WHERE i.machine_id = ?
+                ORDER BY i.registered_date DESC
+            ");
+
+            $stmt->execute([$machineId]);
+            $incidents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Limpiar y validar datos de incidencias
+            foreach ($incidents as &$incident) {
+                // Limpiar strings
+                foreach ($incident as $key => $value) {
+                    $incident[$key] = $cleanString($value);
+                }
+                
+                // Validar nombre del técnico
+                $incident['technician_name'] = $incident['technician_name'] ? 
+                    $cleanString($incident['technician_name']) : 'No asignado';
+                
+                // Validar estado
+                $incident['status'] = in_array($incident['status'], ['pending', 'in_progress', 'resolved']) ? 
+                    $incident['status'] : 'pending';
+            }
+
+            // Calcular estadísticas
+            $stats = [
+                'total_incidents' => count($incidents),
+                'pending_incidents' => 0,
+                'in_progress_incidents' => 0,
+                'resolved_incidents' => 0
+            ];
+
+            foreach ($incidents as $incident) {
+                switch ($incident['status']) {
+                    case 'pending': $stats['pending_incidents']++; break;
+                    case 'in_progress': $stats['in_progress_incidents']++; break;
+                    case 'resolved': $stats['resolved_incidents']++; break;
+                }
+            }
+
+            // Preparar respuesta
+            $result = [
+                'success' => true,
+                'machine' => array_merge($machineInfo, $stats),
+                'data' => array_values($incidents) // Asegurar que es un array indexado
+            ];
+
+            // Verificar que se puede codificar como JSON
+            $json = json_encode($result, JSON_PARTIAL_OUTPUT_ON_ERROR);
+            if ($json === false) {
+                throw new \Exception("Error al codificar datos: " . json_last_error_msg());
+            }
+
+            return json_decode($json, true); // Decodificar de nuevo para asegurar datos limpios
+
+        } catch (\Exception $e) {
+            error_log("Error en getIncidentsByMachine: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => "Error al obtener las incidencias: " . $e->getMessage()
+            ];
         }
     }
 }
