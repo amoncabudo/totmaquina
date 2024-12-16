@@ -5,49 +5,51 @@ use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
 /**
- * Middleware que gestiona la autenticación
+ * Middleware de autenticación
  */
-function auth(Request $request, Response $response, Container $container, $next) : Response
-{
-    if (!$response) {
-        $response = $container->get('response');
-    }
+function auth(Request $request, Response $response, Container $container, $next) {
+    try {
+        // Verificar si hay una sesión activa
+        $user = $request->get("SESSION", "user");
+        $logat = $request->get("SESSION", "logat");
 
-    $user = $request->get("SESSION", "user");
-    $logat = $request->get("SESSION", "logat");
-
-    if (!isset($logat)) {
-        $user = "";
-        $logat = false;
-    }
-
-    $response->set("user", $user);
-    $response->set("logat", $logat);
-
-    // Si el usuario está logueado permitimos cargar el recurso
-    if ($logat) {
-        try {
-            $nextResponse = \Emeset\Middleware::next($request, $response, $container, $next);
-            return $nextResponse instanceof Response ? $nextResponse : $response;
-        } catch (\Exception $e) {
-            error_log("Error en auth middleware: " . $e->getMessage());
-            return $response->setTemplate("error.php");
+        if (!isset($logat) || !$logat) {
+            // Si no hay sesión y es una petición AJAX, devolver error JSON
+            if ($request->isAjax()) {
+                return $response
+                    ->setHeader('Content-Type', 'application/json')
+                    ->setStatus(401)
+                    ->setJson([
+                        'success' => false,
+                        'message' => 'No autorizado'
+                    ]);
+            }
+            // Si no es AJAX, redirigir al login
+            return $response->redirect("/login");
         }
-    }
 
-    // Si es una petición AJAX, devolver error JSON
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-        return $response->setJson([
-            'success' => false,
-            'message' => 'No autorizado',
-            'redirect' => '/login'
-        ])->setStatus(401);
+        // Si hay sesión, continuar
+        $response->set("user", $user);
+        $response->set("logat", $logat);
+
+        // Ejecutar el siguiente middleware o controlador
+        return \Emeset\Middleware::next($request, $response, $container, $next);
+        
+    } catch (\Exception $e) {
+        error_log("Error en auth middleware: " . $e->getMessage());
+        
+        if ($request->isAjax()) {
+            return $response
+                ->setHeader('Content-Type', 'application/json')
+                ->setStatus(500)
+                ->setJson([
+                    'success' => false,
+                    'message' => 'Error de autenticación'
+                ]);
+        }
+        
+        return $response->redirect("/login");
     }
-    
-    // Si no es AJAX, redirigir al login
-    $response->setSession("error", "No tienes permisos para acceder a esta página");
-    return $response->redirect("/login");
 }
 
 /**
@@ -55,24 +57,23 @@ function auth(Request $request, Response $response, Container $container, $next)
  */
 function role($roles = []) {
     return function (Request $request, Response $response, Container $container, $next) use ($roles) {
-        if (!$response) {
-            $response = $container->get('response');
-        }
-
         $user = $request->get("SESSION", "user");
         
         if (!$user || !isset($user['role']) || !in_array($user['role'], $roles)) {
-            error_log("Role Middleware - Acceso denegado para rol: " . ($user['role'] ?? 'no definido'));
+            if ($request->isAjax()) {
+                return $response
+                    ->setHeader('Content-Type', 'application/json')
+                    ->setStatus(403)
+                    ->setJson([
+                        'success' => false,
+                        'message' => 'No tienes permisos para acceder a esta página'
+                    ]);
+            }
+            
             $response->setSession("error", "No tienes permisos para acceder a esta página");
             return $response->redirect("/login");
         }
 
-        try {
-            $nextResponse = \Emeset\Middleware::next($request, $response, $container, $next);
-            return $nextResponse instanceof Response ? $nextResponse : $response;
-        } catch (\Exception $e) {
-            error_log("Error en role middleware: " . $e->getMessage());
-            return $response->setTemplate("error.php");
-        }
+        return \Emeset\Middleware::next($request, $response, $container, $next);
     };
 }

@@ -7,38 +7,42 @@ use \Emeset\Contracts\Container;
 
 class App {
 
-    public static function execute(Request $request, Response $response, Container $container, $next) :Response
-    {
-        // Asegurarnos que la sesión está iniciada
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        // Inicializar variables de sesión si no existen
-        if (!isset($_SESSION['logat'])) {
-            $_SESSION['logat'] = false;
-        }
-
-        if (!isset($_SESSION['user'])) {
-            $_SESSION['user'] = null;
-        }
-
-        // Sincronizar los valores con el response
-        $response->set("logat", $_SESSION['logat']);
-        $response->set("user", $_SESSION['user']);
-
-        // Continuar con la ejecución
-        if (is_array($next)) {
-            if (count($next) > 1) {
-                $call = array_shift($next);
-                $response = call_user_func($call, $request, $response, $container, $next);
-            } else {
-                $response = call_user_func($next[0], $request, $response, $container);
+    public static function execute(Request $request, Response $response, Container $container, $next) {
+        try {
+            if (!$response) {
+                $response = $container->get("response");
             }
-        } else {
-            $response = $next($request, $response, $container);
-        }
 
-        return $response;
+            // Configurar variables globales para las vistas
+            $response->set("error", $request->get("SESSION", "error"));
+            $response->set("success", $request->get("SESSION", "success"));
+            
+            // Limpiar mensajes de sesión después de usarlos
+            $_SESSION["error"] = null;
+            $_SESSION["success"] = null;
+
+            // Ejecutar el siguiente middleware o controlador
+            $nextResponse = \Emeset\Middleware::next($request, $response, $container, $next);
+            
+            // Asegurarse de que siempre devolvemos una respuesta válida
+            return $nextResponse instanceof Response ? $nextResponse : $response;
+
+        } catch (\Exception $e) {
+            error_log("Error en App middleware: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+
+            if ($request->isAjax()) {
+                return $response
+                    ->setHeader('Content-Type', 'application/json')
+                    ->setStatus(500)
+                    ->setJson([
+                        'success' => false,
+                        'message' => 'Error interno del servidor'
+                    ]);
+            }
+
+            // En caso de error, mostrar la página de error
+            return $response->setTemplate("error.php");
+        }
     }
 }

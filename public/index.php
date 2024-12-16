@@ -282,4 +282,15 @@ role(['administrator', 'supervisor'])]);
 $app->post("/api/change-technician", [\App\Controllers\MachinesController::class, "changeTechnician"], ["auth", 
 role(['administrator', 'supervisor'])]);
 
+$app->get("maintenance-history", function($request, $response) {
+    $controller = new \App\Controllers\maintenance_history();
+    return $controller->index($request, $response);
+}, ["auth", role(['technician', 'administrator', 'supervisor'])]);
+
+$app->get("maintenance-history/get/{id}", function($request, $response) {
+    $controller = new \App\Controllers\maintenance_history();
+    $controller->getHistory($request, $response);
+    exit; // Importante: asegurarnos de que no hay más salida después
+}, ["auth", role(['technician', 'administrator', 'supervisor'])]);
+
 $app->execute();
