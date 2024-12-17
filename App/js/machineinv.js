@@ -188,3 +188,12 @@ document.addEventListener('DOMContentLoaded', function() {
 }); 
 
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const saveButton = document.getElementById('save-technicians');
+    if (saveButton) {
+        saveButton.addEventListener('click', function() {
+            // Your event handler code
+        });
+    }
+});

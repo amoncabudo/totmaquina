@@ -13,7 +13,7 @@ window.generateMachinesPDF = function (machines) {
         // Título del PDF
         doc.text("Reporte de Máquinas", 14, 20);
 
-        // Convierte los datos en un formato para jsPDF-Autotable
+        // Convierte los datos en un formato para jsPDF-Autotable3
         const tableRows = machines.map(machine => [
             machine.name || "N/A",
             machine.model || "N/A",
