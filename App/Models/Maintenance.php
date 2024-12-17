@@ -285,4 +285,57 @@ class Maintenance {
             throw $e;
         }
     }
+
+    public function isMaintenanceAssignedToTechnician($maintenanceId, $technicianId) {
+        try {
+            $stmt = $this->sql->prepare("
+                SELECT m.id 
+                FROM Maintenance m 
+                INNER JOIN MaintenanceTechnician mt ON m.id = mt.maintenance_id 
+                WHERE m.id = ? AND mt.technician_id = ?
+            ");
+            $stmt->execute([$maintenanceId, $technicianId]);
+            return $stmt->fetch() !== false;
+        } catch (\PDOException $e) {
+            error_log("Error en isMaintenanceAssignedToTechnician: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateMaintenanceStatus($maintenanceId, $status) {
+        try {
+            error_log("=== INICIO updateMaintenanceStatus en Modelo ===");
+            error_log("Actualizando mantenimiento ID: " . $maintenanceId);
+            error_log("Nuevo estado: " . $status);
+
+            // Validar el estado
+            $validStatuses = ['pending', 'in_progress', 'completed'];
+            if (!in_array($status, $validStatuses)) {
+                error_log("Estado no válido: " . $status);
+                throw new \Exception("Estado no válido: " . $status);
+            }
+
+            // Actualizar solo el estado
+            $stmt = $this->sql->prepare("UPDATE Maintenance SET status = ? WHERE id = ?");
+            $success = $stmt->execute([$status, $maintenanceId]);
+
+            if (!$success) {
+                $error = $stmt->errorInfo();
+                error_log("Error en la actualización: " . implode(", ", $error));
+                throw new \Exception("Error al actualizar el estado: " . implode(", ", $error));
+            }
+
+            error_log("=== FIN updateMaintenanceStatus en Modelo ===");
+            return true;
+
+        } catch (\PDOException $e) {
+            error_log("Error PDO en updateMaintenanceStatus: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw new \Exception("Error de base de datos al actualizar el estado: " . $e->getMessage());
+        } catch (\Exception $e) {
+            error_log("Error general en updateMaintenanceStatus: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw $e;
+        }
+    }
 } 

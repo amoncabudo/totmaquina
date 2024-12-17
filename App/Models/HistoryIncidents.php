@@ -25,7 +25,11 @@ class HistoryIncidents {
                         i.id,
                         i.description,
                         i.priority,
-                        i.status,
+                        CASE 
+                            WHEN i.status = 'in_progress' THEN 'in progress'
+                            WHEN i.status IS NULL THEN 'pending'
+                            ELSE i.status 
+                        END as status,
                         i.registered_date,
                         i.resolved_date,
                         TIMESTAMPDIFF(HOUR, i.registered_date, COALESCE(i.resolved_date, NOW())) as tiempo,
@@ -41,10 +45,16 @@ class HistoryIncidents {
             $stmt->execute(['machineId' => $machineId]);
             $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            error_log("Resultados de la consulta para máquina $machineId: " . print_r($results, true));
+            error_log("=== INICIO getIncidentHistory ===");
+            error_log("Query ejecutado: " . $query);
+            error_log("MachineId: " . $machineId);
+            error_log("Resultados sin procesar: " . print_r($results, true));
 
             // Procesar los resultados
             foreach ($results as &$row) {
+                error_log("Procesando incidencia ID: " . $row['id']);
+                error_log("Estado original: " . ($row['status'] ?? 'NULL'));
+
                 // Formatear la fecha de registro
                 $fecha = new \DateTime($row['registered_date']);
                 $row['registered_date'] = $fecha->format('d/m/Y H:i');
@@ -73,15 +83,21 @@ class HistoryIncidents {
                 ][$row['priority']] ?? $row['priority'];
 
                 // Formatear el estado
+                error_log("Formateando estado para incidencia " . $row['id']);
+                error_log("Estado antes de formatear: " . $row['status']);
                 $row['status_text'] = [
                     'pending' => 'Pendiente',
-                    'in_progress' => 'En Proceso',
+                    'in progress' => 'En Proceso',
                     'resolved' => 'Resuelto'
                 ][$row['status']] ?? $row['status'];
+                error_log("Estado después de formatear: " . $row['status_text']);
 
                 // Asegurar que technician_name tenga un valor por defecto
                 $row['technician_name'] = $row['technician_name'] ?: 'Sin asignar';
             }
+
+            error_log("Resultados finales: " . print_r($results, true));
+            error_log("=== FIN getIncidentHistory ===");
 
             return $results;
         } catch (\PDOException $e) {
@@ -96,7 +112,9 @@ class HistoryIncidents {
                         m.*,
                         COUNT(i.id) as total_incidents,
                         SUM(CASE WHEN i.status = 'pending' THEN 1 ELSE 0 END) as pending_incidents,
-                        SUM(CASE WHEN i.status = 'in_progress' THEN 1 ELSE 0 END) as in_progress_incidents,
+                        SUM(CASE 
+                            WHEN i.status = 'in progress' OR i.status = 'in_progress' 
+                            THEN 1 ELSE 0 END) as in_progress_incidents,
                         SUM(CASE WHEN i.status = 'resolved' THEN 1 ELSE 0 END) as resolved_incidents
                     FROM Machine m
                     LEFT JOIN Incident i ON m.id = i.machine_id

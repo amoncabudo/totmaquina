@@ -65,7 +65,7 @@
                     <span class="text-4xl font-bold text-blue-800">
                         <?php 
                         $enProceso = array_filter($incidents, function($inc) { 
-                            return $inc['status'] === 'in progress'; 
+                            return $inc['status'] === 'in_progress'; 
                         });
                         echo count($enProceso);
                         ?>
@@ -268,7 +268,7 @@
                                                 case 'pending':
                                                     echo 'bg-yellow-100 text-yellow-800';
                                                     break;
-                                                case 'in progress':
+                                                case 'in_progress':
                                                     echo 'bg-blue-100 text-blue-800';
                                                     break;
                                                 case 'resolved':
@@ -283,7 +283,7 @@
                                                 case 'pending':
                                                     echo 'Pendiente';
                                                     break;
-                                                case 'in progress':
+                                                case 'in_progress':
                                                     echo 'En Proceso';
                                                     break;
                                                 case 'resolved':
