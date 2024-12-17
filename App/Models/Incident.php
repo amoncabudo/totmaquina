@@ -24,7 +24,8 @@ class Incident {
             }
 
             // Debug: Imprimir datos recibidos
-            error_log("Datos recibidos en create de Incident: " . print_r($data, true));
+            error_log("=== DEBUG: Creando nueva incidencia ===");
+            error_log("Datos recibidos: " . print_r($data, true));
 
             // Validar que la máquina existe
             $stmt = $this->sql->prepare("SELECT id FROM Machine WHERE id = ?");
@@ -35,8 +36,8 @@ class Incident {
 
             // Procesar el técnico asignado
             $technicianId = null;
-            if (!empty($data['technicians'])) {
-                $technicianId = (int)$data['technicians'];
+            if (!empty($data['responsible_technician_id'])) {
+                $technicianId = (int)$data['responsible_technician_id'];
                 
                 // Validar que el técnico existe y es un técnico
                 $techStmt = $this->sql->prepare("SELECT id FROM User WHERE id = ? AND role = 'technician'");
@@ -47,7 +48,7 @@ class Incident {
                 }
             }
 
-            error_log("ID del técnico final: " . ($technicianId ?? 'null'));
+            error_log("ID del técnico validado: " . ($technicianId ?? 'null'));
 
             // Preparar la consulta
             $sql = "INSERT INTO Incident (description, priority, status, registered_date, machine_id, responsible_technician_id) 
@@ -64,21 +65,30 @@ class Incident {
                 ':technician_id' => $technicianId
             ];
 
-            error_log("Parámetros finales para la inserción: " . print_r($params, true));
+            error_log("SQL: " . $sql);
+            error_log("Parámetros: " . print_r($params, true));
             
             // Ejecutar la consulta
             if (!$stmt->execute($params)) {
                 $error = $stmt->errorInfo();
-                error_log("Error en la inserción de incidencia: " . implode(", ", $error));
+                error_log("Error en la inserción: " . implode(", ", $error));
                 throw new \Exception("Error al crear la incidencia: " . $error[2]);
             }
 
             $newId = $this->sql->lastInsertId();
-            error_log("Incidencia creada con ID: " . $newId);
+            error_log("Incidencia creada exitosamente con ID: " . $newId);
+
+            // Verificar que la incidencia se creó correctamente
+            $verifyStmt = $this->sql->prepare("SELECT * FROM Incident WHERE id = ?");
+            $verifyStmt->execute([$newId]);
+            $newIncident = $verifyStmt->fetch(\PDO::FETCH_ASSOC);
+            error_log("Datos de la nueva incidencia: " . print_r($newIncident, true));
+
             return $newId;
 
         } catch (\PDOException $e) {
-            error_log("Error en la inserción de incidencia: " . $e->getMessage());
+            error_log("Error PDO en create: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             throw new \Exception("Error al crear la incidencia: " . $e->getMessage());
         }
     }
@@ -148,13 +158,31 @@ class Incident {
     }
 
     public function getAllIncidents() {
-        $stmt = $this->sql->prepare("SELECT i.*, m.name as machine_name, u.name as technician_name 
-                                    FROM Incident i 
-                                    LEFT JOIN Machine m ON i.machine_id = m.id 
-                                    LEFT JOIN User u ON i.responsible_technician_id = u.id 
-                                    ORDER BY i.registered_date DESC");
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            error_log("=== DEBUG: Obteniendo todas las incidencias ===");
+            
+            $sql = "SELECT i.*, m.name as machine_name, 
+                           CONCAT(u.name, ' ', COALESCE(u.surname, '')) as technician_name 
+                    FROM Incident i 
+                    LEFT JOIN Machine m ON i.machine_id = m.id 
+                    LEFT JOIN User u ON i.responsible_technician_id = u.id 
+                    ORDER BY i.registered_date DESC";
+            
+            error_log("SQL: " . $sql);
+            
+            $stmt = $this->sql->prepare($sql);
+            $stmt->execute();
+            
+            $incidents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            error_log("Incidencias encontradas: " . count($incidents));
+            error_log("Datos de incidencias: " . print_r($incidents, true));
+            
+            return $incidents;
+        } catch (\PDOException $e) {
+            error_log("Error en getAllIncidents: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw new \Exception("Error al obtener las incidencias: " . $e->getMessage());
+        }
     }
 
     /**
