@@ -283,6 +283,9 @@
                             class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
                             Generar QR
                         </button>
+                        <button onclick="generateMachinesPDF()" class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
+                            Generar PDF
+                        </button>
 
                         <form action="/deletemachine/<?php echo htmlspecialchars($machine['id']); ?>" method="POST" class="block">
                             <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
