@@ -338,4 +338,105 @@ class Maintenance {
             throw $e;
         }
     }
+
+    public function getMaintenanceStats() {
+        try {
+            error_log("=== INICIO getMaintenanceStats ===");
+            
+            // Estadísticas generales
+            $generalStmt = $this->sql->prepare("
+                SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                    SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
+                    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed
+                FROM Maintenance
+            ");
+            $generalStmt->execute();
+            $general = $generalStmt->fetch(\PDO::FETCH_ASSOC);
+            
+            // Estadísticas por tipo de mantenimiento
+            $typeStmt = $this->sql->prepare("
+                SELECT 
+                    type,
+                    COUNT(*) as count
+                FROM Maintenance
+                GROUP BY type
+            ");
+            $typeStmt->execute();
+            $byType = $typeStmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Estadísticas mensuales (últimos 12 meses)
+            $monthlyStmt = $this->sql->prepare("
+                SELECT 
+                    DATE_FORMAT(scheduled_date, '%Y-%m') as month,
+                    COUNT(*) as count
+                FROM Maintenance
+                WHERE scheduled_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                GROUP BY DATE_FORMAT(scheduled_date, '%Y-%m')
+                ORDER BY month ASC
+            ");
+            $monthlyStmt->execute();
+            $monthly = $monthlyStmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Estadísticas por máquina
+            $machineStmt = $this->sql->prepare("
+                SELECT 
+                    m.machine_id,
+                    ma.name as machine_name,
+                    COUNT(*) as maintenance_count,
+                    SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END) as completed_count
+                FROM Maintenance m
+                JOIN Machine ma ON m.machine_id = ma.id
+                GROUP BY m.machine_id, ma.name
+                ORDER BY maintenance_count DESC
+            ");
+            $machineStmt->execute();
+            $byMachine = $machineStmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Tiempo promedio de completado
+            $completionTimeStmt = $this->sql->prepare("
+                SELECT 
+                    AVG(TIMESTAMPDIFF(DAY, scheduled_date, 
+                        CASE 
+                            WHEN status = 'completed' THEN NOW()
+                            ELSE scheduled_date
+                        END
+                    )) as avg_completion_time
+                FROM Maintenance
+                WHERE status = 'completed'
+            ");
+            $completionTimeStmt->execute();
+            $completionTime = $completionTimeStmt->fetch(\PDO::FETCH_ASSOC);
+            
+            $stats = [
+                'general' => [
+                    'total' => (int)$general['total'],
+                    'pending' => (int)$general['pending'],
+                    'in_progress' => (int)$general['in_progress'],
+                    'completed' => (int)$general['completed']
+                ],
+                'by_type' => $byType,
+                'monthly' => $monthly,
+                'by_machine' => $byMachine,
+                'completion_time' => [
+                    'avg_completion_time' => $completionTime['avg_completion_time'] ?? 0
+                ]
+            ];
+            
+            error_log("Estadísticas generadas: " . print_r($stats, true));
+            error_log("=== FIN getMaintenanceStats ===");
+            
+            return $stats;
+            
+        } catch (\PDOException $e) {
+            error_log("Error PDO en getMaintenanceStats: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw new \Exception("Error al obtener las estadísticas de mantenimiento: " . $e->getMessage());
+        } catch (\Exception $e) {
+            error_log("Error general en getMaintenanceStats: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw $e;
+        }
+    }
 } 
