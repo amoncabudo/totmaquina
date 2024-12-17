@@ -43,7 +43,7 @@ class UserConfigController {
                     'success' => false,
                     'error' => "No se ha seleccionado ninguna imagen"
                 ]);
-                return;
+                exit();
             }
 
             $file = $_FILES['avatar'];
@@ -61,7 +61,7 @@ class UserConfigController {
                     'success' => false,
                     'error' => "Tipo de archivo no permitido. Solo se permiten imágenes JPG, PNG y GIF."
                 ]);
-                return;
+                exit();
             }
 
             if ($fileError !== 0) {
@@ -69,7 +69,7 @@ class UserConfigController {
                     'success' => false,
                     'error' => "Hubo un error al subir el archivo."
                 ]);
-                return;
+                exit();
             }
 
             if ($fileSize > 2097152) { // 2MB en bytes
@@ -77,7 +77,7 @@ class UserConfigController {
                     'success' => false,
                     'error' => "El archivo es demasiado grande. Máximo 2MB."
                 ]);
-                return;
+                exit();
             }
 
             // Verificar y crear el directorio de imágenes
@@ -124,7 +124,7 @@ class UserConfigController {
                     'avatar' => $newFileName,
                     'message' => "Foto de perfil actualizada correctamente."
                 ]);
-                return;
+                exit();
 
             } catch (\PDOException $e) {
                 // Si hay error en la BD, eliminar el archivo subido
@@ -146,7 +146,7 @@ class UserConfigController {
                 'success' => false,
                 'error' => "Error al procesar la solicitud: " . $e->getMessage()
             ]);
-            return;
+            exit();
         }
     }
 
