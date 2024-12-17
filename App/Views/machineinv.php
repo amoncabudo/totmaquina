@@ -217,7 +217,6 @@
                                         value="<?= htmlspecialchars($machine['location']) ?>" required
                                         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                                 </div>
-                                <!-- Fecha de Instalación -->
 
                                 <!-- Coordenadas y Foto -->
                                 <?php
