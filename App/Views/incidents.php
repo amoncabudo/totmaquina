@@ -142,10 +142,12 @@
                                 <h3 class="text-sm font-medium text-gray-700 mb-2">Técnicos Disponibles</h3>
                                 <ul id="tecnicos-disponibles" class="min-h-[150px] border-2 border-dashed border-gray-300 rounded-lg p-2">
                                     <?php foreach ($technicians as $technician): ?>
-                                        <li class="bg-white p-2 mb-2 rounded shadow cursor-move flex items-center justify-between" 
-                                            data-id="<?= $technician['id'] ?>">
-                                            <span><?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?></span>
-                                            <i class="fas fa-grip-lines text-gray-400"></i>
+                                        <li class="technician-item bg-white p-2 mb-2 rounded shadow cursor-move flex items-center justify-between" 
+                                            data-id="<?= htmlspecialchars($technician['id']) ?>">
+                                            <span><?= htmlspecialchars($technician['name'] . ' ' . ($technician['surname'] ?? '')) ?></span>
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                            </svg>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
@@ -158,8 +160,19 @@
                                 </ul>
                             </div>
                         </div>
+
                         <!-- Campo oculto para el técnico seleccionado -->
-                        <input type="hidden" name="technicians" id="selected-technician">
+                        <input type="hidden" name="responsible_technician_id" id="technicians-data">
+
+                        <!-- Select como fallback (oculto por defecto) -->
+                        <select id="responsible_technician_id_fallback" class="hidden">
+                            <option value="">Seleccionar técnico</option>
+                            <?php foreach ($technicians as $technician): ?>
+                                <option value="<?= htmlspecialchars($technician['id']) ?>">
+                                    <?= htmlspecialchars($technician['name'] . ' ' . ($technician['surname'] ?? '')) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
 
@@ -195,89 +208,142 @@
                 </div>
             </div>
         </div>
-    </main>
 
+        <!-- Lista de incidencias existentes -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Incidencias Registradas</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Descripción
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Máquina
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Técnico
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estado
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Prioridad
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fecha
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <?php if (empty($incidents)): ?>
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                    No hay incidencias registradas
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($incidents as $incident): ?>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-normal">
+                                        <div class="text-sm text-gray-900">
+                                            <?= htmlspecialchars($incident['description']) ?>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            <?= htmlspecialchars($incident['machine_name'] ?? 'N/A') ?>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            <?= htmlspecialchars($incident['technician_name'] ?? 'No asignado') ?>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            <?php
+                                            switch($incident['status']) {
+                                                case 'pending':
+                                                    echo 'bg-yellow-100 text-yellow-800';
+                                                    break;
+                                                case 'in progress':
+                                                    echo 'bg-blue-100 text-blue-800';
+                                                    break;
+                                                case 'resolved':
+                                                    echo 'bg-green-100 text-green-800';
+                                                    break;
+                                                default:
+                                                    echo 'bg-gray-100 text-gray-800';
+                                            }
+                                            ?>">
+                                            <?php
+                                            switch($incident['status']) {
+                                                case 'pending':
+                                                    echo 'Pendiente';
+                                                    break;
+                                                case 'in progress':
+                                                    echo 'En Proceso';
+                                                    break;
+                                                case 'resolved':
+                                                    echo 'Resuelto';
+                                                    break;
+                                                default:
+                                                    echo ucfirst($incident['status']);
+                                            }
+                                            ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            <?php
+                                            switch($incident['priority']) {
+                                                case 'high':
+                                                    echo 'bg-red-100 text-red-800';
+                                                    break;
+                                                case 'medium':
+                                                    echo 'bg-yellow-100 text-yellow-800';
+                                                    break;
+                                                case 'low':
+                                                    echo 'bg-green-100 text-green-800';
+                                                    break;
+                                                default:
+                                                    echo 'bg-gray-100 text-gray-800';
+                                            }
+                                            ?>">
+                                            <?php
+                                            switch($incident['priority']) {
+                                                case 'high':
+                                                    echo 'Alta';
+                                                    break;
+                                                case 'medium':
+                                                    echo 'Media';
+                                                    break;
+                                                case 'low':
+                                                    echo 'Baja';
+                                                    break;
+                                                default:
+                                                    echo ucfirst($incident['priority']);
+                                            }
+                                            ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <?= date('d/m/Y H:i', strtotime($incident['registered_date'])) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <script src="/js/main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const disponibles = document.getElementById('tecnicos-disponibles');
-            const asignados = document.getElementById('tecnicos-asignados');
-            const selectedTechnician = document.getElementById('selected-technician');
+    
 
-            // Función para actualizar el técnico seleccionado
-            function updateSelectedTechnician() {
-                const assignedTechnicians = asignados.children;
-                if (assignedTechnicians.length > 0) {
-                    // Solo tomamos el primer técnico asignado
-                    selectedTechnician.value = assignedTechnicians[0].dataset.id;
-                } else {
-                    selectedTechnician.value = '';
-                }
-            }
-
-            // Inicializar Sortable para la lista de disponibles
-            new Sortable(disponibles, {
-                group: {
-                    name: 'tecnicos',
-                    pull: 'clone',
-                    put: true
-                },
-                animation: 150,
-                sort: false
-            });
-
-            // Inicializar Sortable para la lista de asignados
-            new Sortable(asignados, {
-                group: {
-                    name: 'tecnicos',
-                    pull: true,
-                    put: function() {
-                        // Solo permitir un técnico en la lista de asignados
-                        return this.el.children.length < 1;
-                    }
-                },
-                animation: 150,
-                sort: false,
-                onAdd: function() {
-                    // Si hay más de un elemento, remover los anteriores
-                    while (asignados.children.length > 1) {
-                        disponibles.appendChild(asignados.children[0]);
-                    }
-                    updateSelectedTechnician();
-                },
-                onRemove: updateSelectedTechnician
-            });
-
-            // Validación del formulario
-            const form = document.querySelector('form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const machine = document.getElementById('machine_id').value;
-                    const priority = document.getElementById('priority').value;
-                    const description = document.getElementById('description').value;
-                    const technician = selectedTechnician.value;
-
-                    if (!machine || !priority || !description || !technician) {
-                        e.preventDefault();
-                        alert('Por favor, complete todos los campos obligatorios');
-                    }
-                });
-            }
-        });
-
-        // Función para resetear los técnicos al limpiar el formulario
-        function resetTechnicians() {
-            const disponibles = document.getElementById('tecnicos-disponibles');
-            const asignados = document.getElementById('tecnicos-asignados');
-            const selectedTechnician = document.getElementById('selected-technician');
-
-            // Mover todos los técnicos de vuelta a disponibles
-            while (asignados.firstChild) {
-                disponibles.appendChild(asignados.firstChild);
-            }
-            selectedTechnician.value = '';
-        }
-    </script>
 </body>
 </html>
