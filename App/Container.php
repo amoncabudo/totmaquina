@@ -59,5 +59,11 @@ class Container extends EmesetContainer {
             $db = $c->get("Db");
             return new \App\Models\Incident($db->getConnection());
         };
+
+        // Registro del modelo Maintenance
+        $this["Maintenance"] = function ($c) {
+            $db = $c->get("Db");
+            return new \App\Models\Maintenance($db->getConnection());
+        };
     }
 }

@@ -92,11 +92,27 @@ include $viewsPath . "/layouts/navbar.php";
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-normal"><?= htmlspecialchars($incident['description']) ?></td>
                                                 <td class="px-6 py-4">
-                                                    <select class="status-selector incident-status px-2 py-1 rounded-full text-xs font-semibold"
-                                                            data-incident-id="<?= $incident['id'] ?>"
-                                                            data-current-status="<?= $incident['status'] ?>">
+                                                    <select class="status-selector incident-status px-2 py-1 rounded-full text-xs font-semibold 
+                                                        <?php
+                                                        $status = strtolower($incident['status']);
+                                                        switch($status) {
+                                                            case 'pending':
+                                                                echo 'bg-yellow-100 text-yellow-800';
+                                                                break;
+                                                            case 'in progress':
+                                                                echo 'bg-blue-100 text-blue-800';
+                                                                break;
+                                                            case 'resolved':
+                                                                echo 'bg-green-100 text-green-800';
+                                                                break;
+                                                            default:
+                                                                echo 'bg-yellow-100 text-yellow-800';
+                                                        }
+                                                        ?>"
+                                                        data-incident-id="<?= $incident['id'] ?>"
+                                                        data-current-status="<?= htmlspecialchars($incident['status']) ?>">
                                                         <option value="pending" <?= $incident['status'] === 'pending' ? 'selected' : '' ?>>Pendiente</option>
-                                                        <option value="in_progress" <?= $incident['status'] === 'in_progress' ? 'selected' : '' ?>>En Proceso</option>
+                                                        <option value="in progress" <?= $incident['status'] === 'in progress' ? 'selected' : '' ?>>En Proceso</option>
                                                         <option value="resolved" <?= $incident['status'] === 'resolved' ? 'selected' : '' ?>>Resuelto</option>
                                                     </select>
                                                 </td>
@@ -199,11 +215,44 @@ include $viewsPath . "/layouts/navbar.php";
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-normal"><?= htmlspecialchars($incident['description']) ?></td>
                                                 <td class="px-6 py-4">
+                                                    <?php
+                                                    error_log("Estado original: " . print_r($incident['status'], true));
+                                                    $status = strtolower($incident['status']);
+                                                    error_log("Estado después de strtolower: " . $status);
+                                                    ?>
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        <?= $incident['status'] === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                            ($incident['status'] === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                                            'bg-green-100 text-green-800') ?>">
-                                                        <?= htmlspecialchars($incident['status']) ?>
+                                                        <?php
+                                                        $status = strtolower($incident['status']);
+                                                        switch($status) {
+                                                            case 'pending':
+                                                                echo 'bg-yellow-100 text-yellow-800';
+                                                                break;
+                                                            case 'in progress':
+                                                                echo 'bg-blue-100 text-blue-800';
+                                                                break;
+                                                            case 'resolved':
+                                                                echo 'bg-green-100 text-green-800';
+                                                                break;
+                                                            default:
+                                                                echo 'bg-yellow-100 text-yellow-800';
+                                                        }
+                                                        ?>">
+                                                        <?php
+                                                        $status = strtolower($incident['status']);
+                                                        switch($status) {
+                                                            case 'pending':
+                                                                echo 'Pendiente';
+                                                                break;
+                                                            case 'in progress':
+                                                                echo 'En Proceso';
+                                                                break;
+                                                            case 'resolved':
+                                                                echo 'Resuelto';
+                                                                break;
+                                                            default:
+                                                                echo 'Pendiente';
+                                                        }
+                                                        ?>
                                                     </span>
                                                 </td>
                                                 <td class="px-6 py-4"><?= htmlspecialchars($incident['technician_name'] ?? 'Sin asignar') ?></td>
@@ -282,6 +331,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para actualizar el estado de una incidencia
     function updateIncidentStatus(incidentId, status, selectElement) {
+        console.log('Actualizando incidencia:', {
+            id: incidentId,
+            nuevoEstado: status,
+            estadoActual: selectElement.dataset.currentStatus
+        });
+
         fetch('/user-machines/update-incident-status', {
             method: 'POST',
             headers: {
@@ -290,6 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: `incident_id=${incidentId}&status=${status}`
         })
         .then(response => {
+            console.log('Respuesta del servidor:', response.status);
             if (!response.ok) {
                 return response.json().then(err => {
                     throw new Error(err.message || 'Error al actualizar el estado');
@@ -298,10 +354,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
+            console.log('Datos de respuesta:', data);
             if (data.success) {
                 selectElement.dataset.currentStatus = status;
                 updateStatusStyle(selectElement, status);
                 showNotification('Estado actualizado correctamente', 'success');
+                console.log('Recargando página...');
+                window.location.reload();
             } else {
                 throw new Error(data.message || 'Error al actualizar el estado');
             }
@@ -315,6 +374,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para actualizar el estado de un mantenimiento
     function updateMaintenanceStatus(maintenanceId, status, selectElement) {
+        console.log('Actualizando mantenimiento:', {
+            id: maintenanceId,
+            nuevoEstado: status,
+            estadoActual: selectElement.dataset.currentStatus
+        });
+
         fetch('/user-machines/update-maintenance-status', {
             method: 'POST',
             headers: {
@@ -322,13 +387,23 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: `maintenance_id=${maintenanceId}&status=${status}`
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Respuesta del servidor:', response.status);
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Error al actualizar el estado');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('Datos de respuesta:', data);
             if (data.success) {
                 selectElement.dataset.currentStatus = status;
-                // Actualizar el estilo del select según el nuevo estado
                 updateStatusStyle(selectElement, status);
                 showNotification('Estado actualizado correctamente', 'success');
+                console.log('Recargando página...');
+                window.location.reload();
             } else {
                 throw new Error(data.message || 'Error al actualizar el estado');
             }
@@ -336,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error:', error);
             selectElement.value = selectElement.dataset.currentStatus;
-            showNotification(error.message, 'error');
+            showNotification(error.message || 'Error al actualizar el estado', 'error');
         });
     }
 
@@ -347,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'pending':
                 selectElement.classList.add('bg-yellow-100', 'text-yellow-800');
                 break;
-            case 'in_progress':
+            case 'in progress':
                 selectElement.classList.add('bg-blue-100', 'text-blue-800');
                 break;
             case 'resolved':

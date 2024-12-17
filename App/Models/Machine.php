@@ -214,8 +214,23 @@ class Machine
     public function getIncidentsByTechnicianAndMachine($technicianId, $machineId) {
         try {
             $params = [];
-            $sql = "SELECT i.* 
+            $sql = "SELECT i.id, 
+                           i.description,
+                           i.priority,
+                           CASE 
+                               WHEN i.status = 'in_progress' THEN 'in progress'
+                               WHEN i.status IS NULL THEN 'pending'
+                               ELSE i.status 
+                           END as status,
+                           DATE_FORMAT(i.registered_date, '%Y-%m-%d %H:%i:%s') as registered_date,
+                           i.resolved_date,
+                           i.machine_id,
+                           i.responsible_technician_id,
+                           m.name as machine_name,
+                           CONCAT(u.name, ' ', COALESCE(u.surname, '')) as technician_name
                     FROM Incident i 
+                    LEFT JOIN Machine m ON i.machine_id = m.id
+                    LEFT JOIN User u ON i.responsible_technician_id = u.id
                     WHERE i.responsible_technician_id = ?";
             $params[] = $technicianId;
             
@@ -226,11 +241,26 @@ class Machine
             
             $sql .= " ORDER BY i.registered_date DESC";
             
+            error_log("SQL Query: " . $sql);
+            error_log("Params: " . print_r($params, true));
+            
             $stmt = $this->sql->prepare($sql);
             $stmt->execute($params);
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $incidents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Asegurar que todos los estados sean válidos
+            foreach ($incidents as &$incident) {
+                if (empty($incident['status'])) {
+                    $incident['status'] = 'pending';
+                }
+            }
+            
+            error_log("Incidencias recuperadas: " . print_r($incidents, true));
+            
+            return $incidents;
         } catch (\PDOException $e) {
             error_log("Error en getIncidentsByTechnicianAndMachine: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             return [];
         }
     }
@@ -255,17 +285,42 @@ class Machine
 
     public function getMachineIncidents($machineId) {
         try {
-            $sql = "SELECT i.*, u.name as technician_name 
+            $sql = "SELECT i.id, 
+                           i.description,
+                           i.priority,
+                           CASE 
+                               WHEN i.status = 'in_progress' THEN 'in progress'
+                               WHEN i.status IS NULL THEN 'pending'
+                               ELSE i.status 
+                           END as status,
+                           DATE_FORMAT(i.registered_date, '%Y-%m-%d %H:%i:%s') as registered_date,
+                           i.resolved_date,
+                           i.responsible_technician_id,
+                           CONCAT(u.name, ' ', COALESCE(u.surname, '')) as technician_name 
                     FROM Incident i 
                     LEFT JOIN User u ON i.responsible_technician_id = u.id 
                     WHERE i.machine_id = ? 
                     ORDER BY i.registered_date DESC";
             
+            error_log("SQL Query for machine incidents: " . $sql);
+            
             $stmt = $this->sql->prepare($sql);
             $stmt->execute([$machineId]);
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $incidents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Asegurar que todos los estados sean válidos
+            foreach ($incidents as &$incident) {
+                if (empty($incident['status'])) {
+                    $incident['status'] = 'pending';
+                }
+            }
+            
+            error_log("Machine incidents retrieved: " . print_r($incidents, true));
+            
+            return $incidents;
         } catch (\PDOException $e) {
             error_log("Error en getMachineIncidents: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             return [];
         }
     }
