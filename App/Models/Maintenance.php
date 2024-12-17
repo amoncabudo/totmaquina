@@ -120,19 +120,38 @@ class Maintenance {
 
     public function getAllTechnicians() {
         try {
-            $stmt = $this->sql->prepare("
-                SELECT 
-                    id,
-                    name,
-                    surname,
-                    email,
-                    role
-                FROM User 
-                WHERE role IN ('technician', 'administrator', 'supervisor')
-                ORDER BY name, surname
-            ");
+            // Si el usuario es técnico, solo se muestra a sí mismo
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+                $stmt = $this->sql->prepare("
+                    SELECT 
+                        id,
+                        name,
+                        surname,
+                        email,
+                        role
+                    FROM User 
+                    WHERE role = 'technician' 
+                    AND id = ?
+                    ORDER BY name, surname
+                ");
+                $stmt->execute([$_SESSION["user"]["id"]]);
+            } 
+            // Si es administrador o supervisor, muestra todos los técnicos
+            else {
+                $stmt = $this->sql->prepare("
+                    SELECT 
+                        id,
+                        name,
+                        surname,
+                        email,
+                        role
+                    FROM User 
+                    WHERE role IN ('technician', 'administrator', 'supervisor')
+                    ORDER BY name, surname
+                ");
+                $stmt->execute();
+            }
             
-            $stmt->execute();
             $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Formatear los resultados para mostrar nombre completo
@@ -263,6 +282,59 @@ class Maintenance {
             
         } catch (\Exception $e) {
             error_log("Error en removeTechnician: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function isMaintenanceAssignedToTechnician($maintenanceId, $technicianId) {
+        try {
+            $stmt = $this->sql->prepare("
+                SELECT m.id 
+                FROM Maintenance m 
+                INNER JOIN MaintenanceTechnician mt ON m.id = mt.maintenance_id 
+                WHERE m.id = ? AND mt.technician_id = ?
+            ");
+            $stmt->execute([$maintenanceId, $technicianId]);
+            return $stmt->fetch() !== false;
+        } catch (\PDOException $e) {
+            error_log("Error en isMaintenanceAssignedToTechnician: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateMaintenanceStatus($maintenanceId, $status) {
+        try {
+            error_log("=== INICIO updateMaintenanceStatus en Modelo ===");
+            error_log("Actualizando mantenimiento ID: " . $maintenanceId);
+            error_log("Nuevo estado: " . $status);
+
+            // Validar el estado
+            $validStatuses = ['pending', 'in_progress', 'completed'];
+            if (!in_array($status, $validStatuses)) {
+                error_log("Estado no válido: " . $status);
+                throw new \Exception("Estado no válido: " . $status);
+            }
+
+            // Actualizar solo el estado
+            $stmt = $this->sql->prepare("UPDATE Maintenance SET status = ? WHERE id = ?");
+            $success = $stmt->execute([$status, $maintenanceId]);
+
+            if (!$success) {
+                $error = $stmt->errorInfo();
+                error_log("Error en la actualización: " . implode(", ", $error));
+                throw new \Exception("Error al actualizar el estado: " . implode(", ", $error));
+            }
+
+            error_log("=== FIN updateMaintenanceStatus en Modelo ===");
+            return true;
+
+        } catch (\PDOException $e) {
+            error_log("Error PDO en updateMaintenanceStatus: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw new \Exception("Error de base de datos al actualizar el estado: " . $e->getMessage());
+        } catch (\Exception $e) {
+            error_log("Error general en updateMaintenanceStatus: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             throw $e;
         }
     }

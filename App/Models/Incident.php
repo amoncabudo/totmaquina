@@ -35,8 +35,8 @@ class Incident {
 
             // Procesar el técnico asignado
             $technicianId = null;
-            if (!empty($data['technicians'])) {
-                $technicianId = (int)$data['technicians'];
+            if (!empty($data['responsible_technician_id'])) {
+                $technicianId = (int)$data['responsible_technician_id'];
                 
                 // Validar que el técnico existe y es un técnico
                 $techStmt = $this->sql->prepare("SELECT id FROM User WHERE id = ? AND role = 'technician'");
@@ -113,28 +113,36 @@ class Incident {
 
     public function getAllMachines() {
         try {
-            // Si el usuario es técnico, solo mostrar máquinas sin técnico asignado
-            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {-
-                $sql = "SELECT m.id, m.name 
+            // Si el usuario es técnico, mostrar máquinas disponibles
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+                $sql = "SELECT DISTINCT m.id, m.name 
                        FROM Machine m 
-                       LEFT JOIN Incident i ON m.id = i.machine_id AND i.status != 'resolved'
-                       WHERE i.id IS NULL 
-                       OR NOT EXISTS (
+                       WHERE NOT EXISTS (
                            SELECT 1 
-                           FROM Incident i2 
-                           WHERE i2.machine_id = m.id 
-                           AND i2.status != 'resolved'
+                           FROM Incident i 
+                           WHERE i.machine_id = m.id 
+                           AND i.status IN ('pending', 'in progress')
                        )
-                       GROUP BY m.id, m.name";
+                       OR m.id NOT IN (
+                           SELECT machine_id 
+                           FROM Incident 
+                           WHERE status IN ('pending', 'in progress')
+                       )
+                       ORDER BY m.name";
             } 
             // Si es administrador o supervisor, mostrar todas las máquinas
             else {
-                $sql = "SELECT id, name FROM Machine";
+                $sql = "SELECT id, name FROM Machine ORDER BY name";
             }
             
+            error_log("SQL para obtener máquinas: " . $sql);
             $stmt = $this->sql->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $machines = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            error_log("Máquinas encontradas: " . count($machines));
+            error_log("Máquinas: " . print_r($machines, true));
+            
+            return $machines;
         } catch (\PDOException $e) {
             error_log("Error en getAllMachines: " . $e->getMessage());
             throw new \Exception("Error al obtener las máquinas");
@@ -167,29 +175,71 @@ class Incident {
      */
     public function updateIncidentStatus($incidentId, $status) {
         try {
+            error_log("=== INICIO updateIncidentStatus en Modelo ===");
+            error_log("Parámetros recibidos:");
+            error_log("- ID: " . $incidentId);
+            error_log("- Estado solicitado: " . $status);
+            
             // Validar el estado
             $validStatuses = ['pending', 'in progress', 'resolved'];
+            error_log("Estados válidos: " . implode(", ", $validStatuses));
+            
             if (!in_array($status, $validStatuses)) {
-                throw new \Exception("Estado no válido");
+                error_log("Estado no válido: " . $status);
+                // Intentar convertir el formato si es necesario
+                $status = str_replace('_', ' ', $status);
+                if (!in_array($status, $validStatuses)) {
+                    throw new \Exception("Estado no válido");
+                }
             }
 
-            // Verificar que la incidencia existe
-            $stmt = $this->sql->prepare("SELECT id FROM Incident WHERE id = ?");
+            // Primero, verificar el estado actual
+            $stmt = $this->sql->prepare("SELECT id, status FROM Incident WHERE id = ?");
             $stmt->execute([$incidentId]);
-            if (!$stmt->fetch()) {
+            $incident = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if (!$incident) {
+                error_log("La incidencia no existe: " . $incidentId);
                 throw new \Exception("La incidencia no existe");
             }
+            
+            error_log("Estado actual en la base de datos: " . ($incident['status'] ?? 'NULL'));
 
             // Actualizar el estado
-            $stmt = $this->sql->prepare("UPDATE Incident SET status = ? WHERE id = ?");
-            if (!$stmt->execute([$status, $incidentId])) {
-                throw new \Exception("Error al actualizar el estado");
+            $updateSql = "UPDATE Incident SET status = ? WHERE id = ?";
+            error_log("SQL de actualización: " . $updateSql);
+            error_log("Parámetros de actualización: [" . $status . ", " . $incidentId . "]");
+            
+            $stmt = $this->sql->prepare($updateSql);
+            $success = $stmt->execute([$status, $incidentId]);
+            
+            if (!$success) {
+                $error = $stmt->errorInfo();
+                error_log("Error en la actualización: " . implode(", ", $error));
+                throw new \Exception("Error al actualizar el estado: " . implode(", ", $error));
             }
 
+            // Verificar que el cambio se realizó correctamente
+            $stmt = $this->sql->prepare("SELECT id, status FROM Incident WHERE id = ?");
+            $stmt->execute([$incidentId]);
+            $updatedIncident = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            error_log("Estado después de la actualización: " . ($updatedIncident['status'] ?? 'NULL'));
+            
+            if ($updatedIncident['status'] !== $status) {
+                error_log("¡ADVERTENCIA! El estado no coincide después de la actualización");
+                error_log("Estado esperado: " . $status);
+                error_log("Estado actual: " . $updatedIncident['status']);
+                throw new \Exception("El estado no se actualizó correctamente");
+            }
+
+            error_log("=== FIN updateIncidentStatus en Modelo ===");
             return true;
+            
         } catch (\PDOException $e) {
-            error_log("Error al actualizar el estado de la incidencia: " . $e->getMessage());
-            throw new \Exception("Error al actualizar el estado: " . $e->getMessage());
+            error_log("Error PDO en updateIncidentStatus: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            throw new \Exception("Error de base de datos al actualizar el estado: " . $e->getMessage());
         }
     }
 
@@ -243,7 +293,11 @@ class Incident {
                     i.id,
                     i.description,
                     i.priority,
-                    i.status,
+                    CASE 
+                        WHEN i.status = 'in_progress' THEN 'in progress'
+                        WHEN i.status IS NULL THEN 'pending'
+                        ELSE i.status 
+                    END as status,
                     DATE_FORMAT(i.registered_date, '%Y-%m-%d %H:%i:%s') as registered_date,
                     COALESCE(CONCAT(TRIM(u.name), ' ', TRIM(u.surname)), '') as technician_name
                 FROM Incident i
@@ -267,8 +321,13 @@ class Incident {
                     $cleanString($incident['technician_name']) : 'No asignado';
                 
                 // Validar estado
-                $incident['status'] = in_array($incident['status'], ['pending', 'in_progress', 'resolved']) ? 
+                $incident['status'] = in_array($incident['status'], ['pending', 'in progress', 'resolved']) ? 
                     $incident['status'] : 'pending';
+
+                // Si el estado es 'in_progress', convertirlo a 'in progress'
+                if ($incident['status'] === 'in_progress') {
+                    $incident['status'] = 'in progress';
+                }
             }
 
             // Calcular estadísticas
@@ -281,10 +340,25 @@ class Incident {
 
             foreach ($incidents as $incident) {
                 switch ($incident['status']) {
-                    case 'pending': $stats['pending_incidents']++; break;
-                    case 'in_progress': $stats['in_progress_incidents']++; break;
-                    case 'resolved': $stats['resolved_incidents']++; break;
+                    case 'pending': 
+                        $stats['pending_incidents']++; 
+                        break;
+                    case 'in progress': 
+                        $stats['in_progress_incidents']++; 
+                        break;
+                    case 'resolved': 
+                        $stats['resolved_incidents']++; 
+                        break;
                 }
+            }
+
+            // Traducir estados a español
+            foreach ($incidents as &$incident) {
+                $incident['status_text'] = [
+                    'pending' => 'Pendiente',
+                    'in progress' => 'En Proceso',
+                    'resolved' => 'Resuelto'
+                ][$incident['status']] ?? $incident['status'];
             }
 
             // Preparar respuesta

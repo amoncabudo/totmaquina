@@ -197,17 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Para el formulario de creación, no necesitamos maintenance_id
-        const isCreationForm = window.location.pathname === '/maintenance' || 
-                             window.location.pathname === '/maintenance/create';
-
-        console.log('Es formulario de creación:', isCreationForm);
-
-        // Asegurarse de que Sortable está disponible
-        if (typeof Sortable === 'undefined') {
-            console.error('Sortable no está disponible');
-            return;
-        }
+        // Determinar si estamos en la página de incidencias o mantenimiento
+        const isIncidentsPage = window.location.pathname.includes('incidents');
+        console.log('Es página de incidencias:', isIncidentsPage);
 
         try {
             // Inicializar Sortable para la lista de disponibles
@@ -229,6 +221,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 chosenClass: 'bg-blue-200',
                 dragClass: 'opacity-50',
                 onAdd: function(evt) {
+                    if (isIncidentsPage) {
+                        // Para incidencias, solo permitir un técnico
+                        const items = asignados.children;
+                        if (items.length > 1) {
+                            // Si ya hay un técnico, devolver el nuevo al contenedor original
+                            disponibles.appendChild(items[0]);
+                        }
+                    }
                     updateTechniciansData();
                 },
                 onRemove: function(evt) {
@@ -249,8 +249,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const techniciansDataInput = document.getElementById('technicians-data');
         
         if (asignados && techniciansDataInput) {
-            const technicianIds = Array.from(asignados.children).map(li => li.dataset.id);
-            techniciansDataInput.value = JSON.stringify(technicianIds);
+            const assignedTechnicians = Array.from(asignados.children);
+            
+            // Para incidencias, solo tomamos el primer técnico asignado
+            if (window.location.pathname.includes('incidents')) {
+                if (assignedTechnicians.length > 0) {
+                    techniciansDataInput.value = assignedTechnicians[0].dataset.id;
+                    // Remover cualquier técnico adicional
+                    while (assignedTechnicians.length > 1) {
+                        asignados.removeChild(assignedTechnicians[assignedTechnicians.length - 1]);
+                    }
+                } else {
+                    techniciansDataInput.value = '';
+                }
+            } else {
+                // Para mantenimiento, tomamos todos los técnicos
+                const technicianIds = assignedTechnicians.map(li => li.dataset.id);
+                techniciansDataInput.value = JSON.stringify(technicianIds);
+            }
         }
     }
 
@@ -878,6 +894,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para resetear técnicos
     async function resetTechnicians() {
+        // Si estamos en la página de incidencias, solo resetear el select
+        if (window.location.pathname.includes('incidents')) {
+            const select = document.getElementById('responsible_technician_id');
+            if (select) {
+                select.value = '';
+            }
+            return;
+        }
+
+        // Código existente para mantenimiento
         const disponibles = document.getElementById('tecnicos-disponibles');
         const asignados = document.getElementById('tecnicos-asignados');
         const maintenanceId = document.getElementById('maintenance_id')?.value;
