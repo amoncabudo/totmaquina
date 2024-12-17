@@ -120,19 +120,38 @@ class Maintenance {
 
     public function getAllTechnicians() {
         try {
-            $stmt = $this->sql->prepare("
-                SELECT 
-                    id,
-                    name,
-                    surname,
-                    email,
-                    role
-                FROM User 
-                WHERE role IN ('technician', 'administrator', 'supervisor')
-                ORDER BY name, surname
-            ");
+            // Si el usuario es técnico, solo se muestra a sí mismo
+            if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'technician') {
+                $stmt = $this->sql->prepare("
+                    SELECT 
+                        id,
+                        name,
+                        surname,
+                        email,
+                        role
+                    FROM User 
+                    WHERE role = 'technician' 
+                    AND id = ?
+                    ORDER BY name, surname
+                ");
+                $stmt->execute([$_SESSION["user"]["id"]]);
+            } 
+            // Si es administrador o supervisor, muestra todos los técnicos
+            else {
+                $stmt = $this->sql->prepare("
+                    SELECT 
+                        id,
+                        name,
+                        surname,
+                        email,
+                        role
+                    FROM User 
+                    WHERE role IN ('technician', 'administrator', 'supervisor')
+                    ORDER BY name, surname
+                ");
+                $stmt->execute();
+            }
             
-            $stmt->execute();
             $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Formatear los resultados para mostrar nombre completo
@@ -264,90 +283,6 @@ class Maintenance {
         } catch (\Exception $e) {
             error_log("Error en removeTechnician: " . $e->getMessage());
             throw $e;
-        }
-    }
-
-    public function getMaintenanceStats() {
-        try {
-            error_log("=== DEBUG: Obteniendo estadísticas de mantenimiento ===");
-            
-            $stats = [];
-            
-            // Estadísticas por tipo
-            $typeQuery = "SELECT 
-                            type,
-                            COUNT(*) as count,
-                            COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending,
-                            COUNT(CASE WHEN status = 'in_progress' THEN 1 END) as in_progress,
-                            COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
-                        FROM Maintenance 
-                        GROUP BY type";
-            
-            $stmt = $this->sql->prepare($typeQuery);
-            $stmt->execute();
-            $stats['by_type'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            
-            // Estadísticas por mes
-            $monthlyQuery = "SELECT 
-                            DATE_FORMAT(scheduled_date, '%Y-%m') as month,
-                            COUNT(*) as count
-                        FROM Maintenance 
-                        WHERE scheduled_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-                        GROUP BY DATE_FORMAT(scheduled_date, '%Y-%m')
-                        ORDER BY month ASC";
-            
-            $stmt = $this->sql->prepare($monthlyQuery);
-            $stmt->execute();
-            $stats['monthly'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            
-            // Estadísticas por máquina
-            $machineQuery = "SELECT 
-                            m.name as machine_name,
-                            COUNT(mt.id) as maintenance_count,
-                            COUNT(CASE WHEN mt.status = 'completed' THEN 1 END) as completed_count
-                        FROM Machine m
-                        LEFT JOIN Maintenance mt ON m.id = mt.machine_id
-                        GROUP BY m.id, m.name
-                        ORDER BY maintenance_count DESC
-                        LIMIT 10";
-            
-            $stmt = $this->sql->prepare($machineQuery);
-            $stmt->execute();
-            $stats['by_machine'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            
-            // Estadísticas generales
-            $generalQuery = "SELECT 
-                            COUNT(*) as total,
-                            COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending,
-                            COUNT(CASE WHEN status = 'in_progress' THEN 1 END) as in_progress,
-                            COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed,
-                            COUNT(CASE WHEN type = 'preventive' THEN 1 END) as preventive,
-                            COUNT(CASE WHEN type = 'corrective' THEN 1 END) as corrective
-                        FROM Maintenance";
-            
-            $stmt = $this->sql->prepare($generalQuery);
-            $stmt->execute();
-            $stats['general'] = $stmt->fetch(\PDO::FETCH_ASSOC);
-            
-            // Tiempo promedio estimado basado en la diferencia entre la fecha actual y la fecha programada
-            // para mantenimientos completados
-            $timeQuery = "SELECT 
-                            AVG(DATEDIFF(NOW(), scheduled_date)) as avg_completion_time
-                        FROM Maintenance 
-                        WHERE status = 'completed'";
-            
-            $stmt = $this->sql->prepare($timeQuery);
-            $stmt->execute();
-            $stats['completion_time'] = $stmt->fetch(\PDO::FETCH_ASSOC);
-            
-            error_log("Estadísticas obtenidas: " . print_r($stats, true));
-            
-            return $stats;
-            
-        } catch (\PDOException $e) {
-            error_log("Error al obtener estadísticas: " . $e->getMessage());
-            error_log("Stack trace: " . $e->getTraceAsString());
-            throw new \Exception("Error al obtener las estadísticas de mantenimiento: " . $e->getMessage());
         }
     }
 } 
