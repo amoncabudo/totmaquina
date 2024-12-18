@@ -147,7 +147,7 @@
                                 <ul id="tecnicos-disponibles" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2">
                                     <?php foreach ($technicians as $technician): ?>
                                         <li class="technician-item bg-white p-2 mb-2 rounded shadow cursor-move" 
-                                            data-id="<?= $technician['id'] ?>"
+                                            data-id="<?= htmlspecialchars($technician['id']) ?>"
                                             data-name="<?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?>">
                                             <?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?>
                                         </li>
@@ -160,8 +160,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <input type="hidden" name="maintenance_id" id="maintenance_id" value="<?= isset($maintenance['id']) ? $maintenance['id'] : '' ?>">
-                        <input type="hidden" name="technicians_data" id="technicians-data">
+                        <input type="hidden" name="technicians_data" id="technicians-data" value="[]">
                     </div>
 
                     <!-- Descripción -->
