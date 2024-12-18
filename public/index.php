@@ -58,7 +58,7 @@ $app->route("tancar-sessio", "ctrlTancarSessio");
 $app->route("index", "ctrlindex");
 
 // Maintenance routes
-$app->route("maintenance", "maintenance", [
+$app->route("maintenance", [\App\Controllers\maintenance::class, "index"], [
     "auth", 
     role(['technician', 'administrator', 'supervisor'])
 ]);
