@@ -101,6 +101,7 @@
                 
                 <!-- Búsqueda y perfil -->
                 <div class="hidden md:flex items-center space-x-6">
+                    <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
                     <div class="relative">
                         <label for="searchInput" class="sr-only">Buscar máquinas</label>
                         <input type="search" 
@@ -119,7 +120,6 @@
                         </div>
                     </div>
                     
-                    <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
                         <!-- Iconos de notificación y perfil para usuario logueado -->
                         <div class="flex items-center space-x-4">
                             <!-- Botón de notificaciones con dropdown -->
