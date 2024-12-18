@@ -89,6 +89,8 @@ $app->route("api/machine/{id}", function($request, $response) {
     return $controller->getMachineInfo($request, $response);
 });
 
+
+
 // Ruta para la búsqueda de máquinas
 $app->route("api/search", function($request, $response) {
     try {
@@ -208,6 +210,7 @@ $app->route("userManagement", [\App\Controllers\ctrluserManagement::class, "ctrl
 role(['administrator','supervisor'])]);
 $app->route("history", "history",["auth",
 role(['technician', 'administrator', 'supervisor'])]);
+
 
 $app->route("adminPanel", [\App\Controllers\ctrladminPanel::class, "adminPanel"], ["auth", 
 role(['administrator'])]);
