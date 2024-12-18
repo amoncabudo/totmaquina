@@ -8,7 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/main.css">
     <link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/bundle.js"></script>
+
 </head>
 
 <body class="bg-gray-100 min-h-screen">
@@ -28,13 +30,14 @@
             </button>
 
             <button id="createTestTechnician"
-                class="bg-blue-600 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
+                class="bg-[#024ad8] text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2">
                 Crear Técnico de Prueba
             </button>
             <button id="createTestSupervisor"
-                class="bg-green-600 text-white hover:bg-green-700 focus:ring-4 focus:ring-green-600 font-medium rounded-lg text-sm px-5 py-2.5">
+                class="bg-[#006646] text-white hover:bg-green-700 focus:ring-4 focus:ring-green-600 font-medium rounded-lg text-sm px-5 py-2.5">
                 Crear Supervisor de Prueba
             </button>
+
         </div>
 
         <!-- Modal Añadir Usuario -->
@@ -128,8 +131,9 @@
                     <div class="flex items-center space-x-4">
                         <img src="<?= '/Images/' . $user["avatar"]; ?>" alt="Avatar" class="h-12 w-12 rounded-full object-cover">
                         <div>
-                            <h2 class="text-lg font-bold"><?= htmlspecialchars($user['name'] . ' ' . $user['surname']) ?></h2>
-                            <p class="text-sm text-gray-600"><?= htmlspecialchars($user['role']) ?></p>
+                            <h2 class="text-lg font-bold text-gray-800"><?= htmlspecialchars($user['name'] . ' ' . $user['surname']) ?></h2>
+                            <p class="text-sm text-gray-800"><?= htmlspecialchars($user['role']) ?></p>
+
                         </div>
                     </div>
                     <div class="flex space-x-2">
@@ -161,6 +165,7 @@
                 </div>
             </div>
         <?php endforeach; ?>
+
 
         <!-- Modales de Edición -->
         <?php foreach ($users as $user) : ?>

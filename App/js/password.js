@@ -1,10 +1,11 @@
 import $ from "jquery";
-   document.addEventListener('DOMContentLoaded', function() {
-    initializePasswordValidation();
-   });
 
-   // Validación de contraseña
-   function initializePasswordValidation() {
+document.addEventListener('DOMContentLoaded', function () {
+    initializePasswordValidation();
+});
+
+// Validación de contraseña
+function initializePasswordValidation() {
     // Patrones individuales para cada requisito
     const patterns = {
         minLength: /.{6,13}/,
@@ -55,52 +56,49 @@ import $ from "jquery";
         const password = $(this).val();
         const results = validatePassword(password);
         const messageContainer = $(this).siblings('.password-requirements');
-        
+
         // Crear el contenedor de requisitos si no existe
         if (messageContainer.length === 0) {
             $(this).after('<div class="password-requirements"></div>');
         }
-        
+
         const allPassed = updatePasswordFeedback(results, $(this).siblings('.password-requirements'));
-        
-        // Actualizar el estilo del input y el estado del botón
-        if (allPassed) {
-            $(this).css("border", "2px solid green");
-            $("#btnEnviar").prop("disabled", false);
-        } else {
-            $(this).css("border", "2px solid red");
-            $("#btnEnviar").prop("disabled", true);
-        }
+
+        // Actualizar el estilo del input usando clases de Tailwind
+        $(this)
+            .removeClass("border-red-500 border-green-500") // Elimina clases previas
+            .addClass(allPassed ? "border-green-500" : "border-red-500"); // Añade clase según resultado
+
+        // Habilitar o deshabilitar el botón
+        $("#btnEnviar").prop("disabled", !allPassed);
     }
 
     function handleEditPasswordValidation() {
         const password = $(this).val();
         const messageContainer = $(this).siblings('.password-requirements');
-        
+
         // Crear el contenedor de requisitos si no existe
         if (messageContainer.length === 0) {
             $(this).after('<div class="password-requirements"></div>');
         }
-        
+
         // Si el campo está vacío en modo edición
         if (password === "") {
-            $(this).css("border", "");
+            $(this).removeClass("border-red-500 border-green-500");
             messageContainer.html("");
             $("button[type='submit']").prop("disabled", false);
             return;
         }
-        
+
         const results = validatePassword(password);
         const allPassed = updatePasswordFeedback(results, messageContainer);
-        
-        // Actualizar el estilo del input y el estado del botón
-        if (allPassed) {
-            $(this).css("border", "2px solid green");
-            $("button[type='submit']").prop("disabled", false);
-        } else {
-            $(this).css("border", "2px solid red");
-            $("button[type='submit']").prop("disabled", true);
-        }
+
+        // Actualizar el estilo del input usando clases de Tailwind
+        $(this)
+            .removeClass("border-red-500 border-green-500")
+            .addClass(allPassed ? "border-green-500" : "border-red-500");
+
+        $("button[type='submit']").prop("disabled", !allPassed);
     }
 
     // Asignar eventos

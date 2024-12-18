@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
 
 </head>
+
 <body class="bg-gray-100">
     <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
@@ -66,10 +68,11 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm text-gray-600">Uso de Disco</p>
-                            <p class="font-semibold text-yellow-600">
+                            <p class="font-semibold" style="color: #050400;">
                                 <?= isset($stats['system_status']['disk_usage']) ? $stats['system_status']['disk_usage'] : 'No disponible' ?>
                             </p>
                         </div>
+
                     </div>
                 </div>
                 <div class="p-4 bg-purple-50 rounded-lg">
@@ -157,7 +160,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                             <?php
-                                            switch($activity['status']) {
+                                            switch ($activity['status']) {
                                                 case 'pending':
                                                     echo 'bg-yellow-100 text-yellow-800';
                                                     break;
@@ -308,4 +311,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.2.1/dist/flowbite.min.js"></script>
 </body>
+
 </html>
