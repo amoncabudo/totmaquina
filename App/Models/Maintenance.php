@@ -338,4 +338,95 @@ class Maintenance {
             throw $e;
         }
     }
+
+    public function getMaintenanceStats() {
+        try {
+            $stats = [];
+
+            // Estadísticas por tipo de mantenimiento
+            $stmt = $this->sql->prepare("
+                SELECT 
+                    type,
+                    COUNT(*) as count
+                FROM Maintenance
+                GROUP BY type
+            ");
+            $stmt->execute();
+            $stats['by_type'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Estadísticas mensuales
+            $stmt = $this->sql->prepare("
+                SELECT 
+                    DATE_FORMAT(scheduled_date, '%Y-%m') as month,
+                    COUNT(*) as count
+                FROM Maintenance
+                GROUP BY DATE_FORMAT(scheduled_date, '%Y-%m')
+                ORDER BY month DESC
+                LIMIT 12
+            ");
+            $stmt->execute();
+            $stats['monthly'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Estadísticas por máquina
+            $stmt = $this->sql->prepare("
+                SELECT 
+                    m.machine_id,
+                    ma.name as machine_name,
+                    COUNT(*) as maintenance_count,
+                    SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END) as completed_count
+                FROM Maintenance m
+                JOIN Machine ma ON m.machine_id = ma.id
+                GROUP BY m.machine_id, ma.name
+                ORDER BY maintenance_count DESC
+                LIMIT 10
+            ");
+            $stmt->execute();
+            $stats['by_machine'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Estadísticas generales
+            $stmt = $this->sql->prepare("
+                SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                    SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress
+                FROM Maintenance
+            ");
+            $stmt->execute();
+            $stats['general'] = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            // Tiempo promedio de completado (en días)
+            $stmt = $this->sql->prepare("
+                SELECT 
+                    AVG(DATEDIFF(
+                        CASE 
+                            WHEN status = 'completed' THEN NOW() 
+                            ELSE scheduled_date 
+                        END,
+                        scheduled_date
+                    )) as avg_completion_time
+                FROM Maintenance
+                WHERE status = 'completed'
+            ");
+            $stmt->execute();
+            $stats['completion_time'] = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            // Asegurar que todos los valores existan
+            $stats['general'] = array_merge([
+                'total' => 0,
+                'completed' => 0,
+                'pending' => 0,
+                'in_progress' => 0
+            ], $stats['general'] ?: []);
+
+            $stats['completion_time'] = array_merge([
+                'avg_completion_time' => 0
+            ], $stats['completion_time'] ?: []);
+
+            return $stats;
+        } catch (\Exception $e) {
+            error_log("Error en getMaintenanceStats: " . $e->getMessage());
+            throw new \Exception("Error al obtener las estadísticas de mantenimiento: " . $e->getMessage());
+        }
+    }
 } 
