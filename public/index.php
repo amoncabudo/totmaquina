@@ -73,8 +73,10 @@ $app->route("maintenance/stats", "maintenanceStats", [
     role(['technician', 'administrator', 'supervisor'])
 ]);
 
-$app->route("maintenance_history", [\App\Controllers\maintenance_history::class, "index"],["auth",
-    role(['administrator', 'supervisor'])]);
+$app->route("maintenance_history", function($request, $response) {
+    $controller = new \App\Controllers\maintenance_history();
+    return $controller->index($request, $response);
+}, ["auth", role(['administrator', 'supervisor'])]);
 
 // API routes
 $app->route("api/maintenance/history/{id}", function($request, $response) {
@@ -174,14 +176,13 @@ $app->route("api/search", function($request, $response) {
 });
 
 // Ruta para el historial de incidencias
-$app->route("history", "history", ["auth", role(['technician', 'administrator', 'supervisor'])]);
+$app->route("history", "history", ["auth", role(['administrator', 'supervisor'])]);
 
 // Ruta para obtener el historial de una máquina específica
 $app->route("history/incidents/{id}", "getIncidentHistory", ["auth", role(['technician', 'administrator', 'supervisor'])]);
 
 // Machine routes
-$app->route("machineinv", [\App\Controllers\ctrlmachineinv::class, "ctrlmachineinv"],["auth",
-role(['technician', 'administrator', 'supervisor'])]);
+$app->route("machineinv", [\App\Controllers\ctrlmachineinv::class, "ctrlmachineinv"]);
 $app->route("/addmachine", [\App\Controllers\ctrlAddMachine::class, "createMachine"],["auth",
 role(['technician', 'administrator', 'supervisor'])]);
 $app->route('machinedetail/{id}', [\App\Controllers\ctrlmachinedetail::class, "ctrlMachineDetail"],["auth",
