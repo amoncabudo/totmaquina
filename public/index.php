@@ -63,7 +63,10 @@ $app->route("maintenance", [\App\Controllers\maintenance::class, "index"], [
     role(['technician', 'administrator', 'supervisor'])
 ]);
 
-$app->route("maintenance/create", "createMaintenance", [
+$app->route("maintenance/create", function($request, $response) {
+    $controller = new \App\Controllers\maintenance();
+    return $controller->createMaintenance($request, $response);
+}, [
     "auth", 
     role(['technician', 'administrator', 'supervisor'])
 ]);
