@@ -30,25 +30,25 @@
                         <div class="flex items-baseline space-x-4" role="menubar">
                             <a href="index" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" role="menuitem">DASHBOARD</a>
                             
-                            <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
-                                <!-- Menú desplegable GESTIÓN -->
-                                <div class="relative group" role="menuitem">
-                                    <button class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center" 
-                                            aria-haspopup="true" 
-                                            aria-expanded="false">
-                                        GESTIÓN
-                                        <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </button>
-                                    <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
-                                        <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
-                                            <a href="/userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
-                                        <?php endif; ?>
-                                        <a href="/machineinv" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Inventario de Máquinas</a>
-                                    </div>
+                            <!-- Menú desplegable GESTIÓN (accesible para todos) -->
+                            <div class="relative group" role="menuitem">
+                                <button class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center" 
+                                        aria-haspopup="true" 
+                                        aria-expanded="false">
+                                    GESTIÓN
+                                    <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
+                                    <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"] && isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
+                                        <a href="/userManagement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Gestión de Usuarios</a>
+                                    <?php endif; ?>
+                                    <a href="/machineinv" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Inventario de Máquinas</a>
                                 </div>
-                                
+                            </div>
+                            
+                            <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
                                 <!-- Menú desplegable MANTENIMIENTO -->
                                 <div class="relative group" role="menuitem">
                                     <button class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center" 
@@ -79,8 +79,8 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Menú desplegable HISTORIAL (solo para administradores) -->
-                                <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
+                                <!-- Menú desplegable HISTORIAL (para administradores y supervisores) -->
+                                <?php if (isset($_SESSION["user"]["role"]) && in_array($_SESSION["user"]["role"], ['administrator', 'supervisor'])): ?>
                                 <div class="relative group" role="menuitem">
                                     <button class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center" 
                                             aria-haspopup="true" 
@@ -103,6 +103,7 @@
                 
                 <!-- Búsqueda y perfil -->
                 <div class="hidden md:flex items-center space-x-6">
+                    <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
                     <div class="relative">
                         <label for="searchInput" class="sr-only">Buscar máquinas</label>
                         <input type="search" 
@@ -121,7 +122,6 @@
                         </div>
                     </div>
                     
-                    <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
                         <!-- Iconos de notificación y perfil para usuario logueado -->
                         <div class="flex items-center space-x-4">
                             <!-- Botón de notificaciones con dropdown -->
@@ -333,8 +333,8 @@
                         </ul>
                     </div>
                     
-                    <!-- Botón desplegable HISTORIAL móvil (solo para administradores) -->
-                    <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
+                    <!-- Botón desplegable HISTORIAL móvil (para administradores y supervisores) -->
+                    <?php if (isset($_SESSION["user"]["role"]) && in_array($_SESSION["user"]["role"], ['administrator', 'supervisor'])): ?>
                     <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" 
                             class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
                             aria-expanded="false"

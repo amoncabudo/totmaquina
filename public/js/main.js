@@ -8,6 +8,101 @@ if (typeof Fancybox === 'undefined') {
     console.error('Fancybox no está cargado. La previsualización de imágenes no estará disponible.');
 }
 
+// Función para mostrar notificaciones toast (función global)
+function showToast(message, type = 'info') {
+    const toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.className = `flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow ${
+        type === 'error' ? 'border-l-4 border-red-500' : 'border-l-4 border-blue-500'
+    }`;
+
+    toast.innerHTML = `
+        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 ${
+            type === 'error' ? 'text-red-500 bg-red-100' : 'text-blue-500 bg-blue-100'
+        } rounded-lg">
+            ${
+                type === 'error' 
+                ? '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"></path></svg>'
+                : '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>'
+            }
+        </div>
+        <div class="ml-3 text-sm font-normal">${message}</div>
+    `;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// Función para cambiar el técnico asignado (función global)
+function saveTechnicianChange(assignmentId) {
+    const newTechnicianId = document.getElementById(`newTechnician-${assignmentId}`).value;
+    const selectElement = document.getElementById(`newTechnician-${assignmentId}`);
+    const newTechnicianName = selectElement.options[selectElement.selectedIndex].text;
+    
+    console.log('Enviando datos:', {
+        assignmentId: assignmentId,
+        newTechnicianId: newTechnicianId
+    });
+
+    fetch('/api/change-technician', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+            assignmentId: assignmentId,
+            newTechnicianId: newTechnicianId
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        return response.text().then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Error parsing JSON:', text);
+                throw new Error('Respuesta del servidor no válida');
+            }
+        });
+    })
+    .then(data => {
+        if (data.success) {
+            // Cerrar el modal usando el botón de cerrar
+            const modalId = `changeTechnicianModal-${assignmentId}`;
+            const closeButton = document.querySelector(`[data-modal-hide="${modalId}"]`);
+            if (closeButton) {
+                closeButton.click();
+            }
+            
+            // Actualizar el nombre del técnico en la tabla
+            const row = document.querySelector(`tr[data-assignment-id="${assignmentId}"]`);
+            if (row) {
+                const technicianCell = row.querySelector('td:first-child');
+                if (technicianCell) {
+                    technicianCell.textContent = newTechnicianName;
+                }
+            }
+            
+            // Mostrar mensaje de éxito
+            showToast('Técnico cambiado exitosamente', 'success');
+        } else {
+            showToast(data.message || 'Error al cambiar el técnico', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error al procesar la solicitud: ' + error.message, 'error');
+    });
+}
+
 // Función para manejar el scroll
 function handleScroll() {
     const navbar = document.getElementById('navbar');
@@ -859,37 +954,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
             showToast(`Error: ${error.message}`, 'error');
         }
-    }
-
-    // Función para mostrar notificaciones toast
-    function showToast(message, type = 'info') {
-        const toastContainer = document.getElementById('toast-container');
-        if (!toastContainer) return;
-
-        const toast = document.createElement('div');
-        toast.className = `flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow ${
-            type === 'error' ? 'border-l-4 border-red-500' : 'border-l-4 border-blue-500'
-        }`;
-
-        toast.innerHTML = `
-            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 ${
-                type === 'error' ? 'text-red-500 bg-red-100' : 'text-blue-500 bg-blue-100'
-            } rounded-lg">
-                ${
-                    type === 'error' 
-                    ? '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"></path></svg>'
-                    : '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>'
-                }
-            </div>
-            <div class="ml-3 text-sm font-normal">${message}</div>
-        `;
-
-        toastContainer.appendChild(toast);
-
-        // Eliminar el toast después de 3 segundos
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
     }
 
     // Función para resetear técnicos

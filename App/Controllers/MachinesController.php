@@ -23,7 +23,6 @@ class MachinesController {
                 FROM Incident i
                 LEFT JOIN User u ON i.responsible_technician_id = u.id
                 WHERE i.status != 'resolved'
-                AND i.responsible_technician_id IS NOT NULL
                 ORDER BY i.registered_date DESC
             ");
             $incidents->execute();
@@ -33,14 +32,14 @@ class MachinesController {
             $maintenance = $this->db->prepare("
                 SELECT 
                     m.id,
-                    CONCAT(u.name, ' ', u.surname) as technician_name,
+                    u.name as technician_name,
                     'maintenance' as type,
                     m.id as task_id,
                     m.description,
                     m.scheduled_date as assigned_date,
                     mt.technician_id
                 FROM Maintenance m
-                JOIN MaintenanceTechnician mt ON m.id = mt.maintenance_id
+                LEFT JOIN MaintenanceTechnician mt ON m.id = mt.maintenance_id
                 LEFT JOIN User u ON mt.technician_id = u.id
                 WHERE m.status != 'completed'
                 ORDER BY m.scheduled_date DESC
@@ -56,14 +55,18 @@ class MachinesController {
                 return strtotime($b['assigned_date']) - strtotime($a['assigned_date']);
             });
 
-            // Obtener todos los técnicos
+            // Obtener todos los técnicos disponibles
             $technicians = $this->db->prepare("
                 SELECT id, CONCAT(name, ' ', surname) as name 
                 FROM User 
                 WHERE role = 'technician'
+                ORDER BY name ASC
             ");
             $technicians->execute();
             $technicians = $technicians->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Debug
+            error_log("Assignments después de la consulta: " . print_r($assignments, true));
 
             $response->set("assignments", $assignments);
             $response->set("technicians", $technicians);
@@ -78,63 +81,34 @@ class MachinesController {
         }
     }
 
-    public function changeTechnician($request, $response, $container) {
+    public function changeTechnician($request, $response) {
         try {
-            $inputData = file_get_contents('php://input');
-            error_log("Datos recibidos (raw): " . $inputData);
+            // Obtener los datos del request
+            $data = json_decode(file_get_contents('php://input'), true);
             
-            $data = json_decode($inputData, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new \Exception("Error al decodificar JSON: " . json_last_error_msg());
-            }
-            
-            error_log("Datos decodificados: " . print_r($data, true));
-            
-            // Validar datos recibidos
             if (!isset($data['assignmentId']) || !isset($data['newTechnicianId'])) {
-                throw new \Exception("Faltan datos necesarios para el cambio de técnico");
+                throw new \Exception('Faltan datos requeridos');
             }
 
-            // Validar que el técnico existe
-            $checkTechnician = $this->db->prepare("
-                SELECT COUNT(*) FROM User 
-                WHERE id = ? AND role = 'technician'
-            ");
-            $checkTechnician->execute([$data['newTechnicianId']]);
-            if ($checkTechnician->fetchColumn() == 0) {
-                throw new \Exception("El técnico seleccionado no existe");
-            }
-
-            // Determinar si es incidencia o mantenimiento
-            $checkType = $this->db->prepare("
-                SELECT 
-                    CASE 
-                        WHEN EXISTS (SELECT 1 FROM Incident WHERE id = ?) THEN 'incident'
-                        WHEN EXISTS (SELECT 1 FROM Maintenance WHERE id = ?) THEN 'maintenance'
-                        ELSE NULL
-                    END as type
-            ");
-            $checkType->execute([$data['assignmentId'], $data['assignmentId']]);
-            $type = $checkType->fetchColumn();
-            error_log("Tipo de asignación encontrado: " . $type);
-
-            if (!$type) {
-                throw new \Exception("No se encontró la tarea especificada");
-            }
+            error_log("Datos recibidos: " . print_r($data, true));
 
             $this->db->beginTransaction();
 
             try {
-                if ($type === 'incident') {
+                // Primero verificamos si es una incidencia
+                $stmt = $this->db->prepare("SELECT id FROM Incident WHERE id = ?");
+                $stmt->execute([$data['assignmentId']]);
+                $isIncident = $stmt->fetch();
+
+                if ($isIncident) {
                     error_log("Actualizando incidencia...");
                     $stmt = $this->db->prepare("
                         UPDATE Incident 
-                        SET responsible_technician_id = ?
+                        SET responsible_technician_id = ? 
                         WHERE id = ?
                     ");
                     $result = $stmt->execute([$data['newTechnicianId'], $data['assignmentId']]);
                     error_log("Resultado de la actualización de incidencia: " . ($result ? "éxito" : "fallo"));
-                    error_log("Filas afectadas en incidencia: " . $stmt->rowCount());
                 } else {
                     error_log("Actualizando mantenimiento...");
                     // Primero eliminamos la asignación anterior
@@ -144,7 +118,6 @@ class MachinesController {
                     ");
                     $result = $stmt->execute([$data['assignmentId']]);
                     error_log("Resultado de la eliminación: " . ($result ? "éxito" : "fallo"));
-                    error_log("Filas eliminadas en MaintenanceTechnician: " . $stmt->rowCount());
 
                     // Luego insertamos la nueva asignación
                     $stmt = $this->db->prepare("
@@ -158,15 +131,21 @@ class MachinesController {
                 $this->db->commit();
                 error_log("Transacción completada con éxito");
                 
+                // Obtener el nombre del nuevo técnico para la respuesta
+                $stmt = $this->db->prepare("SELECT CONCAT(name, ' ', surname) as name FROM User WHERE id = ?");
+                $stmt->execute([$data['newTechnicianId']]);
+                $technicianName = $stmt->fetchColumn();
+                
                 // Establecer el header Content-Type antes de enviar la respuesta
                 header('Content-Type: application/json');
                 
                 // Enviar la respuesta JSON directamente
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Técnico actualizado correctamente'
+                    'message' => 'Técnico actualizado correctamente',
+                    'technicianName' => $technicianName
                 ]);
-                exit; // Terminar la ejecución para evitar que el middleware modifique la respuesta
+                exit;
                 
             } catch (\Exception $e) {
                 $this->db->rollBack();
@@ -177,15 +156,12 @@ class MachinesController {
             error_log("Error en MachinesController::changeTechnician: " . $e->getMessage());
             error_log("Stack trace: " . $e->getTraceAsString());
             
-            // Establecer el header Content-Type antes de enviar la respuesta
             header('Content-Type: application/json');
-            
-            // Enviar la respuesta JSON directamente
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
-            exit; // Terminar la ejecución para evitar que el middleware modifique la respuesta
+            exit;
         }
     }
 } 

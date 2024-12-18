@@ -31,28 +31,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-
-    // Define la función showMachineQRCode
-    window.showMachineQRCode = function(machineId) {
-        console.log("Generando QR para la máquina ID:", machineId);
-        window.location.href = `/generate_machine_qr/${machineId}`;
-    };
 });
-
-function deleteMachine(machineId) {
-    if (confirm('¿Estás seguro de que quieres eliminar esta máquina?')) {
-        fetch(`/deletemachine/${machineId}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Elimina la máquina del DOM
-                document.getElementById(`machine-${machineId}`).remove();
-            } else {
-                alert('Error al eliminar la máquina');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-}
