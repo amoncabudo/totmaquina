@@ -1,12 +1,4 @@
 import $ from "jquery";
-
-// Define la función showMachineQRCode
-window.showMachineQRCode = function(machineId) {
-    console.log("Generando QR para la máquina ID:", machineId);
-    const url = `/generate_machine_qr/${machineId}`;
-    window.open(url, "_blank", "width=200,height=200");
-};
-
 window.deleteMachine=function(machineId) {
   if (confirm('¿Estás seguro de que quieres eliminar esta máquina?')) { // If the user confirms the deletion
       fetch(`/deletemachine/${machineId}`, { // Delete the machine
@@ -93,18 +85,6 @@ $(document).ready(function () {
         }
     }
 
-
-document.addEventListener('DOMContentLoaded', function() {
-    const disponibles = document.getElementById('tecnicos-disponibles');
-    const asignados = document.getElementById('tecnicos-asignados');
-    const saveButton = document.getElementById('save-technicians');
-    const machineId = document.getElementById('machine-id')?.value;
-
-    if (!disponibles || !asignados || !saveButton || !machineId) {
-        console.error('Faltan elementos necesarios');
-        return;
-    }
-
     // Función para mostrar notificaciones
     window.showNotification=function(message, type = 'success') {
         const notification = document.createElement('div');
@@ -187,13 +167,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 }); 
 
-});
-
+if(document.getElementById("save-technicians")){
 document.addEventListener('DOMContentLoaded', function() {
     const saveButton = document.getElementById('save-technicians');
+    console.log('saveButton:', saveButton);
+
     if (saveButton) {
-        saveButton.addEventListener('click', function() {
-            // Your event handler code
+        saveButton.addEventListener('click', async () => {
+            await saveChanges();
         });
+    } else {
+        console.error('El botón de guardar no se encontró en el DOM');
     }
 });
+}
+// Add function to generate PDF for specific machine
+function generateMachinesPDF() {
+    const machineId = this.closest('[id^="dropdown-"]').id.split('-')[1];
+    if (machineId) {
+        generateIncidentPDF(machineId);
+    } else {
+        showToast('Error: No se pudo identificar la máquina', 'error');
+    }
+}
