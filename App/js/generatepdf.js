@@ -1,5 +1,4 @@
 import { jsPDF } from 'jspdf';
-
 async function generateIncidentPDF(machineId) {
     try {
         const response = await fetch(`/history/incidents/${machineId}`, {

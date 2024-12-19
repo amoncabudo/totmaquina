@@ -43,13 +43,14 @@ $(document).ready(function () {
 
         results.forEach(function (item) {
             const resultItem = `
-            <a href="/machinedetail/${item.id}" 
+            <a href="http://localhost/machine_detail/${item.id}" 
                class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
                data-id="${item.id}">
                 <strong class="text-gray-900">${item.name} (${item.model})</strong><br>
                 <span class="text-gray-600 text-sm">${item.manufacturer} - ${item.location}</span>
             </a>
         `;
+
 
             $searchResults.append(resultItem);
         });

@@ -1,13 +1,13 @@
- import $ from "jquery";
+import $ from "jquery";
 
- document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     initializeUserManagement();
- });
+});
 
- // Función para generar usuarios de prueba
- function initializeUserManagement() {
+// Function to generate test users
+function initializeUserManagement() {
     $(document).ready(function() {
-        console.log('DOM cargado, configurando event listeners...');
+        console.log('DOM loaded, setting up event listeners...');
     
         $('#createTestTechnician').on('click', function() {
             generarUsuarioPrueba('technician');
@@ -20,7 +20,7 @@
 }
 
 function generarUsuarioPrueba(role) {
-    console.log('Generando usuario de prueba para el rol:', role);
+    console.log('Generating test user for role:', role);
 
     $.ajax({
         url: 'https://randomuser.me/api/?nat=es&inc=email,name,login',
@@ -35,31 +35,31 @@ function generarUsuarioPrueba(role) {
                 rol: role
             };
 
-            // Enviar al servidor
+            // Send to server
             $.ajax({
                 url: '/createTestUser',
                 method: 'POST',
                 data: usuarioPrueba,
                 contentType: 'application/x-www-form-urlencoded',
                 success: function(response) {
-                    console.log('Respuesta del servidor:', response);
+                    console.log('Server response:', response);
                     const result = typeof response === 'string' ? JSON.parse(response) : response;
                     if (result.success) {
                         window.location.reload();
                     } else {
-                        console.error('Error del servidor:', result.message);
+                        console.error('Server error:', result.message);
                         alert('Error: ' + result.message);
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error en la petición:', error);
-                    alert('Error al crear el usuario: ' + error);
+                    console.error('Request error:', error);
+                    alert('Error creating user: ' + error);
                 }
             });
         },
         error: function(xhr, status, error) {
-            console.error('Error al obtener usuario aleatorio:', error);
-            alert('Error al generar usuario de prueba: ' + error);
+            console.error('Error fetching random user:', error);
+            alert('Error generating test user: ' + error);
         }
     });
 }

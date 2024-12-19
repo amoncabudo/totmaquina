@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', function () {
     initializePasswordValidation();
 });
 
-// Validación de contraseña
+// Password validation
 function initializePasswordValidation() {
-    // Patrones individuales para cada requisito
+    // Individual patterns for each requirement
     const patterns = {
         minLength: /.{6,13}/,
         lowercase: /[a-z]/,
@@ -47,7 +47,7 @@ function initializePasswordValidation() {
 
         messageContainer.html(html);
 
-        // Verificar si todos los requisitos se cumplen
+        // Check if all requirements are met
         const allPassed = Object.values(results).every(result => result);
         return allPassed;
     }
@@ -57,14 +57,14 @@ function initializePasswordValidation() {
         const results = validatePassword(password);
         const messageContainer = $(this).siblings('.password-requirements');
 
-        // Crear el contenedor de requisitos si no existe
+        // Create the requirements container if it doesn't exist
         if (messageContainer.length === 0) {
             $(this).after('<div class="password-requirements"></div>');
         }
 
         const allPassed = updatePasswordFeedback(results, $(this).siblings('.password-requirements'));
 
-        // Actualizar el estilo del input usando clases de Tailwind
+        // Update the input style using Tailwind classes
         $(this)
             .removeClass("border-red-500 border-green-500") // Elimina clases previas
             .addClass(allPassed ? "border-green-500" : "border-red-500"); // Añade clase según resultado

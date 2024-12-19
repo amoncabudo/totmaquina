@@ -4,10 +4,12 @@ namespace App\Models;
 class HistoryIncidents {
     private $sql;
 
+    // Constructor to initialize the database connection
     public function __construct(\PDO $conn) {
         $this->sql = $conn;
     }
 
+    // Function to get all machines
     public function getAllMachines() {
         try {
             $stmt = $this->sql->prepare("SELECT id, name FROM Machine ORDER BY name");
@@ -19,6 +21,7 @@ class HistoryIncidents {
         }
     }
 
+    // Function to get incident history for a specific machine
     public function getIncidentHistory($machineId) {
         try {
             $query = "SELECT 
@@ -50,7 +53,7 @@ class HistoryIncidents {
             error_log("MachineId: " . $machineId);
             error_log("Resultados sin procesar: " . print_r($results, true));
 
-            // Procesar los resultados
+            // Process the results
             foreach ($results as &$row) {
                 error_log("Procesando incidencia ID: " . $row['id']);
                 error_log("Estado original: " . ($row['status'] ?? 'NULL'));
@@ -106,6 +109,7 @@ class HistoryIncidents {
         }
     }
 
+    // Function to get machine information
     public function getMachineInfo($machineId) {
         try {
             $query = "SELECT 
@@ -129,7 +133,7 @@ class HistoryIncidents {
                 throw new \Exception("Máquina no encontrada");
             }
 
-            // Asegurar que los contadores sean números
+            // Ensure the counters are numbers
             $result['total_incidents'] = (int)$result['total_incidents'];
             $result['pending_incidents'] = (int)$result['pending_incidents'];
             $result['in_progress_incidents'] = (int)$result['in_progress_incidents'];
@@ -143,4 +147,4 @@ class HistoryIncidents {
             throw new \Exception("Error al obtener la información de la máquina");
         }
     }
-} 
+}
