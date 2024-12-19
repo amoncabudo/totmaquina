@@ -269,97 +269,124 @@
         <!-- Menú móvil -->
         <div class="hidden md:hidden" id="navbar-mobile">
             <div class="space-y-1 px-2 pb-3 pt-2 bg-black">
+                <!-- Dashboard -->
                 <a href="index" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700" role="menuitem">DASHBOARD</a>
                 
-                <?php if (isset($_SESSION["logat"]) && $_SESSION["logat"]): ?>
-                    <!-- Botón desplegable GESTIÓN móvil -->
-                    <button id="dropdownGestionLink" data-dropdown-toggle="dropdownGestion" 
-                            class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
-                            aria-expanded="false"
-                            aria-haspopup="true">
-                        GESTIÓN 
-                        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <!-- Menú desplegable GESTIÓN móvil -->
-                    <div id="dropdownGestion" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownGestionLink">
-                        <ul class="py-2 text-sm text-white">
-                            <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
-                            <li>
-                                <a href="/userManagement" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Usuarios</a>
-                            </li>
-                            <?php endif; ?>
-                            <li>
-                                <a href="/machineinv" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Inventario de Máquinas</a>
-                            </li>
-                        </ul>
-                    </div>
+                <?php if (!isset($_SESSION["logat"]) || !$_SESSION["logat"]): ?>
+                    <!-- Opción de inicio de sesión para usuarios no logueados -->
+                    <a href="/login" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700" role="menuitem">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            Iniciar Sesión
+                        </div>
+                    </a>
+                <?php else: ?>
+                    <!-- Menú para usuarios logueados -->
                     
-                    <!-- Botón desplegable MANTENIMIENTO móvil -->
-                    <button id="dropdownMaintenanceLink" data-dropdown-toggle="dropdownMaintenance" 
-                            class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
-                            aria-expanded="false"
-                            aria-haspopup="true">
-                        MANTENIMIENTO 
-                        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <!-- Gestión -->
+                    <button id="dropdownGestionMobile" data-dropdown-toggle="dropdownGestionMobile" class="flex w-full items-center justify-between text-white rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                        <span>GESTIÓN</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
-                    <!-- Menú desplegable MANTENIMIENTO móvil -->
-                    <div id="dropdownMaintenance" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownMaintenanceLink">
-                        <ul class="py-2 text-sm text-white">
-                            <li>
-                                <a href="/maintenance" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Registro de Mantenimiento</a>
-                            </li>
-                            <li>
-                                <a href="/maintenance/stats" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Estadísticas de Mantenimiento</a>
-                            </li>
-                        </ul>
+                    <div id="dropdownGestionMobile" class="hidden z-10 w-full bg-gray-700 rounded-lg">
+                        <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
+                            <a href="/userManagement" class="block px-4 py-2 text-sm text-white hover:bg-gray-600">Gestión de Usuarios</a>
+                        <?php endif; ?>
+                        <a href="/machineinv" class="block px-4 py-2 text-sm text-white hover:bg-gray-600">Inventario de Máquinas</a>
                     </div>
 
-                    <!-- Botón desplegable INCIDENCIAS móvil -->
-                    <button id="dropdownIncidenciasLink" data-dropdown-toggle="dropdownIncidencias" 
-                            class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
-                            aria-expanded="false"
-                            aria-haspopup="true">
-                        INCIDENCIAS 
-                        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <!-- Mantenimiento -->
+                    <button id="dropdownMantenimientoMobile" data-dropdown-toggle="dropdownMantenimientoMobile" class="flex w-full items-center justify-between text-white rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                        <span>MANTENIMIENTO</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
-                    <!-- Menú desplegable INCIDENCIAS móvil -->
-                    <div id="dropdownIncidencias" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownIncidenciasLink">
-                        <ul class="py-2 text-sm text-white">
-                            <li>
-                                <a href="/incidents" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Gestión de Incidencias</a>
-                            </li>
-                        </ul>
+                    <div id="dropdownMantenimientoMobile" class="hidden z-10 w-full bg-gray-700 rounded-lg">
+                        <a href="/maintenance" class="block px-4 py-2 text-sm text-white hover:bg-gray-600">Registro de Mantenimiento</a>
+                        <a href="/maintenance/stats" class="block px-4 py-2 text-sm text-white hover:bg-gray-600">Estadísticas</a>
                     </div>
-                    
-                    <!-- Botón desplegable HISTORIAL móvil (para administradores y supervisores) -->
+
+                    <!-- Incidencias -->
+                    <button id="dropdownIncidenciasMobile" data-dropdown-toggle="dropdownIncidenciasMobile" class="flex w-full items-center justify-between text-white rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                        <span>INCIDENCIAS</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="dropdownIncidenciasMobile" class="hidden z-10 w-full bg-gray-700 rounded-lg">
+                        <a href="/incidents" class="block px-4 py-2 text-sm text-white hover:bg-gray-600">Registro de Incidencias</a>
+                    </div>
+
                     <?php if (isset($_SESSION["user"]["role"]) && in_array($_SESSION["user"]["role"], ['administrator', 'supervisor'])): ?>
-                    <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" 
-                            class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-white hover:bg-gray-700"
-                            aria-expanded="false"
-                            aria-haspopup="true">
-                        HISTORIAL 
-                        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <!-- Menú desplegable HISTORIAL móvil -->
-                    <div id="dropdownNavbar" class="z-10 hidden w-full bg-gray-700 rounded-lg" role="menu" aria-labelledby="dropdownNavbarLink">
-                        <ul class="py-2 text-sm text-white">
-                            <li>
-                                <a href="/maintenance_history" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Mantenimiento</a>
-                            </li>
-                            <li>
-                                <a href="/history" class="block px-4 py-2 hover:bg-gray-600" role="menuitem">Incidencias</a>
-                            </li>
-                        </ul>
-                    </div>
+                        <!-- Historial -->
+                        <button id="dropdownHistorialMobile" data-dropdown-toggle="dropdownHistorialMobile" class="flex w-full items-center justify-between text-white rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                            <span>HISTORIAL</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="dropdownHistorialMobile" class="hidden z-10 w-full bg-gray-700 rounded-lg">
+                            <a href="/maintenance_history" class="block px-4 py-2 text-sm text-white hover:bg-gray-600">Mantenimiento</a>
+                            <a href="/history" class="block px-4 py-2 text-sm text-white hover:bg-gray-600">Registros</a>
+                        </div>
                     <?php endif; ?>
+
+                    <!-- Perfil y configuración -->
+                    <div class="border-t border-gray-700 mt-2 pt-2">
+                        <a href="/userconfig" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37.996.608 2.296.07 2.572-1.065z"/>
+                                </svg>
+                                Configuración
+                            </div>
+                        </a>
+                        <a href="/usermachines" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                                Mis Máquinas
+                            </div>
+                        </a>
+                        <?php if (isset($_SESSION["user"]["role"]) && in_array($_SESSION["user"]["role"], ['administrator', 'supervisor'])): ?>
+                            <a href="/assigned-technicians" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                    Técnicos Asignados
+                                </div>
+                            </a>
+                        <?php endif; ?>
+                        <?php if (isset($_SESSION["user"]["role"]) && $_SESSION["user"]["role"] === 'administrator'): ?>
+                            <a href="/adminPanel" class="text-white block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                                    </svg>
+                                    Panel de Administración
+                                </div>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Cerrar sesión -->
+                    <div class="border-t border-gray-700 mt-2 pt-2">
+                        <a href="/tancar-sessio" class="text-red-400 block rounded-lg px-3 py-2 text-base font-medium hover:bg-gray-700">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                Cerrar sesión
+                            </div>
+                        </a>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
