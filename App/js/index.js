@@ -9,7 +9,6 @@ import  "./map.js";
 import  "./password.js";
 import  "./testUser.js";
 import  "./search.js";
-
 import  "./asigntechnicians.js";
 import  "./generatepdf.js";
 import  "./machine-qr.js";
