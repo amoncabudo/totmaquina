@@ -1,73 +1,85 @@
 <?php
 
+// Function to load the incidents page
 function incidents($request, $response, $container) {
     try {
-        error_log("=== DEBUG: Cargando página de incidencias ===");
+        // Debug log for tracking
+        error_log("=== DEBUG: Loading incidents page ===");
         
+        // Database connection
         $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
         $incident = new \App\Models\Incident($db->getConnection());
         
-        // Obtener los datos necesarios para la vista
+        // Get data for the view: technicians, machines, and incidents
         $technicians = $incident->getAllTechnicians();
         $machines = $incident->getAllMachines();
         $allIncidents = $incident->getAllIncidents();
         
-        error_log("Técnicos cargados: " . count($technicians));
-        error_log("Máquinas cargadas: " . count($machines));
-        error_log("Incidencias cargadas: " . count($allIncidents));
+        // Debug logs to confirm the data
+        error_log("Technicians loaded: " . count($technicians));
+        error_log("Machines loaded: " . count($machines));
+        error_log("Incidents loaded: " . count($allIncidents));
         
-        // Pasar los datos a la vista
+        // Pass the data to the view
         $response->set("technicians", $technicians);
         $response->set("machines", $machines);
         $response->set("incidents", $allIncidents);
         
+        // Set the template for incidents page
         $response->setTemplate('incidents.php');
         return $response;
     } catch (\Exception $e) {
-        error_log("Error al cargar la página de incidencias: " . $e->getMessage());
+        // Log any errors during the process
+        error_log("Error loading incidents page: " . $e->getMessage());
         error_log("Stack trace: " . $e->getTraceAsString());
-        $_SESSION['error_message'] = "Error al cargar la página: " . $e->getMessage();
+        
+        // Store the error message in the session and redirect
+        $_SESSION['error_message'] = "Error loading the page: " . $e->getMessage();
         header('Location: /');
         exit;
     }
 }
 
+// Function to create a new incident
 function createIncident($request, $response, $container) {
     try {
-        error_log("=== DEBUG: Iniciando creación de incidencia ===");
+        // Debug log for tracking
+        error_log("=== DEBUG: Starting incident creation ===");
         
-        // Validar que el usuario esté autenticado
+        // Validate if the user is authenticated
         if (!isset($_SESSION["logat"]) || !$_SESSION["logat"]) {
-            throw new \Exception("No autorizado");
+            throw new \Exception("Unauthorized");
         }
 
+        // Database connection
         $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
         $incident = new \App\Models\Incident($db->getConnection());
         
-        // Obtener y validar los datos del formulario
+        // Get and validate the data from the form
         $description = $request->get(INPUT_POST, "description");
         $priority = $request->get(INPUT_POST, "priority");
         $machineId = $request->get(INPUT_POST, "machine_id");
         $technicianId = $request->get(INPUT_POST, "responsible_technician_id");
 
-        error_log("Datos del formulario:");
-        error_log("- Descripción: " . $description);
-        error_log("- Prioridad: " . $priority);
-        error_log("- ID Máquina: " . $machineId);
-        error_log("- ID Técnico: " . $technicianId);
+        // Debug logs for form data
+        error_log("Form data:");
+        error_log("- Description: " . $description);
+        error_log("- Priority: " . $priority);
+        error_log("- Machine ID: " . $machineId);
+        error_log("- Technician ID: " . $technicianId);
 
-        // Validaciones básicas
+        // Basic validations
         if (empty($description)) {
-            throw new \Exception("La descripción es obligatoria");
+            throw new \Exception("Description is required");
         }
         if (empty($machineId)) {
-            throw new \Exception("Debe seleccionar una máquina");
+            throw new \Exception("You must select a machine");
         }
         if (empty($technicianId)) {
-            throw new \Exception("Debe seleccionar un técnico");
+            throw new \Exception("You must select a technician");
         }
 
-        // Preparar los datos para el modelo
+        // Prepare the data for the model
         $data = [
             'description' => $description,
             'priority' => $priority,
@@ -75,29 +87,35 @@ function createIncident($request, $response, $container) {
             'responsible_technician_id' => $technicianId
         ];
         
-        error_log("Datos preparados para el modelo: " . print_r($data, true));
+        // Debug log for prepared data
+        error_log("Prepared data for model: " . print_r($data, true));
         
-        // Crear la incidencia
+        // Create the incident
         $incidentId = $incident->create($data);
         
         if ($incidentId) {
-            error_log("Incidencia creada exitosamente con ID: " . $incidentId);
+            // Log success and fetch the new incident data
+            error_log("Incident created successfully with ID: " . $incidentId);
             
-            // Verificar que la incidencia se puede recuperar
+            // Retrieve the new incident details
             $newIncident = $incident->getIncidentById($incidentId);
-            error_log("Datos de la nueva incidencia: " . print_r($newIncident, true));
+            error_log("New incident details: " . print_r($newIncident, true));
             
-            $_SESSION['success_message'] = "Incidencia creada correctamente";
+            // Store success message in session and redirect
+            $_SESSION['success_message'] = "Incident created successfully";
             header('Location: /incidents');
             exit;
         } else {
-            throw new \Exception("Error al crear la incidencia");
+            throw new \Exception("Error creating the incident");
         }
         
     } catch (\Exception $e) {
-        error_log("=== ERROR en createIncident ===");
+        // Log any errors during the incident creation process
+        error_log("=== ERROR in createIncident ===");
         error_log($e->getMessage());
         error_log($e->getTraceAsString());
+        
+        // Store the error message in the session and redirect
         $_SESSION['error_message'] = $e->getMessage();
         header('Location: /incidents');
         exit;

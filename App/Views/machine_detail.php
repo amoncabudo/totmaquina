@@ -11,6 +11,7 @@
 
 
   </head>
+</head>
 <?php include __DIR__ . "/layouts/navbar.php"; ?>
 
 <body class="bg-gray-100 min-h-screen">
@@ -29,43 +30,41 @@
       <div class="flex flex-col items-center">
         <img src="<?php echo htmlspecialchars('/Images/' . $machine['photo']); ?>" alt="Imagen de la máquina" class="w-full mb-4 shadow-md rounded-lg">
         <div class="bg-gray-50 p-4 rounded-lg">
-    <div class="flex gap-4">
-        <!-- Técnicos Disponibles -->
-        <div class="bg-gray-50 p-4 rounded-lg w-1/2">
-            <h3 class="text-sm font-medium text-gray-700 mb-2">Técnicos Disponibles</h3>
-            <ul id="tecnicos-disponibles" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2">
+          <div class="flex gap-4">
+            <!-- Técnicos Disponibles -->
+            <div class="bg-gray-50 p-4 rounded-lg w-1/2">
+              <h3 class="text-sm font-medium text-gray-700 mb-2">Técnicos Disponibles</h3>
+              <ul id="tecnicos-disponibles" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2">
                 <?php foreach ($technicians as $technician): ?>
-                    <li class="bg-white p-2 mb-2 rounded shadow cursor-move" data-id="<?= $technician['id'] ?>">
-                        <?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?>
-                    </li>
+                  <li class="bg-white p-2 mb-2 rounded shadow cursor-move" data-id="<?= $technician['id'] ?>">
+                    <?= htmlspecialchars($technician['name'] . ' ' . $technician['surname']) ?>
+                  </li>
                 <?php endforeach; ?>
-            </ul>
-        </div>
+              </ul>
+            </div>
 
-        <!-- Técnicos Asignados -->
-        <div class="bg-gray-50 p-4 rounded-lg w-1/2">
-            <h3 class="text-sm font-medium text-gray-700 mb-2">Técnicos Asignados</h3>
-            <ul id="tecnicos-asignados" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2">
+            <!-- Técnicos Asignados -->
+            <div class="bg-gray-50 p-4 rounded-lg w-1/2">
+              <h3 class="text-sm font-medium text-gray-700 mb-2">Técnicos Asignados</h3>
+              <ul id="tecnicos-asignados" class="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2">
                 <!-- Los técnicos asignados se mostrarán aquí -->
-            </ul>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Botón de Guardar -->
+          <div class="mt-4 flex justify-end">
+            <button id="save-technicians" 
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300">
+              Guardar Asignación
+            </button>
+          </div>
+
+          <input type="hidden" name="technicians_data" id="<?= $machine['technicians_data'] ?>">
+          <input type="hidden" id="machine-id" value="<?= $machine['id'] ?>">
         </div>
-    </div>
-
-    <!-- Botón de Guardar -->
-    <div class="mt-4 flex justify-end">
-        <button id="save-technicians" 
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300">
-            Guardar Asignación
-        </button>
-    </div>
-
-    <input type="hidden" name="technicians_data" id="<?= $machine['technicians_data'] ?>">
-    <input type="hidden" id="machine-id" value="<?= $machine['id'] ?>">
-</div>
       </div>
-
-     
-    
+    </div>
     <div class="flex justify-end mt-4">
       <a href="javascript:void(0);" onclick="history.back();" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">

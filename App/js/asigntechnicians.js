@@ -1,65 +1,76 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const disponibles = document.getElementById('tecnicos-disponibles');
+    const asignados = document.getElementById('tecnicos-asignados');
 
-window.allowDrop = function(ev) {
-    if (!ev) return;
-    ev.preventDefault();
+    if (!disponibles || !asignados) {
+        console.error('No se encontraron las listas necesarias para el drag and drop');
+        return;
+    }
+
+    // Hacer que los elementos sean "draggables"
+    disponibles.querySelectorAll('li').forEach(li => {
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', dragStartHandler);
+    });
+
+    // Configurar las áreas "dropzone"
+    [disponibles, asignados].forEach(zone => {
+        zone.addEventListener('dragover', allowDropHandler);
+        zone.addEventListener('drop', dropHandler);
+    });
+});
+
+// Gestionar el evento dragstart
+function dragStartHandler(event) {
+    if (!event.target) return;
+    const id = event.target.dataset.id;
+    event.dataTransfer.setData('text/plain', id);
 }
 
-window.drag = function(ev) {
-    if (!ev || !ev.target) return;
-    const draggableElement = ev.target.closest('.draggable');
-    if (!draggableElement) return;
-
-    const technicianId = draggableElement.dataset.technicianId;
-    ev.dataTransfer.setData("technicianId", technicianId);
+// Permitir el drop
+function allowDropHandler(event) {
+    event.preventDefault(); // Permite que el drop ocurra
 }
 
-window.drop = function(ev) {
-    if (!ev) return;
-    ev.preventDefault();
+// Gestionar el evento drop
+function dropHandler(event) {
+    event.preventDefault();
 
-    const droppableElement = ev.target.closest('.droppable');
-    const technicianId = ev.dataTransfer.getData("technicianId");
-    const machineId = droppableElement.dataset.machineId;
-    const loadingSpan = droppableElement.querySelector('span');
-    const originalText = loadingSpan.textContent;
-    loadingSpan.textContent = 'Asignando...';
+    const id = event.dataTransfer.getData('text/plain');
+    const technicianElement = document.querySelector(`[data-id="${id}"]`);
+    const dropZone = event.target.closest('ul');
 
-    fetch('/assign-technician', {
+    if (!dropZone || !technicianElement) return;
+
+    // Mover el técnico al nuevo contenedor
+    dropZone.appendChild(technicianElement);
+}
+
+// Guardar asignación al hacer clic en el botón
+document.getElementById('save-technicians').addEventListener('click', () => {
+    const assignedTechnicians = Array.from(document.querySelectorAll('#tecnicos-asignados li'))
+        .map(li => li.dataset.id);
+    const machineId = document.getElementById('machine-id').value;
+
+    fetch('/save-technicians', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
         },
         body: JSON.stringify({
-            technician_id: technicianId,
-            machine_id: machineId
+            machine_id: machineId,
+            technician_ids: assignedTechnicians
         })
     })
     .then(response => {
         if (response.ok) {
-            // Recarga la página después de una asignación exitosa
+            alert('Asignación guardada con éxito');
             window.location.reload();
         } else {
-            // Si hay un error, restauramos el texto original
-            loadingSpan.textContent = originalText;
-            throw new Error('Error en la asignación');
+            throw new Error('Error al guardar la asignación');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        loadingSpan.textContent = originalText;
+        console.error('Error al guardar la asignación:', error);
     });
-}
-
-// Inicialización del drag and drop de técnicos
-function initTechnicianDragDrop() {
-    const disponibles = document.getElementById('tecnicos-disponibles');
-    const asignados = document.getElementById('tecnicos-asignados');
-    
-    console.log('Intentando inicializar drag and drop...');
-    
-    if (!disponibles || !asignados) {
-        console.log('No se encontraron las listas necesarias para el drag and drop');
-        return;
-    }
-}
+});

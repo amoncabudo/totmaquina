@@ -1,3 +1,21 @@
+<<<<<<< HEAD
+=======
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de control de TOT Màquina">
+    <title>TOT Màquina - Panel de Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <link href="<?php echo $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST']; ?>/css/main.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script src="/js/bundle.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-100">
+>>>>>>> develop
     <nav id="navbar" class="bg-black shadow-lg transition-all duration-300" role="navigation" aria-label="Menú principal">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -6,7 +24,7 @@
                     <div class="flex-shrink-0">
                         <a href="/index" class="flex items-center">
                             <div class="bg-white p-1.5 rounded-full">
-                                <img class="h-10 w-10" src="/Images/Imagen_2024-11-28_150432915-removebg-preview.png" alt="Logo de la aplicación">
+                                <img class="h-10 w-10" src="/Images/imagen_2024-11-28_150432915-removebg-preview.png" alt="Logo de la aplicación">
                             </div>
                         </a>
                     </div>
@@ -102,7 +120,8 @@
                             </svg>
                         </button>
                         <!-- Contenedor de resultados -->
-                        <div id="searchResults" class="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-lg overflow-hidden hidden z-50">
+                        <div id="searchResults" class="absolute top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden hidden z-50">
+
                             <!-- Los resultados se insertarán aquí dinámicamente -->
                         </div>
                     </div>
