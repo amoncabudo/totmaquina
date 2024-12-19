@@ -4,16 +4,6 @@
  */
 
 /*!
- * 
- *               jsPDF AutoTable plugin v3.8.4
- *
- *               Copyright (c) 2024 Simon Bengtsson, https://github.com/simonbengtsson/jsPDF-AutoTable
- *               Licensed under the MIT License.
- *               http://opensource.org/licenses/mit-license
- *
- */
-
-/*!
  * fancyBox - jQuery Plugin
  * version: 2.1.5 (Fri, 14 Jun 2013)
  * requires jQuery v1.6 or later
