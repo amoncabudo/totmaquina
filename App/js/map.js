@@ -1,56 +1,48 @@
-if (document.getElementById("map")) {
-  // Inicializar el mapa con un estilo más moderno
-  var map = L.map("map", {
-    zoomControl: false, // Desactivamos el control de zoom predeterminado
-  }).setView([42.2735257096842, 2.9648616030527037], 15);
+if (document.getElementById("map")) { //If the map element exists, run the code
+  var map = L.map("map", { //Create a new map with the id map
+    zoomControl: false, //Disable the default zoom control
+  }).setView([42.2735257096842, 2.9648616030527037], 15); //Set the view to the coordinates [42.2735257096842, 2.9648616030527037] and the zoom level to 15
 
-  // Añadir un estilo de mapa más moderno
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-    attribution: "© OpenStreetMap contributors",
-    maxZoom: 19,
-  }).addTo(map);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { //Add a tile layer with the url https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png
+    attribution: "© OpenStreetMap contributors", //Set the attribution to © OpenStreetMap contributors
+    maxZoom: 19, //Set the max zoom level to 19
+  }).addTo(map); //Add the tile layer to the map
 
-  // Añadir control de zoom en una posición personalizada
-  L.control
-    .zoom({
-      position: "bottomright",
+  L.control //Add a control to the map
+    .zoom({ //Add a zoom control to the map
+      position: "bottomright", //Set the position to bottomright
     })
     .addTo(map);
-  // Definir el icono personalizado
-  const customIcon = L.divIcon({
-    html: '<i class="fa-solid fa-location-dot fa-2x" style="color: #4169e1;"></i>',
-    iconSize: [30, 30],
-    className: "custom-div-icon",
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -30],
+
+  const customIcon = L.divIcon({ //Add a custom icon to the map
+    html: '<i class="fa-solid fa-location-dot fa-2x" style="color: #4169e1;"></i>', //Set the html to <i class="fa-solid fa-location-dot fa-2x" style="color: #4169e1;"></i>
+    iconSize: [30, 30], //Set the icon size to 30x30
+    className: "custom-div-icon", //Set the class name to custom-div-icon
+    iconAnchor: [15, 30], //Set the icon anchor to 15x30
+    popupAnchor: [0, -30], //Set the popup anchor to 0x-30
   });
 
-  // Función para cargar los marcadores
-  window.loadMarkers = function (machines) {
-    if (!machines || machines.length === 0) {
-      console.log("No hay máquinas para mostrar");
-      return;
+  window.loadMarkers = function (machines) { //When the function loadMarkers is called, run the code
+    if (!machines || machines.length === 0) { //If the machines array is null or empty, run the code
+      console.log("No hay máquinas para mostrar"); 
+      return; 
     }
-    console.log(machines);
-    machines.forEach(function (machine) {
-      // Verificar que machine.coordinates existe y no es undefined/null
-      if (machine.coordinates && typeof machine.coordinates === "string") {
-        const coords = machine.coordinates.split(",");
+    console.log(machines); //Show the machines array
+    machines.forEach(function (machine) { //For each machine in the machines array
+      if (machine.coordinates && typeof machine.coordinates === "string") { //If the machine.coordinates exists and is a string, run the code
+        const coords = machine.coordinates.split(","); //Split the machine.coordinates string by commas
 
-        // Verificar que tenemos dos valores después de dividir
-        if (coords.length === 2) {
-          const lat = parseFloat(coords[0].trim());
-          const lng = parseFloat(coords[1].trim());
+        if (coords.length === 2) { //If the coords array has 2 values, run the code
+          const lat = parseFloat(coords[0].trim()); //Parse the first value of the coords array as a float
+          const lng = parseFloat(coords[1].trim()); //Parse the second value of the coords array as a float
 
-          // Verificar que los valores son números válidos
-          if (!isNaN(lat) && !isNaN(lng)) {
-            const marker = L.marker([lat, lng], {
-              icon: customIcon,
-            }).addTo(map);
-            // Añadir popup al marcador
-            console.log("Machine data:", machine); // Para debug
+          if (!isNaN(lat) && !isNaN(lng)) { //If the lat and lng values are not NaN, run the code
+            const marker = L.marker([lat, lng], { //Create a new marker with the coordinates [lat, lng]
+              icon: customIcon, //Set the icon to the custom icon
+            }).addTo(map); //Add the marker to the map
+            console.log("Machine data:", machine); //Show the machine data
 
-            marker
+            marker //Bind the popup to the marker
               .bindPopup(
                 `
                       <div class="popup-content">

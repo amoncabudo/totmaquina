@@ -41,10 +41,10 @@ document.addEventListener('DOMContentLoaded', function() { // When the DOM conte
   });
 
 // Add function to generate PDF for specific machine
-function generateMachinesPDF() {
-    const machineId = this.closest('[id^="dropdown-"]').id.split('-')[1];
-    if (machineId) {
-        generateIncidentPDF(machineId);
+function generateMachinesPDF() { //When the function generateMachinesPDF is called, run the code
+    const machineId = this.closest('[id^="dropdown-"]').id.split('-')[1]; //Get the machine id
+    if (machineId) { //If the machine id is not null, run the code
+        generateIncidentPDF(machineId); //Call the function generateIncidentPDF with the machine id as a parameter
     } else {
         showToast('Error: No se pudo identificar la máquina', 'error');
     }
