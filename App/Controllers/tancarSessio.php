@@ -5,40 +5,41 @@ use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
 /**
- * Controlador que gestiona el cierre de sesión
+ * Controller that manages the logout process
  *
- * @param $request contingut de la peticó http.
- * @param $response contingut de la response http.
- * @param Container $container contenedor de dependencias
+ * @param $request content of the HTTP request.
+ * @param $response content of the HTTP response.
+ * @param Container $container dependency container
  **/
 function ctrlTancarSessio(Request $request, Response $response, Container $container) :Response
 {
-    // Iniciamos la sesión si no está iniciada
+    // Start the session if it's not already started
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
 
-    // Guardamos el ID del usuario antes de limpiar la sesión
+    // Save the user ID before clearing the session
     $userId = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
 
-    // Limpiamos las variables de sesión específicas
-    $response->setSession("logat", false);
-    $response->setSession("user", null);
+    // Clear specific session variables
+    $response->setSession("logat", false); // Set logged-in status to false
+    $response->setSession("user", null);   // Set user data to null
 
-    // Limpiamos el array de sesión
+    // Clear the entire session array
     $_SESSION = array();
 
-    // Eliminamos la cookie de sesión si existe
+    // If a session cookie exists, delete it
     if (isset($_COOKIE[session_name()])) {
+        // Set the session cookie with an expiration time in the past to remove it
         setcookie(session_name(), '', time()-42000, '/');
     }
 
-    // Destruimos la sesión
+    // Destroy the session
     session_destroy();
 
-    // Hacemos el redirect antes de devolver la respuesta
+    // Perform the redirect to the login page before returning the response
     header("Location: /login");
-    exit();
+    exit(); // Ensure no further code is executed after the redirect
 
     return $response;
 }

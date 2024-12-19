@@ -10,6 +10,8 @@
     <!-- Fancybox -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
+
 </head>
 <body class="bg-gray-100">
     <?php include __DIR__ . "/layouts/navbar.php"; ?>
@@ -46,5 +48,7 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-50"></div>
 
     <script src="/js/main.js"></script>
+    <script src="/js/flowbite.min.js"></script>
+    <script src="/js/bundle.js"></script>
 </body>
 </html>

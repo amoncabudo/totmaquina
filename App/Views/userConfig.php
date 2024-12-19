@@ -6,6 +6,7 @@ include $viewsPath . "/layouts/navbar.php";
 <html lang="es">
 <head>
 <link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <div class="container mx-auto px-4 py-8">
@@ -129,7 +130,8 @@ include $viewsPath . "/layouts/navbar.php";
 </div>
 
 <?php include $viewsPath . "/layouts/footer.php"; ?> 
-
+<script src="/js/flowbite.min.js"></script>
+<script src="/js/bundle.js"></script>
 <script>
 document.getElementById('avatarForm').addEventListener('submit', async function(e) {
     e.preventDefault();

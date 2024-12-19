@@ -10,10 +10,10 @@ class DashboardController {
     }
 
     public function __invoke($request, $response, $container) {
-        // Renderizar la vista del dashboard
+        // Render the dashboard view
         $response->set("title", "Dashboard");
         $response->setTemplate("dashboard.php");
         
         return $response;
     }
-} 
+}

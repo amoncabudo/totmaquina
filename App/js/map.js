@@ -2,7 +2,7 @@ if (document.getElementById("map")) {
   // Inicializar el mapa con un estilo más moderno
   var map = L.map("map", {
     zoomControl: false, // Desactivamos el control de zoom predeterminado
-  }).setView([42.27351400039436, 2.9648054015140053 ], 15);
+  }).setView([42.2735257096842, 2.9648616030527037], 15);
 
   // Añadir un estilo de mapa más moderno
   L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {

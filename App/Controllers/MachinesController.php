@@ -4,13 +4,15 @@ namespace App\Controllers;
 class MachinesController {
     private $db;
 
+    // Constructor que recibe el contenedor de dependencias
     public function __construct($container) {
         $this->db = $container->get("db");
     }
 
+    // Función que muestra las incidencias y mantenimientos asignados
     public function showAssignedTechnicians($request, $response, $container) {
         try {
-            // Obtener incidencias asignadas
+            // Obtener incidencias no resueltas
             $incidents = $this->db->prepare("
                 SELECT 
                     i.id,
@@ -28,7 +30,7 @@ class MachinesController {
             $incidents->execute();
             $incidents = $incidents->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Obtener mantenimientos asignados
+            // Obtener mantenimientos no completados
             $maintenance = $this->db->prepare("
                 SELECT 
                     m.id,
@@ -47,15 +49,15 @@ class MachinesController {
             $maintenance->execute();
             $maintenance = $maintenance->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Combinar resultados
+            // Combinar los resultados de incidencias y mantenimientos
             $assignments = array_merge($incidents, $maintenance);
 
-            // Ordenar por fecha
+            // Ordenar las asignaciones por fecha (más reciente primero)
             usort($assignments, function($a, $b) {
                 return strtotime($b['assigned_date']) - strtotime($a['assigned_date']);
             });
 
-            // Obtener todos los técnicos disponibles
+            // Obtener la lista de técnicos disponibles
             $technicians = $this->db->prepare("
                 SELECT id, CONCAT(name, ' ', surname) as name 
                 FROM User 
@@ -65,15 +67,19 @@ class MachinesController {
             $technicians->execute();
             $technicians = $technicians->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Debug
+            // Debug: Log para verificar el contenido de las asignaciones
             error_log("Assignments después de la consulta: " . print_r($assignments, true));
 
+            // Pasar los datos a la respuesta para el template
             $response->set("assignments", $assignments);
             $response->set("technicians", $technicians);
+
+            // Establecer el template para mostrar las asignaciones
             $response->SetTemplate("assigned_technicians.php");
 
             return $response;
         } catch (\Exception $e) {
+            // En caso de error, registrar el error y devolver la respuesta con un mensaje
             error_log("Error en MachinesController::showAssignedTechnicians: " . $e->getMessage());
             $response->set("error", "Error al cargar la página: " . $e->getMessage());
             $response->SetTemplate("assigned_technicians.php");
@@ -81,26 +87,31 @@ class MachinesController {
         }
     }
 
+    // Función para cambiar el técnico asignado a una incidencia o mantenimiento
     public function changeTechnician($request, $response) {
         try {
-            // Obtener los datos del request
+            // Obtener los datos del cuerpo del request
             $data = json_decode(file_get_contents('php://input'), true);
             
+            // Verificar que se proporcionaron los datos necesarios
             if (!isset($data['assignmentId']) || !isset($data['newTechnicianId'])) {
                 throw new \Exception('Faltan datos requeridos');
             }
 
+            // Log de los datos recibidos
             error_log("Datos recibidos: " . print_r($data, true));
 
+            // Iniciar una transacción para asegurar la integridad de la base de datos
             $this->db->beginTransaction();
 
             try {
-                // Primero verificamos si es una incidencia
+                // Verificar si la asignación corresponde a una incidencia
                 $stmt = $this->db->prepare("SELECT id FROM Incident WHERE id = ?");
                 $stmt->execute([$data['assignmentId']]);
                 $isIncident = $stmt->fetch();
 
                 if ($isIncident) {
+                    // Actualizar la incidencia con el nuevo técnico
                     error_log("Actualizando incidencia...");
                     $stmt = $this->db->prepare("
                         UPDATE Incident 
@@ -110,8 +121,9 @@ class MachinesController {
                     $result = $stmt->execute([$data['newTechnicianId'], $data['assignmentId']]);
                     error_log("Resultado de la actualización de incidencia: " . ($result ? "éxito" : "fallo"));
                 } else {
+                    // Actualizar un mantenimiento
                     error_log("Actualizando mantenimiento...");
-                    // Primero eliminamos la asignación anterior
+                    // Eliminar la asignación anterior
                     $stmt = $this->db->prepare("
                         DELETE FROM MaintenanceTechnician 
                         WHERE maintenance_id = ?
@@ -119,7 +131,7 @@ class MachinesController {
                     $result = $stmt->execute([$data['assignmentId']]);
                     error_log("Resultado de la eliminación: " . ($result ? "éxito" : "fallo"));
 
-                    // Luego insertamos la nueva asignación
+                    // Insertar la nueva asignación
                     $stmt = $this->db->prepare("
                         INSERT INTO MaintenanceTechnician (maintenance_id, technician_id)
                         VALUES (?, ?)
@@ -128,6 +140,7 @@ class MachinesController {
                     error_log("Resultado de la inserción: " . ($result ? "éxito" : "fallo"));
                 }
 
+                // Confirmar los cambios en la base de datos
                 $this->db->commit();
                 error_log("Transacción completada con éxito");
                 
@@ -136,10 +149,10 @@ class MachinesController {
                 $stmt->execute([$data['newTechnicianId']]);
                 $technicianName = $stmt->fetchColumn();
                 
-                // Establecer el header Content-Type antes de enviar la respuesta
+                // Establecer el encabezado Content-Type para la respuesta JSON
                 header('Content-Type: application/json');
                 
-                // Enviar la respuesta JSON directamente
+                // Enviar la respuesta en formato JSON
                 echo json_encode([
                     'success' => true,
                     'message' => 'Técnico actualizado correctamente',
@@ -148,14 +161,17 @@ class MachinesController {
                 exit;
                 
             } catch (\Exception $e) {
+                // En caso de error, revertir la transacción
                 $this->db->rollBack();
                 error_log("Error en la transacción: " . $e->getMessage());
                 throw $e;
             }
         } catch (\Exception $e) {
+            // Manejo de errores en la función de cambio de técnico
             error_log("Error en MachinesController::changeTechnician: " . $e->getMessage());
             error_log("Stack trace: " . $e->getTraceAsString());
             
+            // Enviar la respuesta de error en formato JSON
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => false,
@@ -164,4 +180,4 @@ class MachinesController {
             exit;
         }
     }
-} 
+}

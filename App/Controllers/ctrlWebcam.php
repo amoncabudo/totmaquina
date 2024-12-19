@@ -5,15 +5,18 @@ use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
 /**
- * ctrlWebcam: Controlador que carrega la pàgina de la webcam
+ * ctrlWebcam: Controller that loads the webcam page
  *
- * @param Request $request contingut de la petició http.
- * @param Response $response contingut de la resposta http.
- * @param Container $container paràmetres de configuració de l'aplicació
+ * @param Request $request Content of the HTTP request.
+ * @param Response $response Content of the HTTP response.
+ * @param Container $container Application configuration parameters
  *
  **/
 function ctrlWebcam(Request $request, Response $response, Container $container) : Response
 {
+    // Set the template for the webcam page
     $response->setTemplate("webcam.php");
+    
+    // Return the response to be rendered
     return $response;
-} 
+}

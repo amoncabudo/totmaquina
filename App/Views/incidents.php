@@ -6,9 +6,9 @@
     <meta name="description" content="Sistema de gestión de incidencias y averías para el seguimiento y control de problemas técnicos">
     <title>Gestión de Incidencias - Panel de Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
     <link rel="icon" href="/Images/6748b003c2a02_imagen_2024-11-28_150432915-removebg-preview.png">
 
 </head>
@@ -341,9 +341,9 @@
         </div>
     </main>
     <script src="/js/main.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-    
+    <script src="/js/flowbite.min.js"></script>
+    <script src="/js/bundle.js"></script>
 
 </body>
 </html>
