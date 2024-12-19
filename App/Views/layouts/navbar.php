@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,6 +15,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-100">
+>>>>>>> develop
     <nav id="navbar" class="bg-black shadow-lg transition-all duration-300" role="navigation" aria-label="Menú principal">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -367,5 +370,4 @@
 
     <?php include "cookie-banner.php"; ?>
     
-</body>
-</html> 
+    <script src="/js/flowbite.min.js"></script>
