@@ -38,6 +38,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@fancyapps/fancybox": "^3.5.7",
     "fancybox": "^3.0.1",
     "flowbite": "^2.5.2",
     "jspdf": "^2.5.2",
