@@ -5,32 +5,36 @@ use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
 /**
- * Controlador de login d'exemple del Framework Emeset
- * Framework d'exemple per a M07 Desenvolupament d'aplicacions web.
+ * Example login controller for the Emeset Framework
+ * Sample framework for M07 Web Application Development.
  * @author: Dani Prados dprados@cendrassos.net
  *
- * Carrega la pàgina de login
+ * Loads the login page.
  *
  **/
 
 /**
- * ctrlLogin: Controlador que carrega  la pàgina de login
+ * ctrlLogin: Controller that loads the login page.
  *
- * @param $request contingut de la peticó http.
- * @param $response contingut de la response http.
- * @param array $config  paràmetres de configuració de l'aplicació
+ * @param $request HTTP request content.
+ * @param $response HTTP response content.
+ * @param array $config application configuration parameters.
  *
  **/
 function ctrlLogin(Request $request, Response $response, Container $container) :Response
 {
-  // Comptem quantes vegades has visitat aquesta pàgina
+  // Counting how many times this page has been visited (error tracking)
   $error = $request->get("SESSION", "error");
 
-
+  // Pass the error message to the view, if any.
   $response->set("error", $error);
+
+  // Clear the session error after passing it to the view
   $response->setSession("error", "");
 
+  // Set the template for the login page
   $response->SetTemplate("login.php");
 
+  // Return the response with the login page template
   return $response;
 }

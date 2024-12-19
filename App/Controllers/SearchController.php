@@ -7,23 +7,25 @@ use Emeset\Contracts\Container;
 
 class SearchController {
     public function search(Request $request, Response $response, Container $container) {
-        // Obtener el parámetro de búsqueda 'query' del request
+        // Retrieve the 'query' search parameter from the request
         $query = $request->get(INPUT_GET, 'query');
         
-        // Validar si el parámetro de búsqueda es adecuado
+        // Validate if the search parameter is adequate
         if (empty($query) || strlen($query) < 3) {
+            // If the query is invalid (less than 3 characters), set failure response
             $response->set('success', false);
-            $response->set('error', 'La búsqueda debe tener al menos 3 caracteres');
-            $response->setJson(); // Asegúrate de que setJson esté configurado correctamente
+            $response->set('error', 'Search query must be at least 3 characters');
+            $response->setJson(); // Ensure setJson is properly configured to return JSON
             return $response;
         }
 
         try {
-            // Obtener la instancia de la base de datos desde el contenedor
+            // Get the database instance from the container
             $db = $container->get("db");
+            // Sanitize the search query to prevent SQL injection
             $searchQuery = "%" . htmlspecialchars($query, ENT_QUOTES, 'UTF-8') . "%";
             
-            // Consulta SQL con parámetros preparados
+            // SQL query with prepared parameters for security
             $sql = "SELECT id, name, model, manufacturer, location 
                     FROM Machine 
                     WHERE name LIKE ? 
@@ -32,22 +34,23 @@ class SearchController {
                        OR location LIKE ?
                     LIMIT 10";
             
-            // Preparar y ejecutar la consulta
+            // Prepare and execute the query with parameters
             $stmt = $db->prepare($sql);
             $stmt->execute([$searchQuery, $searchQuery, $searchQuery, $searchQuery]);
+            // Fetch all the results as an associative array
             $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Devolver resultados en caso de éxito
+            // Return results in case of success
             $response->set('success', true);
             $response->set('results', $results);
-            $response->setJson(); // Asegúrate de que setJson esté configurado correctamente
+            $response->setJson(); // Ensure setJson is properly configured to return JSON
             return $response;
 
         } catch (\Exception $e) {
-            // Manejo de errores y respuesta en caso de fallo
+            // Handle errors and return a failure response if the search fails
             $response->set('success', false);
-            $response->set('error', 'Error al realizar la búsqueda: ' . $e->getMessage());
-            $response->setJson(); // Asegúrate de que setJson esté configurado correctamente
+            $response->set('error', 'Error performing search: ' . $e->getMessage());
+            $response->setJson(); // Ensure setJson is properly configured to return JSON
             return $response;
         }
     }

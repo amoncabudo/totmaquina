@@ -9,28 +9,30 @@ use App\Models\Machine;
 use App\Models\User;
 
 class incidents {
+    // Method to handle displaying incidents page
     public function index($request, $response, $container) {
-        // Obtener todas las máquinas
+        // Get all machines from the database
         $machineModel = new Machine($container->get('db'));
         $machines = $machineModel->getAllMachine();
 
-        // Obtener todos los usuarios y filtrar técnicos
+        // Get all users and filter out technicians
         $userModel = new User($container->get('db'));
         $allUsers = $userModel->getAllUser();
+        // Filter users by role "technician"
         $technicians = array_filter($allUsers, function ($user) {
             return isset($user['role']) && $user['role'] === 'technician';
         });
 
-        // Pasar datos a la vista
-        $response->set("machines", $machines);
-        $response->set("technicians", $technicians);
+        // Pass the data to the view
+        $response->set("machines", $machines); // Pass the machines list
+        $response->set("technicians", $technicians); // Pass the list of technicians
 
-        // Establecer la plantilla
+        // Set the template for rendering
         $response->setTemplate('incidents.php');
 
+        // Return the response
         return $response;
     }
 }
-   
-    
+
 ?>

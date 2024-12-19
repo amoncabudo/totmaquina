@@ -7,38 +7,38 @@ class AdminController {
     }
 
     public function index($request, $response, $container) {
-        // Verificar que el usuario sea administrador
+        // Verify that the user is an administrator
         if (!isset($_SESSION["user"]["role"]) || $_SESSION["user"]["role"] !== 'administrator') {
             header('Location: /index');
             exit;
         }
 
-        // Obtener estadísticas para el panel de administración
+        // Retrieve statistics for the admin panel
         $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
         $sql = $db->getConnection();
 
         try {
-            // Total de usuarios
+            // Total number of users
             $stmt = $sql->query("SELECT COUNT(*) as total FROM User");
             $totalUsers = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
 
-            // Total de máquinas
+            // Total number of machines
             $stmt = $sql->query("SELECT COUNT(*) as total FROM Machine");
             $totalMachines = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
 
-            // Total de incidencias
+            // Total number of incidents
             $stmt = $sql->query("SELECT COUNT(*) as total FROM Incident");
             $totalIncidents = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
 
-            // Incidencias pendientes
+            // Pending incidents
             $stmt = $sql->query("SELECT COUNT(*) as total FROM Incident WHERE status = 'pending'");
             $pendingIncidents = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
 
-            // Mantenimientos programados
+            // Scheduled maintenance
             $stmt = $sql->query("SELECT COUNT(*) as total FROM Maintenance WHERE status = 'pending'");
             $pendingMaintenance = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
 
-            // Pasar datos a la vista
+            // Pass data to the view
             $response->set("stats", [
                 'total_users' => $totalUsers,
                 'total_machines' => $totalMachines,
@@ -47,18 +47,18 @@ class AdminController {
                 'pending_maintenance' => $pendingMaintenance
             ]);
 
-            // Establecer la plantilla
+            // Set the template
             $response->setTemplate("adminPanel.php");
 
         } catch (\PDOException $e) {
-            // Log del error
-            error_log("Error en AdminController: " . $e->getMessage());
+            // Log the error
+            error_log("Error in AdminController: " . $e->getMessage());
             
-            // Mostrar mensaje de error en la vista
-            $response->set("error_message", "Error al cargar las estadísticas del panel de administración");
+            // Display an error message in the view
+            $response->set("error_message", "Error loading admin panel statistics");
             $response->setTemplate("adminPanel.php");
         }
 
         return $response;
     }
-} 
+}

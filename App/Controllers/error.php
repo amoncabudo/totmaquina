@@ -5,20 +5,20 @@ use \Emeset\Contracts\Http\Response;
 use \Emeset\Contracts\Container;
 
 /**
- * Controlador de la pàgina d'error d'exemple del Framework Emeset
- * Framework d'exemple per a M07 Desenvolupament d'aplicacions web.
+ * Error page controller for the Emeset framework
+ * Example framework for M07 Web Application Development.
  * @author: Dani Prados dprados@cendrassos.net
  *
- * Carrega la portada
+ * Loads the homepage
  *
  **/
 
 /**
- * ctrlError: Controlador que carrega la pàgina d'error
+ * ctrlError: Controller that loads the error page
  *
- * @param $request contingut de la petiicó http.
- * @param $response contingut de la response http.
- * @param $container  paràmetres de configuració de l'aplicació
+ * @param $request contents of the HTTP request.
+ * @param $response contents of the HTTP response.
+ * @param $container application configuration parameters
  *
  **/
 function ctrlError(Request $request, Response $response, Container $container) :Response
