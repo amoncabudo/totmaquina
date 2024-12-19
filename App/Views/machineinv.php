@@ -279,10 +279,10 @@
                                 Editar
                             </button>
                             <button type="button" onclick="showMachineQRCode('<?php echo htmlspecialchars($machine['id']); ?>')"
-                                class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
+                                class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50" id="generate-qr">
                                 Generar QR
                             </button>
-                            <button onclick="generateMachinesPDF()" class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50">
+                            <button type="button" onclick="generateIncidentPDF('<?php echo htmlspecialchars($machine['id']); ?>')" class="block w-full text-left px-4 py-2 text-sm text-fuchsia-600 hover:bg-fuchsia-50">
                                 Generar PDF
                             </button>
 

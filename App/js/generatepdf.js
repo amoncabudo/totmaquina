@@ -1,55 +1,81 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import { jsPDF } from 'jspdf';
 
-window.generateMachinesPDF = function (machines) {
+async function generateIncidentPDF(machineId) {
     try {
-        if (!machines || machines.length === 0) {
-            alert("No hay datos disponibles para generar el PDF.");
-            return;
-        }
-
-        const doc = new jsPDF();
-
-        // Título del PDF
-        doc.text("Reporte de Máquinas", 14, 20);
-
-        // Convierte los datos en un formato para jsPDF-Autotable3
-        const tableRows = machines.map(machine => [
-            machine.name || "N/A",
-            machine.model || "N/A",
-            machine.manufacturer || "N/A",
-            machine.location || "N/A",
-            machine.installation_date || "N/A",
-            machine.coordinates || "N/A"
-        ]);
-
-        // Encabezados de la tabla
-        const tableHeaders = [
-            "Name",
-            "Model",
-            "Manufacturer",
-            "Location",
-            "Installation Date",
-            "Coordinates"
-        ];
-
-        // Agrega la tabla al PDF
-        autoTable(doc, {
-            head: [tableHeaders],
-            body: tableRows,
-            startY: 30,
-            styles: { fontSize: 10, cellPadding: 4 },
-            headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
-            alternateRowStyles: { fillColor: [240, 240, 240] },
+        const response = await fetch(`/history/incidents/${machineId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
         });
 
-        // Guarda el PDF con un nombre dinámico
-        const timestamp = new Date().toISOString().split("T")[0];
-        doc.save(`reporte_maquinas_${timestamp}.pdf`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-        alert("PDF generado correctamente");
+        const data = await response.json();
+        if (!data.success) {
+            throw new Error(data.message || 'Error al cargar el historial');
+        }
+
+        const pdf = new jsPDF();
+        const marginTop = 10;
+        const marginLeft = 10;
+        const marginRight = 10;
+        const marginBottom = 10;
+        
+        pdf.setFontSize(24);
+        pdf.setTextColor(51, 150, 255);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`Historial de Incidencias - ${data.machine.name}`, marginLeft, marginTop);
+        
+        pdf.setFontSize(16);
+        pdf.setTextColor(51, 150, 255);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`Información de la máquina`, 10, 20);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(0, 0, 0);
+
+        pdf.text(`Modelo: ${data.machine.model}`, 15, 30);
+        pdf.text(`Fabricante: ${data.machine.manufacturer}`, 15, 35);
+        pdf.text(`Ubicación: ${data.machine.location}`, 15, 40);
+
+        let yOffset = 50;
+        data.data.forEach((incident, index) => {
+            if (yOffset > 250) {
+                pdf.addPage();
+                yOffset = 20;
+            }
+
+            pdf.setFontSize(14);
+            pdf.setTextColor(51, 150, 255);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`Incidencia ${index + 1}:`, 10, yOffset);
+            yOffset += 7;
+
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(12);
+            pdf.setTextColor(0, 0, 0);
+
+            pdf.text(`Descripción: ${incident.description}`, 20, yOffset);
+            yOffset += 7;
+            pdf.text(`Prioridad: ${incident.priority}`, 20, yOffset);
+            yOffset += 7;
+            pdf.text(`Estado: ${incident.status}`, 20, yOffset);
+            yOffset += 7;
+            pdf.text(`Técnico: ${incident.technician_name || 'No asignado'}`, 20, yOffset);
+            yOffset += 7;
+            pdf.text(`Fecha: ${new Date(incident.registered_date).toLocaleDateString()}`, 20, yOffset);
+            yOffset += 15;
+        });
+
+        pdf.save(`incidencias_${data.machine.name.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
-        console.error("Error generando el PDF:", error);
-        alert("Hubo un problema generando el PDF.");
+        console.error('Error generating PDF:', error);
+        showToast('Error al generar el PDF: ' + error.message, 'error');
     }
-};
+}
+
+window.generateIncidentPDF = generateIncidentPDF;
