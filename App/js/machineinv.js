@@ -18,7 +18,9 @@ window.deleteMachine=function(machineId) {
 }
 
 document.addEventListener('DOMContentLoaded', function() { // When the DOM content is loaded
-  document.getElementById('/editmachine').addEventListener('submit', function(event) { // When the edit machine form is submitted
+    var el = document.getElementById('/editmachine');
+    if (el != null) {
+      el.addEventListener('submit', function(event) { // When the edit machine form is submitted
       event.preventDefault(); // Prevent the default form submission
 
       const formData = new FormData(this); // Get the form data
@@ -27,7 +29,8 @@ document.addEventListener('DOMContentLoaded', function() { // When the DOM conte
           method: 'POST',
           body: formData
       });
-  });
+    });
+   }
 
   const dropdownButtons = document.querySelectorAll('[data-dropdown-toggle]'); // Get the dropdown buttons
   dropdownButtons.forEach(button => { // For each dropdown button

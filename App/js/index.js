@@ -8,11 +8,13 @@ import 'fancybox';
 
 
 import  "./map.js";
-import  "./webcam.js";
 import  "./password.js";
 import  "./testUser.js";
 import  "./asigntechnicians.js";
-import  "./machine-qr.js";
 import  "./generatepdf.js";
+import  "./machine-qr.js";
 import  "./machineinv.js";
+import  "./webcam.js";
+
+
 

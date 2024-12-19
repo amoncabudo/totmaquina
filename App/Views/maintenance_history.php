@@ -42,5 +42,7 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-50"></div>
 
     <script src="/js/main.js"></script>
+    <script src="/js/flowbite.min.js"></script>
+    <script src="/js/bundle.js"></script>
 </body>
 </html>

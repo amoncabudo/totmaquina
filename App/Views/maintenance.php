@@ -6,7 +6,6 @@
     <meta name="description" content="Sistema de gestión de mantenimientos preventivos y correctivos">
     <title>Registro de Mantenimientos - Panel de Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -190,5 +189,6 @@
 
     <script src="/js/main.js"></script>
     <script src="/js/flowbite.min.js"></script>
+    <script src="/js/bundle.js"></script>
 </body>
 </html>
