@@ -97,88 +97,77 @@ $app->route("api/machine/{id}", function($request, $response) {
 // Ruta para la búsqueda de máquinas
 $app->route("api/search", function($request, $response) {
     try {
-        // Desactivar la salida de errores de PHP
-        ini_set('display_errors', '0');
+        // Configuración inicial
+        ini_set('display_errors', '1');
         error_reporting(0);
-        
-        // Asegurar que no haya salida antes de los headers
-        if (ob_get_level()) ob_end_clean();
-        
-        // Establecer headers para JSON
+        if (ob_get_level()) ob_clean();
+
         header('Content-Type: application/json; charset=utf-8');
-        
-        // Obtener el parámetro de búsqueda
+
+        // Obtener y validar el parámetro
         $query = trim($request->get(INPUT_GET, 'query') ?? '');
-        error_log("Término de búsqueda recibido: '" . $query . "'");
-        
-        // Validar que la consulta tenga al menos 2 caracteres
         if (strlen($query) < 2) {
             echo json_encode([
-                'success' => true,
+                'success' => false,
                 'message' => "Ingrese al menos 2 caracteres para buscar",
                 'results' => []
             ]);
-            return;
+            exit;
         }
 
-        // Conectar a la base de datos
+        // Conexión a la base de datos
         $db = new \App\Models\Db("grup7", "*Grup777*", "totmaquina", "hl1373.dinaserver.com");
         $sql = $db->getConnection();
 
-        // Consulta de prueba para verificar datos
+        // Obtener total de máquinas
         $testStmt = $sql->query("SELECT COUNT(*) as total FROM Machine");
         $totalMachines = $testStmt->fetch(\PDO::FETCH_ASSOC)['total'];
-        error_log("Total de máquinas en la base de datos: " . $totalMachines);
 
-        // Preparar y ejecutar la consulta
+        // Ejecutar consulta
         $stmt = $sql->prepare("
             SELECT id, name, model, manufacturer, location 
             FROM Machine 
             WHERE LOWER(name) LIKE LOWER(:query) 
-            OR LOWER(model) LIKE LOWER(:query) 
-            OR LOWER(manufacturer) LIKE LOWER(:query) 
-            OR LOWER(location) LIKE LOWER(:query)
+               OR LOWER(model) LIKE LOWER(:query) 
+               OR LOWER(manufacturer) LIKE LOWER(:query) 
+               OR LOWER(location) LIKE LOWER(:query)
             LIMIT 10
         ");
-
         $searchTerm = "%" . $query . "%";
-        error_log("Término de búsqueda SQL: " . $searchTerm);
-        
         $stmt->execute(['query' => $searchTerm]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
-        error_log("Resultados encontrados: " . count($results));
-        error_log("Resultados: " . print_r($results, true));
 
-        // Devolver resultados
+        // Respuesta exitosa
         echo json_encode([
             'success' => true,
             'query' => $query,
             'total_machines' => $totalMachines,
             'results' => $results
         ]);
-        
+        exit;
+
     } catch (\PDOException $e) {
-        error_log("Error de base de datos en la búsqueda: " . $e->getMessage());
-        http_response_code(200); // Cambiar a 200 para evitar error 500
+        // Error en base de datos
+        error_log("Error de base de datos: " . $e->getMessage());
+        http_response_code(500);
         echo json_encode([
             'success' => false,
-            'error' => "Error en la base de datos",
-            'debug' => $e->getMessage(),
-            'results' => []
+            'message' => "Error en la base de datos"
         ]);
+        exit;
+
     } catch (\Exception $e) {
-        error_log("Error en la búsqueda: " . $e->getMessage());
-        http_response_code(200); // Cambiar a 200 para evitar error 500
+        // Error general
+        error_log("Error general: " . $e->getMessage());
+        http_response_code(500);
         echo json_encode([
             'success' => false,
-            'error' => "Error al realizar la búsqueda",
-            'debug' => $e->getMessage(),
-            'results' => []
+            'message' => "Error inesperado"
         ]);
+        exit;
     }
-    return;
 });
+
 
 // Ruta para el historial de incidencias
 $app->route("history", "history", ["auth", role(['administrator', 'supervisor'])]);

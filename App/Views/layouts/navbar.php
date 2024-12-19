@@ -9,8 +9,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
     <link href="<?php echo $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST']; ?>/css/main.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-
-
+    <script src="/js/bundle.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <nav id="navbar" class="bg-black shadow-lg transition-all duration-300" role="navigation" aria-label="Menú principal">
@@ -117,7 +117,8 @@
                             </svg>
                         </button>
                         <!-- Contenedor de resultados -->
-                        <div id="searchResults" class="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-lg overflow-hidden hidden z-50">
+                        <div id="searchResults" class="absolute top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden hidden z-50">
+
                             <!-- Los resultados se insertarán aquí dinámicamente -->
                         </div>
                     </div>
