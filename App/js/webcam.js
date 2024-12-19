@@ -1,68 +1,61 @@
-if (document.getElementById("capture-photo")) {
+if (document.getElementById("capture-photo")) { //Check if the capture photo button exists, if exists, run the code
 document.addEventListener('DOMContentLoaded', function() {
-    const openCameraBtn = document.getElementById('open-camera');
-    const webcamContainer = document.getElementById('webcam-container');
-    const webcam = document.getElementById('webcam');
-    const canvas = document.getElementById('canvas');
-    const captureBtn = document.getElementById('capture-photo');
-    const capturedPhoto = document.getElementById('captured-photo');
-    const fileInput = document.getElementById('machine-photo');
-    let stream = null;
+    const openCameraBtn = document.getElementById('open-camera'); //Get the open camera button
+    const webcamContainer = document.getElementById('webcam-container'); //Get the webcam container
+    const webcam = document.getElementById('webcam'); //Get the webcam
+    const canvas = document.getElementById('canvas'); //Get the canvas
+    const captureBtn = document.getElementById('capture-photo'); //Get the capture photo button
+    const capturedPhoto = document.getElementById('captured-photo'); //Get the captured photo
+    const fileInput = document.getElementById('machine-photo'); //Get the machine photo input
+    let stream = null; //Initialize the stream
 
-    openCameraBtn.addEventListener('click', async () => {
+    openCameraBtn.addEventListener('click', async () => { //Add event listener to the open camera button
         try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            webcam.srcObject = stream;
-            webcamContainer.classList.remove('hidden');
+            stream = await navigator.mediaDevices.getUserMedia({ video: true }); //Get the user media
+            webcam.srcObject = stream; //Set the webcam source to the stream
+            webcamContainer.classList.remove('hidden'); //Remove the hidden class from the webcam container
         } catch (err) {
             console.error('Error accessing webcam:', err);
             alert('Error accessing webcam. Please make sure you have granted camera permissions.');
         }
     });
 
-    captureBtn.addEventListener('click', () => {
+    captureBtn.addEventListener('click', () => { //Add event listener to the capture photo button
         // Set canvas dimensions to match video
-        canvas.width = webcam.videoWidth;
-        canvas.height = webcam.videoHeight;
+        canvas.width = webcam.videoWidth; //Set the canvas width to the webcam width
+        canvas.height = webcam.videoHeight; //Set the canvas height to the webcam height
         
         // Draw video frame to canvas
-        const context = canvas.getContext('2d');
-        context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+        const context = canvas.getContext('2d'); //Get the canvas context
+        context.drawImage(webcam, 0, 0, canvas.width, canvas.height); //Draw the video frame to the canvas
         
-        // Convert canvas to blob
-        canvas.toBlob((blob) => {
-            // Create a File object from the blob
-            const file = new File([blob], 'webcam-capture.jpg', { type: 'image/jpeg' });
+        canvas.toBlob((blob) => { //Convert the canvas to a blob    
+            const file = new File([blob], 'webcam-capture.jpg', { type: 'image/jpeg' }); //Create a file object from the blob
             
-            // Create a FileList-like object
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
+            const dataTransfer = new DataTransfer(); //Create a FileList-like object
+            dataTransfer.items.add(file); //Add the file to the data transfer
             
-            // Set the file input's files
-            fileInput.files = dataTransfer.files;
+            fileInput.files = dataTransfer.files; //Set the file input's files
             
-            // Display captured photo
-            capturedPhoto.src = URL.createObjectURL(blob);
-            capturedPhoto.classList.remove('hidden');
+            capturedPhoto.src = URL.createObjectURL(blob); //Display captured photo
+            capturedPhoto.classList.remove('hidden'); //Remove the hidden class from the captured photo
             
-            // Stop webcam stream
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+            if (stream) { //Stop the webcam stream
+                stream.getTracks().forEach(track => track.stop()); //Stop the stream tracks
             }
-            webcam.srcObject = null;
-            webcamContainer.classList.add('hidden');
+            webcam.srcObject = null; //Set the webcam source to null
+            webcamContainer.classList.add('hidden'); //Add the hidden class to the webcam container
         }, 'image/jpeg', 0.8);
     });
 
-    // Clean up webcam stream when modal is closed
-    const modal = document.getElementById('machine-modal');
-    modal.addEventListener('hidden.bs.modal', () => {
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
+    const modal = document.getElementById('machine-modal'); //Get the machine modal
+    modal.addEventListener('hidden.bs.modal', () => { //Add event listener to the machine modal
+        if (stream) { //Stop the webcam stream
+            stream.getTracks().forEach(track => track.stop()); //Stop the stream tracks
         }
-        webcam.srcObject = null;
-        webcamContainer.classList.add('hidden');
-        capturedPhoto.classList.add('hidden');
+        webcam.srcObject = null; //Set the webcam source to null
+        webcamContainer.classList.add('hidden'); //Add the hidden class to the webcam container
+        capturedPhoto.classList.add('hidden'); //Add the hidden class to the captured photo
     });
 });
 }

@@ -6,102 +6,93 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Password validation
 function initializePasswordValidation() {
-    // Individual patterns for each requirement
-    const patterns = {
-        minLength: /.{6,13}/,
-        lowercase: /[a-z]/,
-        uppercase: /[A-Z]/,
-        number: /\d/,
-        special: /[$@$!%*?&-.,]/,
-        noSpaces: /^[^\s']+$/
+    const patterns = { //Define the patterns for each requirement
+        minLength: /.{6,13}/, //At least 6 and at most 13 characters
+        lowercase: /[a-z]/, //At least one lowercase letter
+        uppercase: /[A-Z]/, //At least one uppercase letter
+        number: /\d/, //At least one number
+        special: /[$@$!%*?&-.,]/, //At least one special character
+        noSpaces: /^[^\s']+$/ //No spaces or single quotes
     };
 
     function validatePassword(password) {
         return {
-            minLength: patterns.minLength.test(password),
-            lowercase: patterns.lowercase.test(password),
-            uppercase: patterns.uppercase.test(password),
-            number: patterns.number.test(password),
-            special: patterns.special.test(password),
-            noSpaces: patterns.noSpaces.test(password)
+            minLength: patterns.minLength.test(password), //Check if the password has at least 6 and at most 13 characters
+            lowercase: patterns.lowercase.test(password), //Check if the password has at least one lowercase letter
+            uppercase: patterns.uppercase.test(password), //Check if the password has at least one uppercase letter
+            number: patterns.number.test(password), //Check if the password has at least one number
+            special: patterns.special.test(password), //Check if the password has at least one special character
+            noSpaces: patterns.noSpaces.test(password) //Check if the password has no spaces or single quotes
         };
     }
 
-    function updatePasswordFeedback(results, messageContainer) {
+    function updatePasswordFeedback(results, messageContainer) { //Update the password feedback
         const messages = {
-            minLength: 'Entre 6 y 13 caracteres',
-            lowercase: 'Al menos una minúscula',
-            uppercase: 'Al menos una mayúscula',
-            number: 'Al menos un número',
-            special: 'Al menos un carácter especial ($@!%*?&-.,)',
-            noSpaces: 'Sin espacios ni comillas simples'
+            minLength: 'Entre 6 y 13 caracteres', //Message for the minimum length requirement
+            lowercase: 'Al menos una minúscula', //Message for the lowercase requirement
+            uppercase: 'Al menos una mayúscula', //Message for the uppercase requirement
+            number: 'Al menos un número', //Message for the number requirement
+            special: 'Al menos un carácter especial ($@!%*?&-.,)', //Message for the special requirement
+            noSpaces: 'Sin espacios ni comillas simples' //Message for the no spaces requirement
         };
 
-        let html = '<ul class="text-sm mt-2">';
-        for (const [requirement, passed] of Object.entries(results)) {
-            const color = passed ? 'text-green-600' : 'text-red-600';
-            const icon = passed ? '✔' : '✗';
-            html += `<li class="${color}"><span class="mr-2">${icon}</span>${messages[requirement]}</li>`;
+        let html = '<ul class="text-sm mt-2">'; //Create the HTML for the password feedback
+        for (const [requirement, passed] of Object.entries(results)) { //For each requirement, run the code
+            const color = passed ? 'text-green-600' : 'text-red-600'; //Set the color of the requirement
+            const icon = passed ? '✔' : '✗'; //Set the icon of the requirement
+            html += `<li class="${color}"><span class="mr-2">${icon}</span>${messages[requirement]}</li>`; //Add the requirement to the HTML
         }
         html += '</ul>';
 
-        messageContainer.html(html);
+        messageContainer.html(html); //Add the HTML to the message container
 
-        // Check if all requirements are met
-        const allPassed = Object.values(results).every(result => result);
-        return allPassed;
+        const allPassed = Object.values(results).every(result => result); //Check if all requirements are met
+        return allPassed; //Return true if all requirements are met, false otherwise
     }
 
-    function handlePasswordValidation() {
-        const password = $(this).val();
-        const results = validatePassword(password);
-        const messageContainer = $(this).siblings('.password-requirements');
+    function handlePasswordValidation() { //Handle the password validation
+        const password = $(this).val(); //Get the password
+        const results = validatePassword(password); //Validate the password
+        const messageContainer = $(this).siblings('.password-requirements'); //Get the message container
 
-        // Create the requirements container if it doesn't exist
-        if (messageContainer.length === 0) {
-            $(this).after('<div class="password-requirements"></div>');
+        if (messageContainer.length === 0) { //If the message container doesn't exist, create it
+            $(this).after('<div class="password-requirements"></div>'); //Add the message container to the password input
         }
 
-        const allPassed = updatePasswordFeedback(results, $(this).siblings('.password-requirements'));
+        const allPassed = updatePasswordFeedback(results, $(this).siblings('.password-requirements')); //Update the password feedback
 
-        // Update the input style using Tailwind classes
         $(this)
-            .removeClass("border-red-500 border-green-500") // Elimina clases previas
-            .addClass(allPassed ? "border-green-500" : "border-red-500"); // Añade clase según resultado
+            .removeClass("border-red-500 border-green-500") // Remove previous classes
+            .addClass(allPassed ? "border-green-500" : "border-red-500"); // Add class based on result
 
-        // Habilitar o deshabilitar el botón
-        $("#btnEnviar").prop("disabled", !allPassed);
+        $("#btnEnviar").prop("disabled", !allPassed); //Enable or disable the button
     }
 
-    function handleEditPasswordValidation() {
-        const password = $(this).val();
-        const messageContainer = $(this).siblings('.password-requirements');
+    function handleEditPasswordValidation() { //Handle the edit password validation
+        const password = $(this).val(); //Get the password
+        const messageContainer = $(this).siblings('.password-requirements'); //Get the message container
 
-        // Crear el contenedor de requisitos si no existe
-        if (messageContainer.length === 0) {
-            $(this).after('<div class="password-requirements"></div>');
+        if (messageContainer.length === 0) { //If the message container doesn't exist, create it
+            $(this).after('<div class="password-requirements"></div>'); //Add the message container to the password input
         }
 
-        // Si el campo está vacío en modo edición
-        if (password === "") {
-            $(this).removeClass("border-red-500 border-green-500");
-            messageContainer.html("");
-            $("button[type='submit']").prop("disabled", false);
-            return;
+        if (password === "") { //If the password is empty, run the code
+            $(this).removeClass("border-red-500 border-green-500"); //Remove the red or green border
+            messageContainer.html(""); //Remove the message
+            $("button[type='submit']").prop("disabled", false); //Enable the button
+            return; 
         }
 
-        const results = validatePassword(password);
-        const allPassed = updatePasswordFeedback(results, messageContainer);
+        const results = validatePassword(password); //Validate the password
+        const allPassed = updatePasswordFeedback(results, messageContainer); //Update the password feedback
 
-        // Actualizar el estilo del input usando clases de Tailwind
         $(this)
-            .removeClass("border-red-500 border-green-500")
-            .addClass(allPassed ? "border-green-500" : "border-red-500");
+            .removeClass("border-red-500 border-green-500") //Remove the red or green border
+            .addClass(allPassed ? "border-green-500" : "border-red-500"); //Add class based on result
 
-        $("button[type='submit']").prop("disabled", !allPassed);
+        $("button[type='submit']").prop("disabled", !allPassed); //Enable or disable the button
     }
 
-    // Asignar eventos
-    $('#password').on('keyup', handlePasswordValidation);
-    $('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation);
+    $('#password').on('keyup', handlePasswordValidation); //Add event listener to the password input
+    $('input[id^="edit-password-"]').on('keyup', handleEditPasswordValidation); //Add event listener to the edit password input
 }
