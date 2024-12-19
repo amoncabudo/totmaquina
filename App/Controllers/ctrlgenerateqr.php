@@ -13,7 +13,7 @@ class CtrlGenerateMachineQR
         error_log("ID de máquina recibido: " . $machineId);
 
         if ($machineId) {
-            $data = 'localhost/machinedetail/' . $machineId; // Cambia esto por la URL real de la ficha de la máquina
+            $data = '  grup7dawcendrassos.cat//machinedetail/' . $machineId; // Cambia esto por la URL real de la ficha de la máquina
             $options = new QROptions([
                 'version'    => 7,
                 'outputType' => QRCode::OUTPUT_MARKUP_SVG,
