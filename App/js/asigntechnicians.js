@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     const disponibles = document.getElementById('tecnicos-disponibles');
     const asignados = document.getElementById('tecnicos-asignados');
@@ -7,32 +8,32 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // Hacer que los elementos sean "draggables"
+    // Elements with the "draggable" attribute
     disponibles.querySelectorAll('li').forEach(li => {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', dragStartHandler);
     });
 
-    // Configurar las áreas "dropzone"
+    // Drop zones
     [disponibles, asignados].forEach(zone => {
         zone.addEventListener('dragover', allowDropHandler);
         zone.addEventListener('drop', dropHandler);
     });
 });
 
-// Gestionar el evento dragstart
+// Drag start handler
 function dragStartHandler(event) {
     if (!event.target) return;
     const id = event.target.dataset.id;
     event.dataTransfer.setData('text/plain', id);
 }
 
-// Permitir el drop
+// Allow drop handler
 function allowDropHandler(event) {
-    event.preventDefault(); // Permite que el drop ocurra
+    event.preventDefault(); 
 }
 
-// Gestionar el evento drop
+// Drop handler
 function dropHandler(event) {
     event.preventDefault();
 
@@ -42,11 +43,11 @@ function dropHandler(event) {
 
     if (!dropZone || !technicianElement) return;
 
-    // Mover el técnico al nuevo contenedor
+    // Remove the technician from the previous list
     dropZone.appendChild(technicianElement);
 }
 
-// Guardar asignación al hacer clic en el botón
+// Save technicians
 document.getElementById('save-technicians').addEventListener('click', () => {
     const assignedTechnicians = Array.from(document.querySelectorAll('#tecnicos-asignados li'))
         .map(li => li.dataset.id);

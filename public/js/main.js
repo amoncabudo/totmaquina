@@ -1,14 +1,14 @@
-// Verificar si jQuery está disponible
+// Check if jQuery is available
 if (typeof jQuery === 'undefined') {
     console.error('jQuery no está cargado. Algunas funcionalidades podrían no estar disponibles.');
 }
 
-// Verificar si Fancybox está disponible
+// Check if Fancybox is available
 if (typeof Fancybox === 'undefined') {
     console.error('Fancybox no está cargado. La previsualización de imágenes no estará disponible.');
 }
 
-// Función para mostrar notificaciones toast (función global)
+// Function to show toast notifications (global function)
 function showToast(message, type = 'info') {
     const toastContainer = document.getElementById('toast-container');
     if (!toastContainer) return;
@@ -38,7 +38,7 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// Función para cambiar el técnico asignado (función global)
+// Function to change the assigned technician (global function)
 function saveTechnicianChange(assignmentId) {
     const newTechnicianId = document.getElementById(`newTechnician-${assignmentId}`).value;
     const selectElement = document.getElementById(`newTechnician-${assignmentId}`);
@@ -103,7 +103,7 @@ function saveTechnicianChange(assignmentId) {
     });
 }
 
-// Función para manejar el scroll
+// Function to handle scroll
 function handleScroll() {
     const navbar = document.getElementById('navbar');
     if (window.scrollY > 0) {
@@ -115,13 +115,13 @@ function handleScroll() {
     }
 }
 
-// Agregar el evento de scroll
+// Add scroll event
 window.addEventListener('scroll', handleScroll);
 
-// Ejecutar una vez al cargar para establecer el estado inicial
+// Execute once on load to set the initial state
 handleScroll();
 
-// Función segura para inicializar Fancybox
+// Safe function to initialize Fancybox
 function initFancybox() {
     if (typeof Fancybox !== 'undefined') {
         Fancybox.bind('[data-fancybox]', {
@@ -130,7 +130,7 @@ function initFancybox() {
     }
 }
 
-// Función segura para usar jQuery
+// Safe function to use jQuery
 function initJQuery() {
     if (typeof jQuery !== 'undefined') {
         $(document).ready(function() {
@@ -139,15 +139,15 @@ function initJQuery() {
     }
 }
 
-// Inicializar cuando el DOM esté listo (sin depender de jQuery)
+// Initialize when the DOM is ready (without relying on jQuery)
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar Fancybox si está disponible
+    // Initialize Fancybox if available
     initFancybox();
     
-    // Inicializar jQuery si está disponible
+    // Initialize jQuery if available
     initJQuery();
 
-    // Inicialización del menú móvil y dropdown
+    // Initialize mobile menu and dropdown
     const overlay = document.getElementById('navbar-mobile-overlay');
     const mobileMenu = document.getElementById('navbar-mobile');
     const menuButton = document.querySelector('[data-collapse-toggle="navbar-mobile"]');
@@ -155,14 +155,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropdownButton = document.getElementById('dropdownDefaultButton');
     const dropdownMenu = document.getElementById('dropdown');
 
-    // Función para abrir el menú
+    // Function to open the menu
     function openMenu() {
         overlay.classList.remove('opacity-0', 'pointer-events-none');
         mobileMenu.classList.remove('-translate-x-full');
         document.body.style.overflow = 'hidden';
     }
 
-    // Función para cerrar el menú
+    // Function to close the menu
     function closeMenu() {
         overlay.classList.add('opacity-0', 'pointer-events-none');
         mobileMenu.classList.add('-translate-x-full');
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownMenu?.classList.add('hidden');
     }
 
-    // Función para alternar el dropdown
+    // Function to toggle the dropdown
     function toggleDropdown(event) {
         event.stopPropagation();
         dropdownMenu?.classList.toggle('hidden');
@@ -187,12 +187,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     dropdownButton?.addEventListener('click', toggleDropdown);
 
-    // Prevenir que los clics dentro del menú cierren el overlay
+    // Prevent clicks inside the menu from closing the overlay
     mobileMenu?.addEventListener('click', function(e) {
         e.stopPropagation();
     });
 
-    // Carrusel
+    // Carousel
     const slides = document.querySelectorAll('.carousel-slide');
     let currentSlide = 0;
     let slideInterval;
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentSlide = index;
     }
 
-    // Función global para mover slides
+    // Global function to move slides
     window.moveSlide = function(direction) {
         showSlide(currentSlide + direction);
         resetInterval();
@@ -222,18 +222,18 @@ document.addEventListener('DOMContentLoaded', function() {
         startInterval();
     }
 
-    // Inicializar el carrusel
+    // Initialize the carousel
     if (slides.length > 0) {
         showSlide(0);
         startInterval();
 
-        // Pausar en hover
+        // Pause on hover
         const container = document.querySelector('.carousel-container');
         container?.addEventListener('mouseenter', () => clearInterval(slideInterval));
         container?.addEventListener('mouseleave', startInterval);
     }
 
-    // Inicializar Fancybox para la galería
+    // Initialize Fancybox for the gallery
     if (typeof Fancybox !== 'undefined') {
         Fancybox.bind('[data-fancybox="gallery"]', {
             Carousel: {
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Función para actualizar técnicos en la base de datos
+    // Function to update technicians in the database
     async function updateTechniciansInDatabase(technicianIds, maintenanceId) {
         try {
             if (!maintenanceId) {
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Inicialización del drag and drop de técnicos
+    // Initialize technician drag and drop
     function initTechnicianDragDrop() {
         const disponibles = document.getElementById('tecnicos-disponibles');
         const asignados = document.getElementById('tecnicos-asignados');
@@ -292,12 +292,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Determinar si estamos en la página de incidencias o mantenimiento
+        // Determine if we are on the incidents or maintenance page
         const isIncidentsPage = window.location.pathname.includes('incidents');
         console.log('Es página de incidencias:', isIncidentsPage);
 
         try {
-            // Inicializar Sortable para la lista de disponibles
+            // Initialize Sortable for the available list
             new Sortable(disponibles, {
                 group: 'tecnicos',
                 animation: 150,
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 dragClass: 'opacity-50'
             });
 
-            // Inicializar Sortable para la lista de asignados
+            // Initialize Sortable for the assigned list
             new Sortable(asignados, {
                 group: 'tecnicos',
                 animation: 150,
@@ -317,10 +317,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 dragClass: 'opacity-50',
                 onAdd: function(evt) {
                     if (isIncidentsPage) {
-                        // Para incidencias, solo permitir un técnico
+                        // For incidents, only allow one technician
                         const items = asignados.children;
                         if (items.length > 1) {
-                            // Si ya hay un técnico, devolver el nuevo al contenedor original
+                            // If there is already a technician, return the new one to the original container
                             disponibles.appendChild(items[0]);
                         }
                     }
@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para actualizar el campo oculto con los datos de los técnicos
+    // Function to update the hidden field with technician data
     function updateTechniciansData() {
         const asignados = document.getElementById('tecnicos-asignados');
         const techniciansDataInput = document.getElementById('technicians-data');
@@ -346,11 +346,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (asignados && techniciansDataInput) {
             const assignedTechnicians = Array.from(asignados.children);
             
-            // Para incidencias, solo tomamos el primer técnico asignado
+            // For incidents, only take the first assigned technician
             if (window.location.pathname.includes('incidents')) {
                 if (assignedTechnicians.length > 0) {
                     techniciansDataInput.value = assignedTechnicians[0].dataset.id;
-                    // Remover cualquier técnico adicional
+                    // Remove any additional technicians
                     while (assignedTechnicians.length > 1) {
                         asignados.removeChild(assignedTechnicians[assignedTechnicians.length - 1]);
                     }
@@ -358,14 +358,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     techniciansDataInput.value = '';
                 }
             } else {
-                // Para mantenimiento, tomamos todos los técnicos
+                // For maintenance, take all technicians
                 const technicianIds = assignedTechnicians.map(li => li.dataset.id);
                 techniciansDataInput.value = JSON.stringify(technicianIds);
             }
         }
     }
 
-    // Inicializar el manejo del formulario de mantenimiento
+    // Initialize maintenance form handling
     const maintenanceForm = document.querySelector('form[action="/maintenance/create"]');
     if (maintenanceForm) {
         maintenanceForm.addEventListener('submit', async function(e) {
@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const formData = new FormData(this);
                 
-                // Obtener los técnicos asignados
+                // Get assigned technicians
                 const asignados = document.getElementById('tecnicos-asignados');
                 if (asignados) {
                     const technicianIds = Array.from(asignados.children).map(li => li.dataset.id);
@@ -407,10 +407,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Inicializar el drag and drop de técnicos
+    // Initialize technician drag and drop
     initTechnicianDragDrop();
 
-    // Event listener para el botón de reset si existe
+    // Event listener for the reset button if it exists
     const resetButton = document.getElementById('reset-technicians');
     if (resetButton) {
         resetButton.addEventListener('click', resetTechnicians);
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await loadIncidentHistory(machineId);
     });
 
-    // Manejar el formulario de consulta de historial
+    // Handle the history query form
     const historyForm = document.getElementById('maintenance-history-form');
     if (historyForm) {
         historyForm.addEventListener('submit', async function(e) {
@@ -453,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Función para cargar el historial de incidencias
+    // Function to load incident history
     async function loadIncidentHistory(machineId) {
         try {
             console.log('Cargando historial para máquina:', machineId);
@@ -478,12 +478,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(data.message || 'Error al cargar el historial');
             }
 
-            // Verificar que los datos necesarios existen
+            // Check that the necessary data exists
             if (!data.machine || !data.data) {
                 throw new Error('Datos incompletos en la respuesta');
             }
 
-        // Actualizar la interfaz
+        // Update the interface
             updateMachineInfo(data.machine);
             updateIncidentsList(data.data);
             
@@ -493,7 +493,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para actualizar la información de la máquina
+    // Function to update machine information
     function updateMachineInfo(machine) {
         const machineInfoDiv = document.getElementById('machine-info');
         if (!machineInfoDiv) return;
@@ -507,16 +507,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Crear elementos manualmente
+        // Create elements manually
         const fragment = document.createDocumentFragment();
 
-        // Título
+        // Title
         const title = document.createElement('h2');
         title.className = 'text-xl font-bold mb-4';
         title.textContent = machine.name || 'Sin nombre';
         fragment.appendChild(title);
 
-        // Información básica
+        // Basic information
         const infoDiv = document.createElement('div');
         infoDiv.className = 'space-y-2';
 
@@ -535,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
         infoDiv.appendChild(createInfoP('Ubicación', machine.location));
         fragment.appendChild(infoDiv);
 
-        // Estadísticas
+        // Statistics
         const statsDiv = document.createElement('div');
         statsDiv.className = 'mt-6 grid grid-cols-2 gap-4';
 
@@ -563,12 +563,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         fragment.appendChild(statsDiv);
 
-        // Actualizar el contenido
+        // Update the content
         machineInfoDiv.innerHTML = '';
         machineInfoDiv.appendChild(fragment);
     }
 
-    // Función auxiliar para obtener la clase CSS según el estado
+    // Function to get the CSS class based on status
     function getStatusClass(status) {
         const classes = {
             'pending': 'bg-yellow-100 text-yellow-800',
@@ -578,7 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return classes[status] || 'bg-gray-100 text-gray-800';
     }
 
-    // Función auxiliar para obtener el texto del estado
+    // Function to get the text of the status
     function getStatusText(status) {
         const texts = {
             'pending': 'Pendiente',
@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return texts[status] || status;
     }
 
-    // Función auxiliar para formatear fechas
+    // Function to format dates
     function formatDate(dateString) {
         if (!dateString) return 'Fecha no disponible';
         const date = new Date(dateString);
@@ -601,7 +601,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Función para actualizar la lista de incidencias
+    // Function to update the list of incidents
     function updateIncidentsList(incidents) {
         const incidentsListDiv = document.getElementById('incidents-list');
         if (!incidentsListDiv) return;
@@ -615,7 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Crear elementos manualmente en lugar de usar template strings
+        // Create elements manually instead of using template strings
         const fragment = document.createDocumentFragment();
 
         incidents.forEach(incident => {
@@ -675,7 +675,7 @@ document.addEventListener('DOMContentLoaded', function() {
         incidentsListDiv.appendChild(fragment);
     }
 
-    // Función para cargar el historial de mantenimiento
+    // Function to load maintenance history
     async function loadMaintenanceHistory(machineId) {
         try {
             console.log('Cargando historial de mantenimiento para máquina:', machineId);
@@ -690,7 +690,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 credentials: 'same-origin'
             });
 
-            // Log para debug
+            // Log for debugging
             console.log('URL:', `/maintenance-history/get/${machineId}`);
             console.log('Response status:', response.status);
             const responseText = await response.text();
@@ -716,7 +716,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para actualizar la vista del historial de mantenimiento
+    // Function to update the maintenance history view
     function updateMaintenanceHistory(history) {
         const historyContainer = document.getElementById('maintenance-history');
         if (!historyContainer) return;
@@ -780,7 +780,7 @@ document.addEventListener('DOMContentLoaded', function() {
         historyContainer.appendChild(fragment);
     }
 
-    // Funciones auxiliares
+    // Auxiliary functions
     function getMaintenanceStatusClass(status) {
         const classes = {
             'pending': 'bg-yellow-100 text-yellow-800',
@@ -818,7 +818,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar el drag and drop para técnicos
+        // Initialize the drag and drop for technicians
         initTechnicianDragAndDrop();
     });
 
@@ -826,14 +826,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const technicians = document.querySelectorAll('.technician-item');
         const maintenanceCards = document.querySelectorAll('.maintenance-card');
 
-        // Hacer los técnicos arrastrables
+        // Make technicians draggable
         technicians.forEach(tech => {
             tech.setAttribute('draggable', true);
             tech.addEventListener('dragstart', handleDragStart);
             tech.addEventListener('dragend', handleDragEnd);
         });
 
-        // Configurar las zonas donde se pueden soltar los técnicos
+        // Configure the drop zones for technicians
         maintenanceCards.forEach(card => {
             card.addEventListener('dragover', handleDragOver);
             card.addEventListener('drop', handleDrop);
@@ -842,6 +842,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Function to handle drag start
     function handleDragStart(e) {
         e.target.classList.add('dragging');
         e.dataTransfer.setData('text/plain', JSON.stringify({
@@ -850,23 +851,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }));
     }
 
+    // Function to handle drag end
     function handleDragEnd(e) {
         e.target.classList.remove('dragging');
     }
 
+    // Function to handle drag over
     function handleDragOver(e) {
         e.preventDefault();
     }
 
+    // Function to handle drag enter
     function handleDragEnter(e) {
         e.preventDefault();
         e.currentTarget.classList.add('drag-over');
     }
 
+    // Function to handle drag leave
     function handleDragLeave(e) {
         e.currentTarget.classList.remove('drag-over');
     }
 
+    // Function to handle drop
     async function handleDrop(e) {
         e.preventDefault();
         e.currentTarget.classList.remove('drag-over');
@@ -891,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (data.success) {
-                // Actualizar la UI
+                // Update the UI
                 updateTechniciansList(maintenanceCard, technicianData);
                 showToast('Técnico asignado correctamente', 'success');
             } else {
@@ -903,14 +909,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to update the technician list
     function updateTechniciansList(maintenanceCard, technicianData) {
         const techList = maintenanceCard.querySelector('.technicians-list');
         
-        // Verificar si el técnico ya está asignado
+        // Check if the technician is already assigned
         const existingTech = techList.querySelector(`[data-technician-id="${technicianData.technicianId}"]`);
         if (existingTech) return;
 
-        // Crear el nuevo elemento del técnico
+        // Create the new technician element
         const techItem = document.createElement('div');
         techItem.className = 'flex items-center gap-2 bg-gray-100 rounded p-2 text-sm';
         techItem.dataset.technicianId = technicianData.technicianId;
@@ -928,6 +935,7 @@ document.addEventListener('DOMContentLoaded', function() {
         techList.appendChild(techItem);
     }
 
+    // Function to remove a technician
     async function removeTechnician(button, technicianId, maintenanceId) {
         try {
             const response = await fetch('/maintenance/remove-technician', {
@@ -956,9 +964,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para resetear técnicos
+    // Function to reset technicians
     async function resetTechnicians() {
-        // Si estamos en la página de incidencias, solo resetear el select
+        // If we are on the incidents page, only reset the select
         if (window.location.pathname.includes('incidents')) {
             const select = document.getElementById('responsible_technician_id');
             if (select) {
@@ -967,7 +975,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Código existente para mantenimiento
+        // Existing code for maintenance
         const disponibles = document.getElementById('tecnicos-disponibles');
         const asignados = document.getElementById('tecnicos-asignados');
         const maintenanceId = document.getElementById('maintenance_id')?.value;
@@ -987,7 +995,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = await response.json();
                 if (data.success) {
-                    // Mover todos los técnicos de vuelta a disponibles
+                    // Move all technicians back to available
                     while (asignados.firstChild) {
                         disponibles.appendChild(asignados.firstChild);
                     }
@@ -1002,7 +1010,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para inicializar el drag and drop
+    // Function to initialize drag and drop
     function initDragAndDrop() {
         const disponibles = document.getElementById('tecnicos-disponibles');
         const asignados = document.getElementById('tecnicos-asignados');
@@ -1018,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Inicializar Sortable para la lista de disponibles
+        // Initialize Sortable for the available list
         new Sortable(disponibles, {
             group: 'tecnicos',
             animation: 150,
@@ -1027,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dragClass: 'opacity-50'
         });
 
-        // Inicializar Sortable para la lista de asignados
+        // Initialize Sortable for the assigned list
         new Sortable(asignados, {
             group: 'tecnicos',
             animation: 150,
@@ -1045,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Función para actualizar técnicos en el servidor
+    // Function to update technicians on the server
     async function updateTechnicians(technicianIds, maintenanceId) {
         try {
             const response = await fetch('/maintenance/update-technicians', {
@@ -1072,12 +1080,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Inicializar cuando el DOM esté listo
+    // Initialize when the DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar el drag and drop
+        // Initialize drag and drop
         initDragAndDrop();
 
-        // Manejar el formulario de mantenimiento
+        // Handle the maintenance form
         const form = document.querySelector('form[action="/maintenance/create"]');
         if (form) {
             form.addEventListener('submit', async function(e) {
