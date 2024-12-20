@@ -42,7 +42,7 @@ $(document).ready(function () { //Run the code when the document is ready
 
         results.forEach(function (item) { //For each result, create a link
             const resultItem = `
-            <a href="http://localhost/machine_detail/${item.id}" 
+            <a href="http://grup7dawcendrassos.cat/machine_detail/${item.id}" 
                class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
                data-id="${item.id}">
                 <strong class="text-gray-900">${item.name} (${item.model})</strong><br> 

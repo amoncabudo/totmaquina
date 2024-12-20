@@ -77,7 +77,7 @@
                                     </button>
                                     <div class="absolute left-0 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200" role="menu">
                                         <a href="/maintenance_history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Mantenimiento</a>
-                                        <a href="/history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Registros</a>
+                                        <a href="/history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Incidencias</a>
                                     </div>
                                 </div>
                                 <?php endif; ?>
