@@ -150,7 +150,7 @@ class ResetPassController
             $mail->CharSet = 'UTF-8';
             $mail->Subject = 'Recuperar contraseña';
             $mail->Body = "Click this link to reset your password: 
-           <a href='http://localhost/NuevaPassword?token=$token'>Recuperar contraseña</a>";
+           <a href='http://grup7dawcendrassos.cat/NuevaPassword?token=$token'>Recuperar contraseña</a>";
 
             // Send the email
             $mail->send();

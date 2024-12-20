@@ -48,7 +48,7 @@ if (document.getElementById("map")) { //If the map element exists, run the code
                       <div class="popup-content">
                           <h3 class="font-bold">${machine.name || "Máquina"}</h3>
                           <p>${machine.location || "Sin Ubicación"}</p>
-                          <a href="http://localhost/machinedetail/${machine.id}">Detalles de la maquina </a>
+                          <a href="http://grup7dawcendrassos.cat/machinedetail/${machine.id}">Detalles de la maquina </a>
                           
                       </div>
                   `
