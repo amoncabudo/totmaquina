@@ -2,9 +2,9 @@
 
 return [
     "db" => [
-        "user" => Emeset\Env::get("user", "root"),
-        "pass" => Emeset\Env::get("pass", "12345"),
-        "db" => Emeset\Env::get("db", "totmaquina"),
-        "host" => Emeset\Env::get("host", "mariadb"),
-    ],
+        "user" => "grup7",
+        "pass" => "*Grup777*",
+        "db" => "totmaquina",
+        "host" => "hl1373.dinaserver.com"
+    ]
 ];
