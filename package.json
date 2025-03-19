@@ -41,8 +41,8 @@
     "@fancyapps/fancybox": "^3.5.7",
     "fancybox": "^3.0.1",
     "flowbite": "^2.5.2",
-    "jspdf": "^2.5.2",
-    "jspdf-autotable": "^3.8.4",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "leaflet": "^1.9.4",
     "sortablejs": "^1.15.6",
     "tot__maquina": "file:"
