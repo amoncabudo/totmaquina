@@ -1,5 +1,8 @@
 # TotMaquina - Sistema de Gestión de Mantenimiento Industrial
 
+##  Demo
+https://grup7dawcendrassos.cat/
+
 ## 📋 Descripción
 
 TotMaquina es una plataforma web diseñada para la gestión integral del mantenimiento de maquinaria industrial. Facilita el seguimiento, programación y control de mantenimientos preventivos y correctivos, asegurando la máxima eficiencia operativa.
